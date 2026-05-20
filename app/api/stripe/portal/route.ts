@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { supabaseAdmin } from '@/lib/supabase'
 
 export async function POST() {
@@ -13,7 +13,7 @@ export async function POST() {
     return NextResponse.json({ error: 'No Stripe customer' }, { status: 404 })
   }
 
-  const portal = await stripe.billingPortal.sessions.create({
+  const portal = await getStripe().billingPortal.sessions.create({
     customer: user.stripe_customer_id,
     return_url: `${process.env.NEXTAUTH_URL}/settings`,
   })

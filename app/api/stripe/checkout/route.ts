@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { supabaseAdmin } from '@/lib/supabase'
 
 export async function POST() {
@@ -12,6 +12,7 @@ export async function POST() {
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   const origin = process.env.NEXTAUTH_URL!
+  const stripe = getStripe()
 
   let customerId = user.stripe_customer_id
   if (!customerId) {
