@@ -71,7 +71,7 @@ export default function LoginPage() {
             <p>隔日更新・メール通知</p>
           </div>
           <div>
-            <p className="font-semibold text-gray-700 mb-1">スタンダード（¥500/月）</p>
+            <p className="font-semibold text-gray-700 mb-1">スタンダード（¥300/月）</p>
             <p>アンカー無制限</p>
             <p>毎日更新・Slack対応</p>
             <p>CSV・PDFエクスポート</p>

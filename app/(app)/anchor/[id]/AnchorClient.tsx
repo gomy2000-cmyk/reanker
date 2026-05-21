@@ -225,7 +225,7 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowUpgrade(false)}>
           <div className="bg-white rounded-xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-bold mb-2">スタンダードプランへ</h3>
-            <p className="text-xs text-gray-500 mb-4">エクスポート機能はスタンダードプラン（¥500/月）でご利用いただけます</p>
+            <p className="text-xs text-gray-500 mb-4">エクスポート機能はスタンダードプラン（¥300/月）でご利用いただけます</p>
             <button
               onClick={async () => {
                 const res = await fetch('/api/stripe/checkout', { method: 'POST' })

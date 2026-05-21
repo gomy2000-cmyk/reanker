@@ -310,7 +310,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div className="bg-white rounded-xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg font-bold text-gray-900 mb-1">スタンダードプランへアップグレード</h3>
-        <p className="text-xs text-gray-500 mb-5">¥500/月で全機能が使えます</p>
+        <p className="text-xs text-gray-500 mb-5">¥300/月で全機能が使えます</p>
 
         <div className="grid grid-cols-2 gap-3 mb-5 text-xs">
           <div className="border border-gray-200 rounded-lg p-3">

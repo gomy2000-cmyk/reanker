@@ -5,7 +5,7 @@ import { Check, X } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: '料金プラン — リアンカー',
-  description: 'リアンカーの料金プラン（フリー / スタンダード月額500円）をご案内します。',
+  description: 'リアンカーの料金プラン（フリー / スタンダード月額300円）をご案内します。',
 }
 
 const features = [
@@ -22,7 +22,7 @@ export default function PricingPage() {
   return (
     <LegalLayout title="料金プラン" updatedAt="2026年5月22日">
       <p className="text-sm text-gray-700 leading-relaxed mb-10">
-        リアンカーはフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額500円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
+        リアンカーはフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
       </p>
 
       <div className="grid sm:grid-cols-2 gap-5 mb-10">
@@ -47,7 +47,7 @@ export default function PricingPage() {
           </span>
           <h2 className="text-base font-bold text-gray-900 mb-1">スタンダードプラン</h2>
           <p className="text-xs text-gray-500 mb-4">本格的に競合監視を運用したい方に</p>
-          <p className="text-3xl font-bold text-gray-900 mb-1">¥500<span className="text-sm font-normal text-gray-500"> / 月（税込）</span></p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">¥300<span className="text-sm font-normal text-gray-500"> / 月（税込）</span></p>
           <p className="text-xs text-gray-400 mb-6">クレジットカード決済</p>
           <Link
             href="/login"

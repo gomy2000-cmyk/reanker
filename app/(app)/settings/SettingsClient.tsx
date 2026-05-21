@@ -120,7 +120,7 @@ export function SettingsClient({ user }: Props) {
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
               user.plan === 'standard' ? 'bg-[#378ADD]/10 text-[#378ADD]' : 'bg-gray-100 text-gray-600'
             }`}>
-              {user.plan === 'standard' ? 'スタンダード（¥500/月）' : 'フリー'}
+              {user.plan === 'standard' ? 'スタンダード（¥300/月）' : 'フリー'}
             </span>
           </div>
           {user.plan === 'free' ? (
