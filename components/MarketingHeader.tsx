@@ -18,7 +18,7 @@ export function MarketingHeader({ isAuthenticated = false }: Props) {
           <a href="#product" className="hover:text-gray-900 transition-colors">プロダクト</a>
           <a href="#comparison" className="hover:text-gray-900 transition-colors">比較</a>
           <Link href="/pricing" className="hover:text-gray-900 transition-colors">料金</Link>
-          <a href="#faq" className="hover:text-gray-900 transition-colors">FAQ</a>
+          <Link href="/blog" className="hover:text-gray-900 transition-colors">ブログ</Link>
           <Link href="/contact" className="hover:text-gray-900 transition-colors">お問い合わせ</Link>
         </nav>
 
