@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Anchor } from 'lucide-react'
+import { Wordmark } from './brand/Wordmark'
 
 interface Props {
   isAuthenticated?: boolean
@@ -9,9 +9,8 @@ export function MarketingHeader({ isAuthenticated = false }: Props) {
   return (
     <header className="border-b border-gray-200 bg-white sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Anchor size={18} className="text-[#378ADD]" strokeWidth={2.5} />
-          <span className="font-semibold text-gray-900 text-[15px] tracking-tight">Reanker</span>
+        <Link href="/" className="flex items-center text-gray-900 hover:opacity-80 transition-opacity">
+          <Wordmark height={20} />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-[13px] text-gray-600">

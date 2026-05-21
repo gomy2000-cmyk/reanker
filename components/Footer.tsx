@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Anchor } from 'lucide-react'
+import { Wordmark } from './brand/Wordmark'
 
 export function Footer() {
   return (
@@ -7,11 +7,10 @@ export function Footer() {
       <div className="max-w-5xl mx-auto px-4 py-8 sm:py-10">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           <div>
-            <div className="flex items-center gap-1.5 mb-1">
-              <Anchor size={16} className="text-[#378ADD]" />
-              <span className="font-bold text-gray-900 text-sm">リアンカー</span>
+            <div className="text-gray-900 mb-2">
+              <Wordmark height={18} />
             </div>
-            <p className="text-xs text-gray-500">競合のリリースに、アンカーを。</p>
+            <p className="text-xs text-gray-500">競合のプレスリリース・ニュースを自動監視。</p>
             <p className="text-[11px] text-gray-400 mt-2">© {new Date().getFullYear()} Reanker</p>
           </div>
 

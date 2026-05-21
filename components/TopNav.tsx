@@ -1,7 +1,8 @@
 'use client'
 
 import { signOut, useSession } from 'next-auth/react'
-import { Anchor, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
+import { Wordmark } from './brand/Wordmark'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 
@@ -20,9 +21,8 @@ export function TopNav() {
 
   return (
     <header className="h-11 bg-white border-b border-gray-200 flex items-center px-4 justify-between shrink-0">
-      <div className="flex items-center gap-1.5">
-        <Anchor size={20} className="text-[#378ADD]" />
-        <span className="font-bold text-gray-900 text-sm tracking-tight">リアンカー</span>
+      <div className="flex items-center text-gray-900">
+        <Wordmark height={16} />
       </div>
 
       {session?.user && (

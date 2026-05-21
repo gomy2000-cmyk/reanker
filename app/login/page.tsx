@@ -3,9 +3,11 @@
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { Anchor, Bell, BarChart2, FileDown, Radar } from 'lucide-react'
+import { Bell, BarChart2, FileDown } from 'lucide-react'
 import Link from 'next/link'
 import { Footer } from '@/components/Footer'
+import { Wordmark } from '@/components/brand/Wordmark'
+import { AnchorMark } from '@/components/brand/AnchorMark'
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
@@ -22,22 +24,21 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md p-8">
         {/* ロゴ */}
-        <div className="flex items-center gap-2 mb-2">
-          <Anchor className="text-[#378ADD]" size={28} />
-          <span className="text-2xl font-bold text-gray-900 tracking-tight">リアンカー</span>
-        </div>
+        <Link href="/" className="text-gray-900 mb-3 inline-block hover:opacity-80 transition-opacity">
+          <Wordmark height={28} />
+        </Link>
         <p className="text-gray-500 text-sm mb-1">
-          競合のリリースに、アンカーを。
+          競合のプレスリリース・ニュースを自動監視。
         </p>
         <p className="text-gray-500 text-xs mb-6">
-          PR TIMES・Google Newsから競合の動きを自動取得・通知するBtoB向けSaaS
+          PR TIMES・Google Newsから競合の動きを自動取得・通知するBtoB向けSaaS。
         </p>
 
         {/* 機能リスト */}
         <ul className="space-y-3 mb-8">
           {[
             { icon: Bell, text: 'PR TIMES・Google Newsの記事を自動取得' },
-            { icon: Radar, text: 'アンカー登録で複数競合を同時監視' },
+            { icon: AnchorMark, text: 'アンカー登録で複数競合を同時監視' },
             { icon: Bell, text: '毎朝9時にSlack・メールで通知' },
             { icon: BarChart2, text: 'ダッシュボードで発信トレンドを可視化' },
             { icon: FileDown, text: 'CSV・PDFエクスポート（スタンダード）' },

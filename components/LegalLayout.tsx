@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Anchor, ChevronLeft } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
+import { Wordmark } from './brand/Wordmark'
 import { Footer } from './Footer'
 
 interface Props {
@@ -13,11 +14,10 @@ export function LegalLayout({ title, updatedAt, children }: Props) {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/login" className="flex items-center gap-1.5">
-            <Anchor size={20} className="text-[#378ADD]" />
-            <span className="font-bold text-gray-900 text-sm tracking-tight">リアンカー</span>
+          <Link href="/" className="flex items-center text-gray-900 hover:opacity-80 transition-opacity">
+            <Wordmark height={18} />
           </Link>
-          <Link href="/login" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700">
+          <Link href="/" className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700">
             <ChevronLeft size={14} />
             ホームへ戻る
           </Link>

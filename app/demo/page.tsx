@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Anchor } from 'lucide-react'
+import { Wordmark } from '@/components/brand/Wordmark'
 import { SideNav } from '@/components/SideNav'
 import { DashboardClient } from '../(app)/dashboard/DashboardClient'
 import { mockUser, mockKeywords, mockItems } from '@/lib/mock'
@@ -16,9 +16,8 @@ export default function DemoPage() {
     <div className="flex flex-col h-screen">
       {/* トップナビ（デモ用簡易版） */}
       <header className="h-11 bg-white border-b border-gray-200 flex items-center px-4 justify-between shrink-0">
-        <div className="flex items-center gap-1.5">
-          <Anchor size={20} className="text-[#378ADD]" />
-          <span className="font-bold text-gray-900 text-sm tracking-tight">リアンカー</span>
+        <div className="flex items-center text-gray-900">
+          <Wordmark height={16} />
           <span className="ml-2 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">DEMO</span>
         </div>
         <div className="flex items-center gap-2">

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { Anchor, Home, ArrowRight } from 'lucide-react'
+import { Home, ArrowRight } from 'lucide-react'
+import { Wordmark } from '@/components/brand/Wordmark'
 
 export const metadata: Metadata = {
   title: 'ページが見つかりません',
@@ -11,9 +12,8 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
-      <Link href="/" className="flex items-center gap-2 mb-8">
-        <Anchor size={20} className="text-[#378ADD]" strokeWidth={2.5} />
-        <span className="font-semibold text-gray-900 text-[15px]">Reanker</span>
+      <Link href="/" className="text-gray-900 mb-8 hover:opacity-80 transition-opacity">
+        <Wordmark height={20} />
       </Link>
 
       <p className="text-xs text-gray-400 font-mono mb-3">404</p>

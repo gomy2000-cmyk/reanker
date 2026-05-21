@@ -2,11 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import {
-  Anchor, Bell, Search, BarChart3, MessageSquare, Mail,
+  Bell, Search, BarChart3, MessageSquare, Mail,
   ArrowRight, Check, X, Plus, ExternalLink, Circle, ChevronRight,
 } from 'lucide-react'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
+import { AnchorMark } from '@/components/brand/AnchorMark'
 
 export const metadata: Metadata = {
   title: {
@@ -226,7 +227,7 @@ export default async function HomePage() {
               { icon: BarChart3, title: 'ダッシュボード', desc: '曜日別件数・時間帯分布・アンカー別サマリーをグラフで可視化。' },
               { icon: Check, title: '既読/未読管理', desc: '記事ごとに既読フラグを管理。チェック漏れを防止。' },
               { icon: ExternalLink, title: 'CSV / PDF 出力', desc: 'スタンダードプラン限定。社内レポート用に絞り込み結果を出力可。' },
-              { icon: Anchor, title: 'Warmup機能', desc: 'アンカー登録の翌朝9時から通知開始。過去記事の大量配信を防止。' },
+              { icon: AnchorMark, title: 'Warmup機能', desc: 'アンカー登録の翌朝9時から通知開始。過去記事の大量配信を防止。' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-white p-5 sm:p-6 hover:bg-gray-50 transition-colors">
                 <Icon size={16} className="text-[#378ADD] mb-3" strokeWidth={2.25} />
@@ -661,8 +662,8 @@ function SlackNotifyPreview() {
       </div>
       <div className="p-4 text-xs">
         <div className="flex gap-2.5">
-          <div className="w-8 h-8 bg-[#378ADD] rounded flex items-center justify-center shrink-0">
-            <Anchor size={14} className="text-white" />
+          <div className="w-8 h-8 bg-[#0a0a0a] rounded flex items-center justify-center shrink-0 text-white">
+            <AnchorMark size={14} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-1.5">

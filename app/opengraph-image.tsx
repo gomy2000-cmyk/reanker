@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'Reanker — 競合のPR TIMES・Google Newsを毎日自動チェック'
+export const alt = 'Reanker｜競合のプレスリリース・ニュースを自動監視'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -16,44 +16,78 @@ export default async function OG() {
           display: 'flex',
           flexDirection: 'column',
           padding: '72px',
-          fontFamily: 'sans-serif',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
         }}
       >
-        {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '36px' }}>
-          <div
+        {/* ブランドワードマーク */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+          <span
             style={{
-              width: '48px',
-              height: '48px',
-              background: '#378ADD',
-              borderRadius: '10px',
+              fontSize: 56,
+              fontWeight: 900,
+              color: '#0a0a0a',
+              letterSpacing: '-3px',
+              lineHeight: 1,
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '28px',
-              fontWeight: 700,
             }}
           >
-            ⚓
-          </div>
-          <span style={{ fontSize: '32px', fontWeight: 700, color: '#111827', letterSpacing: '-0.02em' }}>Reanker</span>
+            RE
+          </span>
+          <svg width="36" height="58" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ margin: '0 2px' }}>
+            <path d="M12 1 L7 7 L17 7 Z" fill="#0a0a0a" />
+            <line x1="12" y1="6" x2="12" y2="24" stroke="#0a0a0a" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="5" y1="10.5" x2="19" y2="10.5" stroke="#0a0a0a" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M12 22 L4 29 M4 29 L8 28 M4 29 L5 25" stroke="#0a0a0a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M12 22 L20 29 M20 29 L16 28 M20 29 L19 25" stroke="#0a0a0a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+          <span
+            style={{
+              fontSize: 56,
+              fontWeight: 900,
+              color: '#0a0a0a',
+              letterSpacing: '-3px',
+              lineHeight: 1,
+              display: 'flex',
+            }}
+          >
+            NKER
+          </span>
         </div>
 
         {/* Headline */}
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
-          <p style={{ fontSize: '20px', color: '#378ADD', fontWeight: 600, marginBottom: '16px', letterSpacing: '0.05em' }}>
+          <p style={{ fontSize: 22, color: '#378ADD', fontWeight: 600, marginBottom: 18, letterSpacing: '0.08em', display: 'flex' }}>
             BtoB 競合監視 SaaS
           </p>
-          <h1 style={{ fontSize: '64px', fontWeight: 700, color: '#111827', letterSpacing: '-0.02em', lineHeight: 1.2, margin: 0 }}>
-            競合のPR TIMES・Google Newsを<br />毎日自動チェック。
+          <h1
+            style={{
+              fontSize: 64,
+              fontWeight: 700,
+              color: '#0a0a0a',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.25,
+              margin: 0,
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <span>競合のプレスリリース・ニュースを</span>
+            <span>自動監視。</span>
           </h1>
         </div>
 
         {/* Footer */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-          <span style={{ fontSize: '22px', color: '#6b7280' }}>月額 ¥300 から · 無料プランあり</span>
-          <span style={{ fontSize: '22px', color: '#6b7280' }}>reanker.com</span>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingTop: 24,
+            borderTop: '1px solid #e5e7eb',
+          }}
+        >
+          <span style={{ fontSize: 22, color: '#6b7280', display: 'flex' }}>月額 ¥300 から · 無料プランあり</span>
+          <span style={{ fontSize: 22, color: '#6b7280', display: 'flex' }}>reanker.com</span>
         </div>
       </div>
     ),
