@@ -1,7 +1,7 @@
 ---
-title: "PR TIMES Webクリッピングは高い？代替ツールと月額300円で同じことをやる方法"
-description: "PR TIMES Webクリッピングの料金は月5,000円から。同じように競合のリリースを毎日チェックする方法を、無料〜月額300円の代替手段含めて整理しました。個人広報・小規模チーム向け。"
-ogTitle: "PR TIMES Webクリッピングの代替｜月額300円で競合監視する方法"
+title: "【無料あり】PR TIMES Webクリッピングの代替｜月300円で競合リリースを毎日自動チェック"
+description: "PR TIMES Webクリッピングの料金は月5,000円から。同じことを無料〜月300円で実現する代替手段3ルートを、個人広報・小規模チーム向けに整理しました。"
+ogTitle: "PR TIMES Webクリッピング代替｜無料〜月300円で競合監視する方法"
 publishedAt: "2026-05-22"
 updatedAt: "2026-05-22"
 category: "competitor-monitoring"
