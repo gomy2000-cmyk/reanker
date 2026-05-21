@@ -9,15 +9,25 @@ import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Reanker — 競合のPR TIMES・Google Newsを毎日自動チェック',
-  description: '競合企業のPR TIMES・Google News掲載リリースを毎日自動取得し、毎朝9時にSlack・メールへまとめて通知。月額300円から、個人・小規模チームでも本格的な競合監視。',
+  title: {
+    absolute: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
+  },
+  description: 'Reankerは、PR TIMESやGoogle Newsから競合企業の動きを自動取得し、Slackやメールで通知するBtoB向け競合監視SaaSです。',
   openGraph: {
-    title: 'Reanker — 競合のPR TIMES・Google Newsを毎日自動チェック',
-    description: '競合企業のPR TIMES・Google News掲載リリースを毎日自動取得し、毎朝9時にSlack・メールへまとめて通知。',
+    title: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
+    description: 'Reankerは、PR TIMESやGoogle Newsから競合企業の動きを自動取得し、Slackやメールで通知するBtoB向け競合監視SaaSです。',
     url: 'https://reanker.com',
     siteName: 'Reanker',
     locale: 'ja_JP',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
+    description: 'PR TIMES・Google Newsから競合企業の動きを自動取得・通知するBtoB向けSaaS。',
+  },
+  alternates: {
+    canonical: 'https://reanker.com',
   },
 }
 

@@ -1,7 +1,14 @@
+import type { Metadata } from 'next'
 import { Anchor } from 'lucide-react'
 import { SideNav } from '@/components/SideNav'
 import { DashboardClient } from '../(app)/dashboard/DashboardClient'
 import { mockUser, mockKeywords, mockItems } from '@/lib/mock'
+
+export const metadata: Metadata = {
+  title: 'デモ',
+  description: 'Reanker のダッシュボード画面をログイン不要で体験できます（ダミーデータ）。',
+  robots: { index: false, follow: false },
+}
 
 // 認証・DBなしでダッシュボード(ホーム)を確認するためのデモ画面
 export default function DemoPage() {

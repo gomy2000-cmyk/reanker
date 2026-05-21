@@ -75,15 +75,31 @@ export function SettingsClient({ user }: Props) {
   }
 
   const handleUpgrade = async () => {
-    const res = await fetch('/api/stripe/checkout', { method: 'POST' })
-    const { url } = await res.json()
-    if (url) window.location.href = url
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.message ?? 'アップグレード処理に失敗しました。')
+      }
+    } catch {
+      alert('通信エラーが発生しました。')
+    }
   }
 
   const handlePortal = async () => {
-    const res = await fetch('/api/stripe/portal', { method: 'POST' })
-    const { url } = await res.json()
-    if (url) window.location.href = url
+    try {
+      const res = await fetch('/api/stripe/portal', { method: 'POST' })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.message ?? '決済管理ページを開けませんでした。')
+      }
+    } catch {
+      alert('通信エラーが発生しました。')
+    }
   }
 
   return (

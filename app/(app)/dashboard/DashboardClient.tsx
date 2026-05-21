@@ -301,9 +301,17 @@ export function DashboardClient({ user, keywords, items }: Props) {
 
 function UpgradeModal({ onClose }: { onClose: () => void }) {
   const handleUpgrade = async () => {
-    const res = await fetch('/api/stripe/checkout', { method: 'POST' })
-    const { url } = await res.json()
-    if (url) window.location.href = url
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.message ?? 'アップグレード処理に失敗しました。時間をおいて再度お試しください。')
+      }
+    } catch (e) {
+      alert('通信エラーが発生しました。')
+    }
   }
 
   return (

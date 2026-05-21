@@ -6,15 +6,21 @@ import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'ブログ — Reanker',
-  description: '競合監視・広報PR・マーケティングの実務に役立つ記事を公開しています。',
+  title: 'ブログ',
+  description: '競合監視・広報PR・マーケティングの実務に役立つ記事を公開しています。PR TIMES代替・Slack通知・クリッピングサービス比較など。',
+  alternates: { canonical: 'https://reanker.com/blog' },
   openGraph: {
-    title: 'ブログ — Reanker',
-    description: '競合監視・広報PR・マーケティングの実務に役立つ記事を公開しています。',
+    title: 'ブログ｜Reanker',
+    description: '競合監視・広報PR・マーケティングの実務に役立つ記事。',
     url: 'https://reanker.com/blog',
     siteName: 'Reanker',
     locale: 'ja_JP',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ブログ｜Reanker',
+    description: '競合監視・広報PR・マーケティングの実務に役立つ記事。',
   },
 }
 

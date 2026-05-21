@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/LegalLayout'
 
 export const metadata: Metadata = {
-  title: '特定商取引法に基づく表記 — リアンカー',
-  description: '特定商取引法に基づく表記を掲載しています。',
+  title: '特定商取引法に基づく表記',
+  description: 'Reanker の特定商取引法に基づく表記。事業者情報・販売価格・支払方法・解約・返金ポリシー等を掲載しています。',
+  alternates: { canonical: 'https://reanker.com/legal' },
+  openGraph: {
+    title: '特定商取引法に基づく表記｜Reanker',
+    description: 'Reanker の特定商取引法に基づく表記。',
+    url: 'https://reanker.com/legal',
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: '特定商取引法に基づく表記｜Reanker' },
 }
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (

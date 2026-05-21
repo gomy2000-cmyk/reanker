@@ -4,8 +4,20 @@ import { LegalLayout } from '@/components/LegalLayout'
 import { Check, X } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: '料金プラン — リアンカー',
-  description: 'リアンカーの料金プラン（フリー / スタンダード月額300円）をご案内します。',
+  title: '料金プラン',
+  description: 'Reanker の料金プラン。フリープラン（無料）とスタンダードプラン（月額300円・税込）の機能比較とよくあるご質問。',
+  alternates: { canonical: 'https://reanker.com/pricing' },
+  openGraph: {
+    title: '料金プラン｜Reanker',
+    description: 'フリープラン（無料）とスタンダードプラン（月額300円）の機能比較。',
+    url: 'https://reanker.com/pricing',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '料金プラン｜Reanker',
+    description: 'フリープラン（無料）とスタンダードプラン（月額300円）。',
+  },
 }
 
 const features = [

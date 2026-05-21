@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Not Found' }
 
   return {
-    title: `${post.title} — Reanker`,
+    title: { absolute: `${post.title}｜Reanker` },
     description: post.description,
     openGraph: {
       title: post.ogTitle ?? post.title,

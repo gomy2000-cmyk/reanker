@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/LegalLayout'
 
 export const metadata: Metadata = {
-  title: '利用規約 — リアンカー',
-  description: 'リアンカー（reanker.com）の利用規約です。',
+  title: '利用規約',
+  description: 'Reanker（reanker.com）の利用規約です。',
+  alternates: { canonical: 'https://reanker.com/terms' },
+  openGraph: {
+    title: '利用規約｜Reanker',
+    description: 'Reanker の利用規約です。',
+    url: 'https://reanker.com/terms',
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: '利用規約｜Reanker' },
 }
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (

@@ -6,7 +6,14 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/dashboard', '/anchor', '/settings'],
+        disallow: [
+          '/api/',           // API routes はクロール不要
+          '/dashboard',      // 認証後ページ
+          '/anchor',         // 認証後ページ
+          '/settings',       // 認証後ページ
+          '/demo',           // モックデータのデモ画面
+          '/login',          // ログインページは noindex
+        ],
       },
     ],
     sitemap: 'https://reanker.com/sitemap.xml',

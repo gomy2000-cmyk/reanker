@@ -3,8 +3,16 @@ import { LegalLayout } from '@/components/LegalLayout'
 import { Mail, Clock, HelpCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'お問い合わせ — リアンカー',
-  description: 'リアンカーへのお問い合わせ窓口です。',
+  title: 'お問い合わせ',
+  description: 'Reanker へのお問い合わせはこちらから。サポート対応・解約手続き・個人情報開示請求・その他ご質問にご返信します。',
+  alternates: { canonical: 'https://reanker.com/contact' },
+  openGraph: {
+    title: 'お問い合わせ｜Reanker',
+    description: 'Reanker へのお問い合わせ窓口です。',
+    url: 'https://reanker.com/contact',
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image', title: 'お問い合わせ｜Reanker' },
 }
 
 export default function ContactPage() {
