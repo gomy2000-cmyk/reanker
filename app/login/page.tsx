@@ -4,6 +4,8 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Anchor, Bell, BarChart2, FileDown, Radar } from 'lucide-react'
+import Link from 'next/link'
+import { Footer } from '@/components/Footer'
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
@@ -16,8 +18,9 @@ export default function LoginPage() {
   if (status === 'loading') return null
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md p-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md p-8">
         {/* ロゴ */}
         <div className="flex items-center gap-2 mb-2">
           <Anchor className="text-[#378ADD]" size={28} />
@@ -74,7 +77,15 @@ export default function LoginPage() {
             <p>CSV・PDFエクスポート</p>
           </div>
         </div>
+
+        <p className="text-[11px] text-gray-400 text-center mt-6">
+          ログインすることで、<Link href="/terms" className="underline hover:text-gray-600">利用規約</Link>と<Link href="/privacy" className="underline hover:text-gray-600">プライバシーポリシー</Link>に同意したものとみなされます。
+          <br />
+          <Link href="/pricing" className="underline hover:text-gray-600">料金プラン詳細</Link>
+        </p>
       </div>
     </div>
+    <Footer />
+  </div>
   )
 }
