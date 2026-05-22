@@ -183,9 +183,12 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
         {/* 左: 記事テーブル */}
         <div className="flex-1 bg-white border border-gray-200 rounded-xl overflow-hidden">
           {paged.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="text-sm text-gray-400">記事がまだありません</p>
-              <p className="text-xs text-gray-400 mt-1">翌朝Cronで取得されます</p>
+            <div className="py-16 text-center px-6">
+              <p className="text-sm text-gray-500">記事がまだありません</p>
+              <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                毎日定期的に取得します。<br />
+                右上の「今すぐ取得」ボタンから手動で取得することも可能です。
+              </p>
             </div>
           ) : (
             <table className="w-full text-sm">
