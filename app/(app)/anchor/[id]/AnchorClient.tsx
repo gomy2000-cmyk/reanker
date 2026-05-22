@@ -294,7 +294,8 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                   <th className="text-center py-2 w-9"></th>
                   <th className="text-left py-2 font-medium">タイトル</th>
                   <th className="text-left py-2 font-medium w-24">ソース</th>
-                  <th className="text-left py-2 font-medium w-20 pr-3">公開日</th>
+                  <th className="text-left py-2 font-medium w-20">公開日</th>
+                  <th className="text-center py-2 w-9 pr-3"></th>
                 </tr>
               </thead>
               <tbody>
@@ -302,7 +303,7 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                   <tr
                     key={item.id}
                     onClick={() => selectItem(item)}
-                    className={`border-b border-gray-50 cursor-pointer transition-colors ${
+                    className={`group border-b border-gray-50 cursor-pointer transition-colors ${
                       selected?.id === item.id
                         ? 'bg-[#378ADD]/5'
                         : item.is_read
@@ -345,7 +346,16 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                         {SOURCE_LABEL[item.source]}
                       </span>
                     </td>
-                    <td className={`py-2.5 pr-3 text-xs ${item.is_read ? 'text-gray-400' : 'text-gray-500'}`}>{item.published_at}</td>
+                    <td className={`py-2.5 text-xs ${item.is_read ? 'text-gray-400' : 'text-gray-500'}`}>{item.published_at}</td>
+                    <td className="py-2.5 pr-3 text-center">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); deleteItem(item) }}
+                        className="p-1 rounded text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        title="この記事を削除（再取得もされません）"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
