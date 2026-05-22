@@ -52,11 +52,11 @@ function LoginPageInner() {
     >
       {/* === ヘッダー === */}
       <header
-        className="h-16 flex items-center justify-between px-6 sm:px-10 border-b border-gray-200/80"
+        className="h-[72px] flex items-center justify-between px-6 sm:px-10 border-b border-gray-200/80"
         style={{ background: 'rgba(255, 255, 255, 0.72)', backdropFilter: 'blur(12px)' }}
       >
         <Link href="/" className="flex items-center text-gray-900 hover:opacity-80 transition-opacity">
-          <Wordmark height={22} />
+          <Wordmark height={40} />
         </Link>
         <nav className="hidden sm:flex items-center gap-6 text-[14px] text-gray-600">
           <Link href="/pricing" className="hover:text-[#378ADD] transition-colors">料金プラン</Link>
