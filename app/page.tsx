@@ -46,24 +46,24 @@ export default async function HomePage() {
       {/* HERO + Product screenshot                     */}
       {/* ============================================ */}
       <section className="border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 pt-14 sm:pt-20 pb-8">
+        <div className="max-w-6xl mx-auto px-4 pt-6 sm:pt-10 pb-4">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-[11px] font-medium px-2 py-0.5 rounded mb-5">
+            <div className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-[11px] font-medium px-2 py-0.5 rounded mb-3">
               <span className="w-1.5 h-1.5 bg-[#378ADD] rounded-full" />
               競合監視SaaS · β版公開中
             </div>
 
-            <h1 className="text-[32px] sm:text-[44px] font-semibold text-gray-900 tracking-tight leading-[1.2] mb-4">
+            <h1 className="text-[28px] sm:text-[40px] font-semibold text-gray-900 tracking-tight leading-[1.2] mb-3">
               競合のPR TIMES・Google Newsを<br />
               毎日自動チェック。
             </h1>
 
-            <p className="text-[15px] sm:text-base text-gray-600 leading-relaxed mb-7 max-w-2xl">
+            <p className="text-[14px] sm:text-[15px] text-gray-600 leading-relaxed mb-4 max-w-2xl">
               監視したい競合・キーワード・ドメインを登録するだけ。毎朝9時、前日の新規リリースだけをSlackやメールに自動配信。
               月額300円から、個人や小規模チームでも本格的な競合監視を始められます。
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-2.5 mb-5">
+            <div className="flex flex-col sm:flex-row gap-2.5 mb-3">
               <Link
                 href={ctaHref}
                 className="inline-flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
@@ -91,7 +91,7 @@ export default async function HomePage() {
         </div>
 
         {/* === ヒーロー直下の実画面プレビュー === */}
-        <div className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="max-w-6xl mx-auto px-4 pb-6 sm:pb-8">
           <DashboardPreview />
         </div>
       </section>
@@ -503,7 +503,7 @@ function DashboardPreview() {
         <span className="text-[11px] text-gray-500 ml-3">reanker.com / dashboard</span>
       </div>
 
-      <div className="flex min-h-[420px]">
+      <div className="flex min-h-[360px]">
         {/* Sidebar */}
         <div className="w-[180px] border-r border-gray-200 bg-gray-50/40 p-2 text-[11px]">
           <div className="px-2 py-1.5 rounded bg-[#378ADD]/10 text-[#378ADD] font-medium flex items-center gap-1.5 mb-3">

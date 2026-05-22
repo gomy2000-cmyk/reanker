@@ -8,9 +8,9 @@ interface Props {
 export function MarketingHeader({ isAuthenticated = false }: Props) {
   return (
     <header className="border-b border-gray-200 bg-white sticky top-0 z-40">
-      <div className="max-w-6xl mx-auto px-4 h-[72px] flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 h-[80px] flex items-center justify-between">
         <Link href="/" className="flex items-center text-gray-900 hover:opacity-80 transition-opacity">
-          <Wordmark height={44} />
+          <Wordmark height={56} />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-[13px] text-gray-600">
