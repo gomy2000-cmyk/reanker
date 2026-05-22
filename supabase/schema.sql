@@ -45,6 +45,33 @@ create table if not exists items (
 -- 既存テーブル向けマイグレーション
 alter table items add column if not exists is_clipped boolean default false;
 alter table items add column if not exists deleted_at timestamptz;
+alter table items add column if not exists category text default 'その他';
+alter table items add column if not exists importance text default '中';
+alter table items add column if not exists ai_summary text;
+alter table items add column if not exists importance_reason text;
+
+-- レポートテーブル（週次・月次サマリ）
+create table if not exists reports (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete cascade,
+  type text not null check (type in ('weekly', 'monthly')),
+  period_start date not null,
+  period_end date not null,
+  title text not null,
+  summary text,
+  total_items integer default 0,
+  unread_items integer default 0,
+  top_anchor_name text,
+  top_category text,
+  highlights jsonb default '[]'::jsonb,
+  anchor_summaries jsonb default '[]'::jsonb,
+  category_counts jsonb default '{}'::jsonb,
+  notable_items jsonb default '[]'::jsonb,
+  created_at timestamptz default now()
+);
+
+create unique index if not exists idx_reports_user_type_period
+  on reports(user_id, type, period_start);
 
 -- インデックス
 create index if not exists idx_items_pickkw_id on items(pickkw_id);
@@ -52,6 +79,10 @@ create index if not exists idx_items_published_at on items(published_at);
 create index if not exists idx_items_notified on items(notified);
 create index if not exists idx_items_is_clipped on items(is_clipped);
 create index if not exists idx_items_deleted_at on items(deleted_at);
+create index if not exists idx_items_category on items(category);
+create index if not exists idx_items_importance on items(importance);
+create index if not exists idx_reports_user_id on reports(user_id);
+create index if not exists idx_reports_type on reports(type);
 create index if not exists idx_pick_keywords_user_id on pick_keywords(user_id);
 
 -- Row Level Security

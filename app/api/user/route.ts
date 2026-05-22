@@ -1,15 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
+import { canUseSlackNotification, normalizePlan, planLimitErrorBody } from '@/lib/plan'
 
 export async function PATCH(req: NextRequest) {
   const session = await getServerSession()
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  const { data: user } = await supabaseAdmin
+    .from('users')
+    .select('id, plan')
+    .eq('email', session.user.email)
+    .single()
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+  const plan = normalizePlan(user.plan)
   const body = await req.json()
   const allowed = ['name', 'email', 'slack_webhook_url', 'notify_email']
   const updates: Record<string, any> = {}
   for (const k of allowed) if (k in body) updates[k] = body[k]
+
+  // Free は Slack Webhook URL の設定不可（空文字でクリアは OK）
+  if ('slack_webhook_url' in updates && updates.slack_webhook_url) {
+    if (!canUseSlackNotification(plan)) {
+      return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })
+    }
+  }
 
   const { error } = await supabaseAdmin
     .from('users')

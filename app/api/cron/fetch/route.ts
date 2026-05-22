@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { yesterdayJST } from '@/lib/scraper'
-import { fetchAndSaveForAnchor, type SavedItem } from '@/lib/fetchAndSave'
+import { fetchAndSaveForAnchor } from '@/lib/fetchAndSave'
 import { sendSlackDigest, sendEmailDigest, type AnchorSummary } from '@/lib/notify'
+import { isFetchDayJST, isStandardPlan, canUseSlackNotification, normalizePlan, type Plan } from '@/lib/plan'
 
 export const maxDuration = 300
 
@@ -27,21 +28,18 @@ interface AnchorRow {
 /**
  * Vercel Cron: 09:00 JST (00:00 UTC) 毎日
  *
+ * プラン制御:
+ *   - Free: JST月・水・金のみ実行（他曜日はスキップ）、Slack通知不可（メールのみ）
+ *   - Standard: 毎日実行、Slack/メール両方OK
+ *
  * 動作:
- *   1. 全アンカーから記事を取得・保存（フリープランは隔日）
- *   2. 取得分が0件のユーザーには通知しない
- *   3. ユーザーごとに、新規取得した記事をアンカー別にグルーピングして1通だけ通知
- *   4. warmup_until 経過後のアンカーのみ通知対象（warmup中はsilentにnotified=trueマーク）
- *   5. 手動「今すぐ取得」(/api/anchor/[id]/fetch) からは呼ばれない=通知も飛ばない
- *
- * 手動実行例（デバッグ）:
- *   curl -H "Authorization: Bearer $CRON_SECRET" \
- *        "https://www.reanker.com/api/cron/fetch?date=any&notify=false"
- *
- * クエリパラメータ:
- *   ?date=YYYY-MM-DD  指定日のみ取得
- *   ?date=any         日付フィルタなし全件取得（デフォルトは yesterdayJST）
- *   ?notify=false     通知をスキップ（デバッグ用）
+ *   1. 全アンカー走査、ユーザープランに応じて取得スキップ判定
+ *   2. 取得・保存（is_clipped, deleted_at, category, importance 含む）
+ *   3. 取得分が0件のユーザーには通知しない
+ *   4. ユーザーごとに、新規取得した記事をアンカー別にグルーピングして1通だけ通知
+ *   5. warmup_until 経過後のアンカーのみ通知対象（warmup中はsilent mark）
+ *   6. FreeはSlack通知をスキップ（DBで notify_slack=true でも送らない）
+ *   7. 手動「今すぐ取得」(/api/anchor/[id]/fetch) からは呼ばれない=通知も飛ばない
  */
 export async function GET(req: NextRequest) {
   const auth = req.headers.get('authorization')
@@ -55,7 +53,6 @@ export async function GET(req: NextRequest) {
     dateParam === 'any' ? null : (dateParam ?? yesterdayJST())
 
   const now = new Date()
-  const isEvenDay = now.getDate() % 2 === 0
 
   // 全アンカー取得（ユーザー情報込み）
   const { data: anchors } = await supabaseAdmin
@@ -66,25 +63,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, processed: 0, message: 'no anchors' })
   }
 
-  // ユーザーごとに通知対象を蓄積
   const userNotificationBuckets = new Map<
     string,
     {
       user: AnchorRow['users']
       slack: AnchorSummary[]
       email: AnchorSummary[]
-      allSavedItemIds: string[] // 通知後にnotified=trueをマーク
+      allSavedItemIds: string[]
     }
   >()
 
   let processed = 0
+  let skippedByPlan = 0
   let totalSaved = 0
   let totalSkipped = 0
   const errorsAcc: string[] = []
 
   for (const anchor of anchors as unknown as AnchorRow[]) {
-    // フリープランは隔日（偶数日のみ実行）
-    if (anchor.users.plan === 'free' && !isEvenDay) continue
+    const plan: Plan = normalizePlan(anchor.users.plan)
+
+    // プラン別: 取得曜日チェック (Free は月水金のみ、Standard は毎日)
+    if (!isFetchDayJST(plan, now)) {
+      skippedByPlan++
+      continue
+    }
 
     processed++
     const result = await fetchAndSaveForAnchor(
@@ -95,19 +97,15 @@ export async function GET(req: NextRequest) {
     totalSkipped += result.skipped
     errorsAcc.push(...result.errors)
 
-    // 新着0件 → 何もしない
     if (result.savedItems.length === 0) continue
 
     const warmupActive = new Date(anchor.warmup_until) > now
-
     if (warmupActive || !notifyEnabled) {
-      // warmup期間中 or 通知無効 → 取得した記事を silent に notified=true マーク
       const ids = result.savedItems.map((i) => i.id)
       await supabaseAdmin.from('items').update({ notified: true }).in('id', ids)
       continue
     }
 
-    // 通知バケットに追加
     if (!userNotificationBuckets.has(anchor.user_id)) {
       userNotificationBuckets.set(anchor.user_id, {
         user: anchor.users,
@@ -119,7 +117,8 @@ export async function GET(req: NextRequest) {
     const bucket = userNotificationBuckets.get(anchor.user_id)!
     bucket.allSavedItemIds.push(...result.savedItems.map((i) => i.id))
 
-    if (anchor.notify_slack) {
+    // プラン別: Slack通知はStandardのみ
+    if (anchor.notify_slack && canUseSlackNotification(plan)) {
       bucket.slack.push({ anchorName: anchor.name, items: result.savedItems })
     }
     if (anchor.notify_email) {
@@ -127,7 +126,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // ユーザーごとに通知送信
   let slackNotifications = 0
   let emailNotifications = 0
   const notifyErrors: string[] = []
@@ -145,7 +143,6 @@ export async function GET(req: NextRequest) {
           emailNotifications++
         }
       }
-      // 通知成功 → notified=true をマーク
       if (bucket.allSavedItemIds.length > 0) {
         await supabaseAdmin
           .from('items')
@@ -162,7 +159,7 @@ export async function GET(req: NextRequest) {
     target_date: targetDate,
     notify_enabled: notifyEnabled,
     processed,
-    found: 0, // フィールドは互換用
+    skipped_by_plan: skippedByPlan,
     saved: totalSaved,
     skipped: totalSkipped,
     slack_notifications: slackNotifications,

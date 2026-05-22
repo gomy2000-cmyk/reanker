@@ -1,5 +1,6 @@
 import { supabaseAdmin } from './supabase'
 import { fetchPRTimes, fetchGoogleNews, type ScrapedItem } from './scraper'
+import { classifyArticle } from './classify'
 
 export interface AnchorForFetch {
   id: string
@@ -58,6 +59,9 @@ export async function fetchAndSaveForAnchor(
   let saved = 0
   let skipped = 0
   for (const item of all) {
+    // ルールベースでカテゴリ・重要度を判定（タイトル基準）
+    const { category, importance, importance_reason } = classifyArticle(item.title)
+
     const { data, error } = await supabaseAdmin
       .from('items')
       .insert({
@@ -68,6 +72,9 @@ export async function fetchAndSaveForAnchor(
         summary: item.summary,
         published_at: item.published_at,
         published_hour: item.published_hour,
+        category,
+        importance,
+        importance_reason,
       })
       .select('id, title, url, source')
       .single()

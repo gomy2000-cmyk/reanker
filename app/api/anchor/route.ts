@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
+import { canCreateAnchor, canUseSlackNotification, normalizePlan, planLimitErrorBody } from '@/lib/plan'
 function nextDay9amJST(): string {
   const now = new Date()
   const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
@@ -24,19 +25,25 @@ export async function POST(req: NextRequest) {
   const user = await getUser(session.user.email)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  // フリープラン: 3件制限
-  if (user.plan === 'free') {
-    const { count } = await supabaseAdmin
-      .from('pick_keywords')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-    if ((count ?? 0) >= 3) {
-      return NextResponse.json({ error: 'PLAN_LIMIT', message: 'フリープランは3件まで' }, { status: 403 })
-    }
+  const plan = normalizePlan(user.plan)
+
+  // アンカー数制限（Free=3件、Standard=無制限）
+  const { count } = await supabaseAdmin
+    .from('pick_keywords')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+  if (!canCreateAnchor(plan, count ?? 0)) {
+    return NextResponse.json(planLimitErrorBody('anchor_limit'), { status: 403 })
   }
 
   const body = await req.json()
   const { name, type, query_value, sources, notify_slack, notify_email } = body
+
+  // Slack 通知は Standard のみ許可
+  const slackRequested = notify_slack === true
+  if (slackRequested && !canUseSlackNotification(plan)) {
+    return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })
+  }
 
   const { data, error } = await supabaseAdmin.from('pick_keywords').insert({
     user_id: user.id,
@@ -44,7 +51,7 @@ export async function POST(req: NextRequest) {
     type,
     query_value,
     sources: sources ?? ['prtimes', 'googlenews'],
-    notify_slack: notify_slack ?? true,
+    notify_slack: slackRequested && canUseSlackNotification(plan),
     notify_email: notify_email ?? false,
     warmup_until: nextDay9amJST(),
   }).select().single()
@@ -61,12 +68,25 @@ export async function PATCH(req: NextRequest) {
   const user = await getUser(session.user.email)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
+  const plan = normalizePlan(user.plan)
   const body = await req.json()
   const { id, name, type, query_value, sources, notify_slack, notify_email } = body
 
+  // Slack 通知の有効化は Standard のみ
+  if (notify_slack === true && !canUseSlackNotification(plan)) {
+    return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })
+  }
+
   const { data, error } = await supabaseAdmin
     .from('pick_keywords')
-    .update({ name, type, query_value, sources, notify_slack, notify_email })
+    .update({
+      name,
+      type,
+      query_value,
+      sources,
+      notify_slack: notify_slack === true && canUseSlackNotification(plan),
+      notify_email,
+    })
     .eq('id', id)
     .eq('user_id', user.id)
     .select()

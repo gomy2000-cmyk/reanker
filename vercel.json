@@ -3,6 +3,14 @@
     {
       "path": "/api/cron/fetch",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/generate-weekly-report",
+      "schedule": "0 0 * * 1"
+    },
+    {
+      "path": "/api/cron/generate-monthly-report",
+      "schedule": "0 0 1 * *"
     }
   ]
 }

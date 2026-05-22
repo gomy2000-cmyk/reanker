@@ -54,6 +54,10 @@ export const mockItems: ItemWithKeyword[] = titles.map(([title, kwId, source, ho
     is_clipped: i % 5 === 0,
     notified: true,
     deleted_at: null,
+    category: 'その他',
+    importance: '中',
+    ai_summary: null,
+    importance_reason: null,
     created_at: '',
     pick_keywords: kw,
   }
