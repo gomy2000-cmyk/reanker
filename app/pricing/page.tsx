@@ -34,7 +34,7 @@ export default function PricingPage() {
   return (
     <LegalLayout title="料金プラン" updatedAt="2026年5月22日">
       <p className="text-sm text-gray-700 leading-relaxed mb-10">
-        ReAnkerはフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
+        ReAnker（リアンカー）はフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
       </p>
 
       <div className="grid sm:grid-cols-2 gap-5 mb-10">

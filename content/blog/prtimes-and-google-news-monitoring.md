@@ -60,7 +60,7 @@ PR TIMES だけ追うと「**競合の自慢話**」しか入りません。Goog
 
 ## 方法3：Reanker（月額300円）
 
-[ReAnker](/) は、まさにこの「**PR TIMES と Google News を1ツールで監視する**」用途のために作られたSaaSです。
+[ReAnker（リアンカー）](/) は、まさにこの「**PR TIMES と Google News を1ツールで監視する**」用途のために作られたSaaSです。
 
 ### できること
 

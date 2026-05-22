@@ -157,7 +157,7 @@ export default async function HomePage() {
             <p className="text-sm text-gray-600 leading-relaxed">
               既存の Web クリッピングサービスは法人向けの月額数千〜数万円が中心で、
               個人事業主・小規模チームには予算面で導入しづらい現状があります。
-              ReAnker は同様の用途を月額300円から提供します。
+              ReAnker（リアンカー）は同様の用途を月額300円から提供します。
             </p>
           </div>
 
