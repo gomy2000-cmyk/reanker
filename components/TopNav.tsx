@@ -1,6 +1,7 @@
 'use client'
 
 import { signOut, useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { ChevronDown } from 'lucide-react'
 import { Wordmark } from './brand/Wordmark'
 import { useState, useRef, useEffect } from 'react'
@@ -20,10 +21,10 @@ export function TopNav() {
   }, [])
 
   return (
-    <header className="h-11 bg-white border-b border-gray-200 flex items-center px-4 justify-between shrink-0">
-      <div className="flex items-center text-gray-900">
-        <Wordmark height={20} />
-      </div>
+    <header className="h-[80px] bg-white border-b border-gray-200 flex items-center px-6 justify-between shrink-0">
+      <Link href="/dashboard" className="flex items-center text-gray-900 hover:opacity-80 transition-opacity">
+        <Wordmark height={56} />
+      </Link>
 
       {session?.user && (
         <div className="relative" ref={ref}>
