@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FileDown, Check, Circle, ExternalLink, Sliders } from 'lucide-react'
+import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react'
 import type { User, PickKeyword, Item } from '@/lib/types'
 
 interface Props {
@@ -15,12 +16,44 @@ const SOURCE_LABEL = { prtimes: 'PR TIMES', googlenews: 'Google News' }
 const SOURCE_COLOR = { prtimes: 'bg-blue-100 text-blue-700', googlenews: 'bg-gray-100 text-gray-600' }
 
 export function AnchorClient({ user, keyword, initialItems }: Props) {
+  const router = useRouter()
   const [items, setItems] = useState(initialItems)
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
   const [pageSize, setPageSize] = useState(25)
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<Item | null>(initialItems[0] ?? null)
   const [showUpgrade, setShowUpgrade] = useState(false)
+  const [fetching, setFetching] = useState(false)
+  const [fetchResult, setFetchResult] = useState<{ kind: 'ok' | 'err'; message: string } | null>(null)
+
+  const handleFetchNow = async () => {
+    setFetching(true)
+    setFetchResult(null)
+    try {
+      const res = await fetch(`/api/anchor/${keyword.id}/fetch`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        setFetchResult({ kind: 'err', message: data.error ?? '取得に失敗しました' })
+      } else {
+        const { found = 0, saved = 0, skipped = 0 } = data
+        if (saved > 0) {
+          setFetchResult({ kind: 'ok', message: `新着 ${saved}件を取得しました（既存 ${skipped}件はスキップ）` })
+          // 新着があったら一覧をリロード
+          router.refresh()
+        } else if (found > 0) {
+          setFetchResult({ kind: 'ok', message: `新着なし（取得 ${found}件はすべて取得済）` })
+        } else {
+          setFetchResult({ kind: 'ok', message: '取得対象の記事がありませんでした' })
+        }
+      }
+    } catch (e: any) {
+      setFetchResult({ kind: 'err', message: '通信エラーが発生しました' })
+    } finally {
+      setFetching(false)
+      // 5秒後にメッセージを消す
+      setTimeout(() => setFetchResult(null), 5000)
+    }
+  }
 
   const filtered = useMemo(() => {
     if (filter === 'unread') return items.filter((i) => !i.is_read)
@@ -88,6 +121,15 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={handleFetchNow}
+            disabled={fetching}
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-50 text-gray-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            title="PR TIMES / Google News から今すぐ記事を取得"
+          >
+            <RefreshCw size={13} className={fetching ? 'animate-spin' : ''} />
+            {fetching ? '取得中...' : '今すぐ取得'}
+          </button>
           <select
             value={filter}
             onChange={(e) => { setFilter(e.target.value as any); setPage(1) }}
@@ -119,6 +161,22 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
           </button>
         </div>
       </div>
+
+      {fetchResult && (
+        <div
+          className={`mb-4 flex items-start gap-2 text-xs px-3 py-2.5 rounded-lg border ${
+            fetchResult.kind === 'ok'
+              ? 'bg-green-50 border-green-200 text-green-800'
+              : 'bg-red-50 border-red-200 text-red-700'
+          }`}
+        >
+          {fetchResult.kind === 'ok'
+            ? <CheckCircle2 size={14} className="shrink-0 mt-0.5" />
+            : <AlertCircle size={14} className="shrink-0 mt-0.5" />
+          }
+          <span>{fetchResult.message}</span>
+        </div>
+      )}
 
       {/* メインエリア 左右2ペイン */}
       <div className="flex gap-5 items-start">
