@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import {
-  FileBarChart, Copy, CheckCircle2, ExternalLink, Loader2, ChevronDown, FileText,
+  FileBarChart, Copy, CheckCircle2, ExternalLink, Loader2, ChevronDown, FileText, Lock, Sparkles, ArrowRight,
 } from 'lucide-react'
 import type { Report } from '@/lib/types'
 
@@ -20,6 +20,8 @@ interface Props {
   initialType: 'weekly' | 'monthly'
   weeklyList: ReportListItem[]
   monthlyList: ReportListItem[]
+  /** Free プランのその場プレビューモード */
+  isPreview?: boolean
 }
 
 const IMPORTANCE_COLOR = {
@@ -33,16 +35,18 @@ const SOURCE_COLOR = {
   googlenews: 'bg-gray-100 text-gray-600',
 }
 
-export function ReportsClient({ initialReport, initialType, weeklyList, monthlyList }: Props) {
+export function ReportsClient({ initialReport, initialType, weeklyList, monthlyList, isPreview = false }: Props) {
   const [type, setType] = useState<'weekly' | 'monthly'>(initialType)
   const [report, setReport] = useState<Report | null>(initialReport)
   const [loading, setLoading] = useState(false)
   const [copyState, setCopyState] = useState<'idle' | 'plain' | 'md'>('idle')
+  const [upgradeLoading, setUpgradeLoading] = useState(false)
 
   const currentList = type === 'weekly' ? weeklyList : monthlyList
 
-  // タブ切替時、選択中なければ最新を取得
+  // タブ切替時の挙動 (プレビューモードは API なしなので何もしない)
   useEffect(() => {
+    if (isPreview) return
     let cancelled = false
     if (initialType === type && initialReport) return
     setLoading(true)
@@ -58,6 +62,23 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])
+
+  const handleUpgrade = async () => {
+    setUpgradeLoading(true)
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.message ?? 'アップグレード処理に失敗しました。')
+        setUpgradeLoading(false)
+      }
+    } catch {
+      alert('通信エラーが発生しました。')
+      setUpgradeLoading(false)
+    }
+  }
 
   const loadReport = async (periodStart: string) => {
     setLoading(true)
@@ -98,6 +119,34 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
         </p>
       </div>
 
+      {/* プレビューモードの上部告知バナー */}
+      {isPreview && (
+        <div className="mb-5 bg-gradient-to-r from-[#378ADD]/10 to-amber-50 border border-[#378ADD]/30 rounded-xl p-4 sm:p-5">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shrink-0 border border-[#378ADD]/30">
+              <Sparkles size={16} className="text-[#378ADD]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-900 mb-1">
+                これはサンプルプレビューです（あなたの直近データから自動生成）
+              </p>
+              <p className="text-xs text-gray-700 leading-relaxed mb-3">
+                Standardにアップグレードすると、毎週月曜・毎月1日に最新レポートが自動生成され、
+                Markdownコピーで議事録やチャットに貼り付けられます。月額300円（税抜）。
+              </p>
+              <button
+                onClick={handleUpgrade}
+                disabled={upgradeLoading}
+                className="inline-flex items-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white text-xs font-medium px-4 py-2 rounded-md transition-colors disabled:opacity-60"
+              >
+                {upgradeLoading ? '処理中...' : 'Standardにアップグレード'}
+                <ArrowRight size={12} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* タブ */}
       <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
         <div className="flex border border-gray-200 rounded-lg overflow-hidden bg-white">
@@ -111,18 +160,21 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
             週次サマリ
           </button>
           <button
-            onClick={() => setType('monthly')}
+            onClick={() => !isPreview && setType('monthly')}
+            disabled={isPreview}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm transition-colors ${
               type === 'monthly' ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-50'
-            }`}
+            } ${isPreview ? 'opacity-60 cursor-not-allowed' : ''}`}
+            title={isPreview ? '月次サマリは Standard プランで利用できます' : undefined}
           >
             <FileBarChart size={14} />
             月次サマリ
+            {isPreview && <Lock size={11} className="ml-0.5" />}
           </button>
         </div>
 
         {/* 期間選択 */}
-        {currentList.length > 0 && (
+        {!isPreview && currentList.length > 0 && (
           <div className="relative">
             <select
               value={report?.period_start ?? ''}
@@ -158,18 +210,30 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={handleCopyPlain}
-                className="flex items-center gap-1.5 text-xs border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-md transition-colors"
+                onClick={isPreview ? handleUpgrade : handleCopyPlain}
+                className={`flex items-center gap-1.5 text-xs border px-3 py-1.5 rounded-md transition-colors ${
+                  isPreview
+                    ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-pointer hover:bg-gray-100'
+                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+                title={isPreview ? 'Standardでロックを解除' : undefined}
               >
-                {copyState === 'plain' ? <CheckCircle2 size={12} className="text-green-600" /> : <Copy size={12} />}
-                {copyState === 'plain' ? 'コピーしました' : 'サマリをコピー'}
+                {isPreview ? <Lock size={11} /> : copyState === 'plain' ? <CheckCircle2 size={12} className="text-green-600" /> : <Copy size={12} />}
+                {isPreview ? 'サマリをコピー' : copyState === 'plain' ? 'コピーしました' : 'サマリをコピー'}
+                {isPreview && <span className="text-[9px] px-1 py-0.5 bg-gray-200 text-gray-600 rounded ml-0.5">Standard</span>}
               </button>
               <button
-                onClick={handleCopyMarkdown}
-                className="flex items-center gap-1.5 text-xs border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-md transition-colors"
+                onClick={isPreview ? handleUpgrade : handleCopyMarkdown}
+                className={`flex items-center gap-1.5 text-xs border px-3 py-1.5 rounded-md transition-colors ${
+                  isPreview
+                    ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-pointer hover:bg-gray-100'
+                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+                title={isPreview ? 'Standardでロックを解除' : undefined}
               >
-                {copyState === 'md' ? <CheckCircle2 size={12} className="text-green-600" /> : <FileText size={12} />}
-                {copyState === 'md' ? 'コピーしました' : 'Markdownでコピー'}
+                {isPreview ? <Lock size={11} /> : copyState === 'md' ? <CheckCircle2 size={12} className="text-green-600" /> : <FileText size={12} />}
+                {isPreview ? 'Markdownでコピー' : copyState === 'md' ? 'コピーしました' : 'Markdownでコピー'}
+                {isPreview && <span className="text-[9px] px-1 py-0.5 bg-gray-200 text-gray-600 rounded ml-0.5">Standard</span>}
               </button>
             </div>
           </div>
@@ -289,6 +353,28 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
                 </table>
               </div>
             </Section>
+          )}
+
+          {/* プレビューモード閉じ CTA */}
+          {isPreview && (
+            <div className="bg-gray-900 text-white rounded-xl p-6 sm:p-7 text-center">
+              <Sparkles size={20} className="text-yellow-300 mx-auto mb-2" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2">
+                毎週・毎月のサマリを自動でお届け
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-300 mb-5 max-w-md mx-auto leading-relaxed">
+                Standardでは、毎週月曜と毎月1日にレポートが自動生成されます。<br />
+                Markdownコピーで議事録・Slack共有もワンクリック。月額300円（税抜）。
+              </p>
+              <button
+                onClick={handleUpgrade}
+                disabled={upgradeLoading}
+                className="inline-flex items-center gap-1.5 bg-white hover:bg-gray-100 text-gray-900 text-sm font-semibold px-6 py-2.5 rounded-md transition-colors disabled:opacity-60"
+              >
+                {upgradeLoading ? '処理中...' : 'Standardにアップグレード'}
+                <ArrowRight size={14} />
+              </button>
+            </div>
           )}
         </div>
       )}

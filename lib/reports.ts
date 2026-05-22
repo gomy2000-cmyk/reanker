@@ -91,16 +91,15 @@ export function getPreviousMonthRangeJST(now: Date = new Date()): {
 }
 
 /**
- * 指定ユーザー・期間のレポートを生成して reports テーブルに upsert。
- * type+user_id+period_start のユニーク制約で重複保存を防止。
+ * 指定ユーザー・期間のレポートをDB保存せずに計算するだけ。
+ * Free プランのプレビュー表示（その場集計）で使う。
  */
-export async function generateReportForUser(
+export async function computeReportForUser(
   userId: string,
   type: ReportType,
   periodStart: string,
   periodEnd: string
-): Promise<{ ok: boolean; reportId?: string; itemCount: number; error?: string }> {
-  // 期間内のアイテム取得（user_id 経由でフィルタ）
+) {
   const { data: rawItems, error } = await supabaseAdmin
     .from('items')
     .select('id, pickkw_id, source, title, url, published_at, is_read, category, importance, pick_keywords!inner(id, name, user_id)')
@@ -110,15 +109,28 @@ export async function generateReportForUser(
     .eq('pick_keywords.user_id', userId)
     .order('published_at', { ascending: false })
 
-  if (error) {
-    return { ok: false, itemCount: 0, error: error.message }
-  }
+  if (error) return { ok: false as const, error: error.message }
 
   const items = (rawItems ?? []) as unknown as ItemRow[]
-  const itemCount = items.length
+  const payload = buildReportPayload(items, type, periodStart, periodEnd)
+  return { ok: true as const, itemCount: items.length, payload }
+}
 
-  // 0件でもレポートは作成する（「今週は0件でした」を表示できるように）
-  const result = buildReportPayload(items, type, periodStart, periodEnd)
+/**
+ * 指定ユーザー・期間のレポートを生成して reports テーブルに upsert。
+ * type+user_id+period_start のユニーク制約で重複保存を防止。
+ */
+export async function generateReportForUser(
+  userId: string,
+  type: ReportType,
+  periodStart: string,
+  periodEnd: string
+): Promise<{ ok: boolean; reportId?: string; itemCount: number; error?: string }> {
+  const computed = await computeReportForUser(userId, type, periodStart, periodEnd)
+  if (!computed.ok) return { ok: false, itemCount: 0, error: computed.error }
+
+  const result = computed.payload
+  const itemCount = computed.itemCount
 
   // upsert（ユニーク制約：user_id, type, period_start）
   const { data: upserted, error: upsertErr } = await supabaseAdmin
