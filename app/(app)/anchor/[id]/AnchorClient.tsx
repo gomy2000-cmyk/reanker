@@ -1,10 +1,18 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react'
+import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
 import type { User, PickKeyword, Item } from '@/lib/types'
+
+interface PreviewData {
+  title?: string
+  description?: string
+  image?: string
+  siteName?: string
+  snippet?: string
+}
 
 interface Props {
   user: User
@@ -25,6 +33,37 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
   const [showUpgrade, setShowUpgrade] = useState(false)
   const [fetching, setFetching] = useState(false)
   const [fetchResult, setFetchResult] = useState<{ kind: 'ok' | 'err'; message: string } | null>(null)
+  const [preview, setPreview] = useState<PreviewData | null>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
+  const [previewError, setPreviewError] = useState(false)
+
+  // 選択された記事のOGPプレビューを取得
+  useEffect(() => {
+    if (!selected) {
+      setPreview(null)
+      setPreviewError(false)
+      return
+    }
+    let cancelled = false
+    setPreview(null)
+    setPreviewError(false)
+    setPreviewLoading(true)
+    fetch(`/api/preview?url=${encodeURIComponent(selected.url)}`)
+      .then((r) => r.ok ? r.json() : Promise.reject())
+      .then((data) => {
+        if (!cancelled) {
+          setPreview(data)
+          setPreviewLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPreviewError(true)
+          setPreviewLoading(false)
+        }
+      })
+    return () => { cancelled = true }
+  }, [selected?.id])
 
   const handleFetchNow = async () => {
     setFetching(true)
@@ -253,31 +292,98 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
         </div>
 
         {/* 右: プレビューペイン */}
-        <aside className="w-[240px] bg-white border border-gray-200 rounded-xl p-4 shrink-0">
+        <aside className="w-[440px] bg-white border border-gray-200 rounded-xl shrink-0 sticky top-4 self-start max-h-[calc(100vh-32px)] overflow-y-auto hidden lg:block">
           {selected ? (
-            <>
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[selected.source]}`}>
-                  {SOURCE_LABEL[selected.source]}
-                </span>
-                <span className="text-xs text-gray-500">{selected.published_at}</span>
-              </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-2 leading-snug">{selected.title}</h3>
-              {selected.summary && (
-                <p className="text-xs text-gray-600 leading-relaxed mb-4 line-clamp-6">{selected.summary}</p>
+            <article>
+              {/* 画像 */}
+              {preview?.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={preview.image}
+                  alt={preview.title ?? selected.title}
+                  className="w-full h-48 object-cover rounded-t-xl bg-gray-100"
+                />
+              ) : previewLoading ? (
+                <div className="w-full h-48 bg-gray-50 rounded-t-xl flex items-center justify-center">
+                  <Loader2 size={20} className="text-gray-300 animate-spin" />
+                </div>
+              ) : (
+                <div className="w-full h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-xl flex items-center justify-center">
+                  <span className={`text-xs px-2 py-1 rounded font-medium ${SOURCE_COLOR[selected.source]}`}>
+                    {SOURCE_LABEL[selected.source]}
+                  </span>
+                </div>
               )}
-              <a
-                href={selected.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-[#378ADD] hover:underline"
-              >
-                <ExternalLink size={12} />
-                記事を開く
-              </a>
-            </>
+
+              {/* メタ + タイトル */}
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-3 text-xs">
+                  <span className={`px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[selected.source]}`}>
+                    {SOURCE_LABEL[selected.source]}
+                  </span>
+                  <span className="text-gray-500">{selected.published_at}</span>
+                  {selected.published_hour != null && (
+                    <span className="text-gray-400">{String(selected.published_hour).padStart(2, '0')}:00</span>
+                  )}
+                  {preview?.siteName && (
+                    <span className="text-gray-400 ml-auto truncate max-w-[120px]">{preview.siteName}</span>
+                  )}
+                </div>
+
+                <h3 className="text-base font-semibold text-gray-900 mb-3 leading-snug">
+                  {preview?.title ?? selected.title}
+                </h3>
+
+                {/* 本文プレビュー */}
+                {previewLoading ? (
+                  <div className="space-y-2 mb-4">
+                    <div className="h-3 bg-gray-100 rounded animate-pulse" />
+                    <div className="h-3 bg-gray-100 rounded animate-pulse w-5/6" />
+                    <div className="h-3 bg-gray-100 rounded animate-pulse w-4/6" />
+                  </div>
+                ) : preview?.snippet ? (
+                  <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                    {preview.snippet}
+                  </p>
+                ) : preview?.description ? (
+                  <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                    {preview.description}
+                  </p>
+                ) : selected.summary ? (
+                  <p className="text-xs text-gray-500 leading-relaxed mb-4">
+                    {selected.summary}
+                  </p>
+                ) : previewError ? (
+                  <p className="text-xs text-gray-400 mb-4">プレビュー取得失敗 — リンクから直接ご覧ください</p>
+                ) : null}
+
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <a
+                    href={selected.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-[#378ADD] hover:underline font-medium"
+                  >
+                    <ExternalLink size={14} />
+                    記事を開く
+                  </a>
+                  <button
+                    onClick={() => toggleRead(selected)}
+                    className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
+                      selected.is_read
+                        ? 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                        : 'border-[#378ADD] text-[#378ADD] hover:bg-[#378ADD]/5'
+                    }`}
+                  >
+                    {selected.is_read ? '未読に戻す' : '既読にする'}
+                  </button>
+                </div>
+              </div>
+            </article>
           ) : (
-            <p className="text-xs text-gray-400 text-center py-8">記事を選択してください</p>
+            <div className="p-8 text-center">
+              <p className="text-xs text-gray-400">左の記事をクリックすると<br />ここにプレビューが表示されます</p>
+            </div>
           )}
         </aside>
       </div>
