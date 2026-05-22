@@ -171,7 +171,7 @@ function LoginPageInner() {
                 <div className="bg-white border border-gray-300 rounded-lg p-3.5">
                   <div className="flex items-baseline justify-between mb-2">
                     <p className="text-[13px] font-semibold text-gray-900">スタンダード</p>
-                    <p className="text-[11px] font-semibold text-gray-700">月額300円</p>
+                    <p className="text-[11px] font-semibold text-gray-700">月額300円（税抜）</p>
                   </div>
                   <ul className="text-[11px] text-gray-600 space-y-1 leading-relaxed">
                     <li>アンカー無制限</li>
