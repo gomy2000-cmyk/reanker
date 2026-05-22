@@ -7,11 +7,20 @@ export interface AnchorForFetch {
   sources: string[]
 }
 
+export interface SavedItem {
+  id: string
+  title: string
+  url: string
+  source: 'prtimes' | 'googlenews'
+}
+
 export interface FetchResult {
   found: number
   saved: number
   skipped: number
   errors: string[]
+  /** 今回新しく保存された記事（通知に使う） */
+  savedItems: SavedItem[]
 }
 
 /**
@@ -19,6 +28,7 @@ export interface FetchResult {
  * - 重複URLは items テーブルの UNIQUE 制約で自動的に弾かれる（skipped としてカウント）
  * - targetDate=null で日付フィルタなし全件取得（手動「今すぐ取得」用）
  * - targetDate=YYYY-MM-DD で当該日のみ取得（cron 用）
+ * - 戻り値の savedItems は通知メッセージ生成用
  */
 export async function fetchAndSaveForAnchor(
   anchor: AnchorForFetch,
@@ -44,27 +54,34 @@ export async function fetchAndSaveForAnchor(
     }
   }
 
+  const savedItems: SavedItem[] = []
   let saved = 0
   let skipped = 0
   for (const item of all) {
-    const { error } = await supabaseAdmin.from('items').insert({
-      pickkw_id: anchor.id,
-      source: item.source,
-      title: item.title,
-      url: item.url,
-      summary: item.summary,
-      published_at: item.published_at,
-      published_hour: item.published_hour,
-    })
-    if (!error) {
+    const { data, error } = await supabaseAdmin
+      .from('items')
+      .insert({
+        pickkw_id: anchor.id,
+        source: item.source,
+        title: item.title,
+        url: item.url,
+        summary: item.summary,
+        published_at: item.published_at,
+        published_hour: item.published_hour,
+      })
+      .select('id, title, url, source')
+      .single()
+
+    if (!error && data) {
       saved++
-    } else if (error.code === '23505') {
-      // UNIQUE 制約違反 = 既に保存済の重複URL
+      savedItems.push(data as SavedItem)
+    } else if (error?.code === '23505') {
+      // UNIQUE 制約違反 = 既に保存済の重複URL or 過去削除済URL
       skipped++
-    } else {
+    } else if (error) {
       errors.push(`db insert: ${error.message}`)
     }
   }
 
-  return { found: all.length, saved, skipped, errors }
+  return { found: all.length, saved, skipped, errors, savedItems }
 }
