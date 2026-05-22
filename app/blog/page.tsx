@@ -41,7 +41,7 @@ export default async function BlogIndexPage() {
       <MarketingHeader isAuthenticated={isAuthenticated} />
 
       <main className="flex-1">
-        <div className="max-w-6xl mx-auto px-4 pt-14 sm:pt-20 pb-16">
+        <div className="max-w-6xl mx-auto px-4 pt-8 sm:pt-12 pb-10">
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10 lg:gap-12">
 
             {/* === メインコンテンツ === */}

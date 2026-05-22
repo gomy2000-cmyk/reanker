@@ -100,8 +100,8 @@ export default async function HomePage() {
       {/* PRODUCT WALKTHROUGH                           */}
       {/* ============================================ */}
       <section id="product" className="border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
-          <div className="max-w-2xl mb-12">
+        <div className="max-w-6xl mx-auto px-4 py-10 sm:py-14">
+          <div className="max-w-2xl mb-8">
             <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">PRODUCT</p>
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
               競合監視の3ステップを完全自動化
@@ -112,7 +112,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="space-y-12 sm:space-y-16">
+          <div className="space-y-8 sm:space-y-12">
             {/* Step 1: 監視対象を登録 */}
             <FeatureRow
               num="01"
@@ -148,7 +148,7 @@ export default async function HomePage() {
       {/* COMPARISON TABLE                              */}
       {/* ============================================ */}
       <section id="comparison" className="border-b border-gray-200 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-6xl mx-auto px-4 py-10 sm:py-14">
           <div className="max-w-2xl mb-10">
             <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">COMPARISON</p>
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
@@ -206,7 +206,7 @@ export default async function HomePage() {
       {/* FEATURES (compact grid)                       */}
       {/* ============================================ */}
       <section className="border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-6xl mx-auto px-4 py-10 sm:py-14">
           <div className="max-w-2xl mb-10">
             <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">FEATURES</p>
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
@@ -243,7 +243,7 @@ export default async function HomePage() {
       {/* USE CASES                                     */}
       {/* ============================================ */}
       <section id="usecases" className="border-b border-gray-200 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-6xl mx-auto px-4 py-10 sm:py-14">
           <div className="max-w-2xl mb-10">
             <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">USE CASES</p>
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
@@ -283,7 +283,7 @@ export default async function HomePage() {
       {/* PRICING                                       */}
       {/* ============================================ */}
       <section id="pricing" className="border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-5xl mx-auto px-4 py-10 sm:py-14">
           <div className="max-w-2xl mb-10">
             <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">PRICING</p>
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
@@ -338,7 +338,7 @@ export default async function HomePage() {
       {/* FAQ                                           */}
       {/* ============================================ */}
       <section id="faq" className="border-b border-gray-200 bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-3xl mx-auto px-4 py-10 sm:py-14">
           <div className="mb-10">
             <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">FAQ</p>
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
@@ -377,7 +377,7 @@ export default async function HomePage() {
       {/* FINAL CTA                                     */}
       {/* ============================================ */}
       <section className="border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-16 sm:py-20 text-center">
+        <div className="max-w-4xl mx-auto px-4 py-10 sm:py-14 text-center">
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
             毎朝の競合チェックを、自動化する。
           </h2>

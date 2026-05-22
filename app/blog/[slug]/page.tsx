@@ -98,7 +98,7 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <main className="flex-1">
-        <div className="max-w-6xl mx-auto px-4 pt-10 sm:pt-14 pb-12">
+        <div className="max-w-6xl mx-auto px-4 pt-6 sm:pt-10 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10 lg:gap-12">
 
           <article className="min-w-0">

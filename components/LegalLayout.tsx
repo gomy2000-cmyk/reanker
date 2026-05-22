@@ -25,7 +25,7 @@ export function LegalLayout({ title, updatedAt, children }: Props) {
       </header>
 
       <main className="flex-1">
-        <article className="max-w-3xl mx-auto px-4 py-10 sm:py-14">
+        <article className="max-w-3xl mx-auto px-4 py-6 sm:py-10">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{title}</h1>
           <p className="text-xs text-gray-500 mb-10">最終改定日：{updatedAt}</p>
 
