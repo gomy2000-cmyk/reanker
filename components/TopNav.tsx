@@ -23,7 +23,7 @@ export function TopNav() {
   return (
     <header className="h-[80px] bg-white border-b border-gray-200 flex items-center px-6 justify-between shrink-0">
       <Link href="/dashboard" className="flex items-center text-gray-900 hover:opacity-80 transition-opacity">
-        <Wordmark height={56} />
+        <Wordmark height={64} />
       </Link>
 
       {session?.user && (

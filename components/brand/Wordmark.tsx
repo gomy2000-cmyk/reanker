@@ -20,8 +20,8 @@ export function Wordmark({ height = 22, className, variant = 'black', decorative
       ? '/brand/03_primary_logo_white_on_black.png'
       : '/brand/02_primary_logo_black_transparent.png'
 
-  // 元PNGのアスペクト比に近い 4.8:1 で幅を計算
-  const width = Math.round(height * 4.8)
+  // 元PNG (1600x400) のアスペクト比 4:1
+  const width = Math.round(height * 4)
 
   return (
     <Image
