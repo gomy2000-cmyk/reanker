@@ -2,7 +2,7 @@ import type { Item } from './types'
 
 export async function sendSlack(webhookUrl: string, anchorName: string, items: Item[]) {
   const lines = items.map((i) => `- ${i.title}\n  ${i.url}`).join('\n')
-  const text = `【リアンカー】${anchorName}\n\n昨日の新規リリース ${items.length}件\n\n${lines}`
+  const text = `【ReAnker】${anchorName}\n\n昨日の新規リリース ${items.length}件\n\n${lines}`
 
   await fetch(webhookUrl, {
     method: 'POST',
@@ -18,7 +18,7 @@ export async function sendEmail(to: string, anchorName: string, items: Item[]) {
     return
   }
   const html = `
-    <h2>【リアンカー】${anchorName}</h2>
+    <h2>【ReAnker】${anchorName}</h2>
     <p>昨日の新規リリース ${items.length}件</p>
     <ul>
       ${items.map((i) => `<li><a href="${i.url}">${i.title}</a></li>`).join('')}
@@ -31,9 +31,9 @@ export async function sendEmail(to: string, anchorName: string, items: Item[]) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      from: 'リアンカー <noreply@reanker.com>',
+      from: 'ReAnker <noreply@reanker.com>',
       to,
-      subject: `【リアンカー】${anchorName} - 昨日の新着 ${items.length}件`,
+      subject: `【ReAnker】${anchorName} - 昨日の新着 ${items.length}件`,
       html,
     }),
   })

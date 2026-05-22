@@ -1,4 +1,4 @@
-# リアンカー (reanker.com)
+# ReAnker (reanker.com)
 
 > 競合のリリースに、アンカーを。
 

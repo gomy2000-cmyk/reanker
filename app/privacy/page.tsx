@@ -6,12 +6,12 @@ export const metadata: Metadata = {
   description: 'Reanker（reanker.com）における個人情報の取扱いについてご説明します。',
   alternates: { canonical: 'https://reanker.com/privacy' },
   openGraph: {
-    title: 'プライバシーポリシー｜Reanker',
-    description: 'Reanker における個人情報の取扱い。',
+    title: 'プライバシーポリシー｜ReAnker',
+    description: 'ReAnker における個人情報の取扱い。',
     url: 'https://reanker.com/privacy',
     type: 'website',
   },
-  twitter: { card: 'summary_large_image', title: 'プライバシーポリシー｜Reanker' },
+  twitter: { card: 'summary_large_image', title: 'プライバシーポリシー｜ReAnker' },
 }
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
   return (
     <LegalLayout title="プライバシーポリシー" updatedAt="2026年5月22日">
       <p className="text-sm text-gray-700 leading-relaxed mb-8">
-        Reanker（以下「当方」といいます）は、競合監視SaaS「リアンカー」（以下「本サービス」といいます）における、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます）を定めます。
+        Reanker（以下「当方」といいます）は、競合監視SaaS「ReAnker」（以下「本サービス」といいます）における、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます）を定めます。
       </p>
 
       <Section title="1. 取得する情報">

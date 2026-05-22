@@ -3,9 +3,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { ChevronLeft, ArrowRight } from 'lucide-react'
-import { getBlogPost, getAllBlogSlugs, getRelatedPosts } from '@/lib/blog'
+import { getBlogPost, getAllBlogSlugs, getRelatedPosts, getAllBlogPosts } from '@/lib/blog'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
+import { BlogSidebar } from '@/components/blog/BlogSidebar'
 import './blog-content.css'
 
 interface Props {
@@ -22,18 +23,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Not Found' }
 
   return {
-    title: { absolute: `${post.title}｜Reanker` },
+    title: { absolute: `${post.title}｜ReAnker` },
     description: post.description,
     openGraph: {
       title: post.ogTitle ?? post.title,
       description: post.description,
       url: `https://reanker.com/blog/${slug}`,
-      siteName: 'Reanker',
+      siteName: 'ReAnker',
       locale: 'ja_JP',
       type: 'article',
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
-      authors: ['Reanker'],
+      authors: ['ReAnker'],
     },
     twitter: {
       card: 'summary_large_image',
@@ -59,6 +60,7 @@ export default async function BlogPostPage({ params }: Props) {
   const session = await getServerSession()
   const isAuthenticated = !!session?.user
   const related = getRelatedPosts(slug, 3)
+  const recentPosts = getAllBlogPosts().filter((p) => p.slug !== slug).slice(0, 5)
 
   // JSON-LD Article schema
   const jsonLd = {
@@ -70,12 +72,12 @@ export default async function BlogPostPage({ params }: Props) {
     dateModified: post.updatedAt ?? post.publishedAt,
     author: {
       '@type': 'Organization',
-      name: 'Reanker',
+      name: 'ReAnker',
       url: 'https://reanker.com',
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Reanker',
+      name: 'ReAnker',
       url: 'https://reanker.com',
     },
     mainEntityOfPage: {
@@ -96,7 +98,10 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <main className="flex-1">
-        <article className="max-w-3xl mx-auto px-4 pt-10 sm:pt-14 pb-12">
+        <div className="max-w-6xl mx-auto px-4 pt-10 sm:pt-14 pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10 lg:gap-12">
+
+          <article className="min-w-0">
           {/* パンくず */}
           <div className="mb-6">
             <Link href="/blog" className="text-xs text-gray-500 hover:text-gray-700 inline-flex items-center gap-1">
@@ -141,7 +146,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* CTA */}
           <div className="mt-14 border border-gray-200 rounded-lg p-6 sm:p-7 bg-gray-50">
-            <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">REANKER について</p>
+            <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">ReAnker について</p>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               競合のPR TIMES・Google Newsを毎日自動チェック
             </h3>
@@ -189,7 +194,13 @@ export default async function BlogPostPage({ params }: Props) {
               </ul>
             </div>
           )}
-        </article>
+          </article>
+
+          {/* === サイドバー === */}
+          <BlogSidebar recentPosts={recentPosts} sticky />
+
+          </div>
+        </div>
       </main>
 
       <Footer />

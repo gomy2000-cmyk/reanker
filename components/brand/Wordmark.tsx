@@ -1,45 +1,37 @@
-import { AnchorMark } from './AnchorMark'
+import Image from 'next/image'
 
 /**
- * Reanker のワードマーク（ロゴ全体）。
- * "RE" + アンカーマーク + "NKER" の構成で、アンカーが "A" の位置に来る。
- * テキストは Inter Bold 系で表示し、currentColor を継承。
+ * ReAnker のワードマーク（公式PNG使用）。
+ * デフォルトは黒透明背景版。`variant="white"` でダーク背景用に切替可。
  */
 interface Props {
-  /** ロゴの高さ（px）。テキストとアンカーがこの高さで整列。 */
+  /** ロゴの高さ（px）。アスペクト比は約 5:1 で自動計算。 */
   height?: number
   className?: string
-  /** "REANKER" のテキスト部分のクラス（色・字間など上書き用） */
-  textClassName?: string
+  /** 'black'（既定）: 明色ヘッダー用 / 'white': 暗色ヘッダー用 */
+  variant?: 'black' | 'white'
+  /** リンク等にラップするとき alt が外側にあるならこちらを true に */
+  decorative?: boolean
 }
 
-export function Wordmark({ height = 22, className, textClassName }: Props) {
-  // テキスト部分は font-extrabold で約9割の高さに見える
-  const fontSize = height * 0.95
-  const anchorSize = height * 1.05
-  const gap = height * 0.05
+export function Wordmark({ height = 22, className, variant = 'black', decorative = false }: Props) {
+  const src =
+    variant === 'white'
+      ? '/brand/03_primary_logo_white_on_black.png'
+      : '/brand/02_primary_logo_black_transparent.png'
+
+  // 元PNGのアスペクト比に近い 4.8:1 で幅を計算
+  const width = Math.round(height * 4.8)
 
   return (
-    <span
-      className={`inline-flex items-center ${className ?? ''}`}
-      style={{ height, lineHeight: 1, letterSpacing: '-0.02em' }}
-      aria-label="Reanker"
-    >
-      <span
-        className={`font-extrabold leading-none ${textClassName ?? ''}`}
-        style={{ fontSize, letterSpacing: '-0.04em' }}
-      >
-        RE
-      </span>
-      <span style={{ display: 'inline-flex', alignItems: 'center', margin: `0 ${gap}px` }}>
-        <AnchorMark size={anchorSize} />
-      </span>
-      <span
-        className={`font-extrabold leading-none ${textClassName ?? ''}`}
-        style={{ fontSize, letterSpacing: '-0.04em' }}
-      >
-        NKER
-      </span>
-    </span>
+    <Image
+      src={src}
+      alt={decorative ? '' : 'ReAnker'}
+      width={width}
+      height={height}
+      priority
+      className={className}
+      style={{ height, width: 'auto' }}
+    />
   )
 }

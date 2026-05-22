@@ -5,17 +5,17 @@ import { Check, X } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: '料金プラン',
-  description: 'Reanker の料金プラン。フリープラン（無料）とスタンダードプラン（月額300円・税込）の機能比較とよくあるご質問。',
+  description: 'ReAnker の料金プラン。フリープラン（無料）とスタンダードプラン（月額300円・税込）の機能比較とよくあるご質問。',
   alternates: { canonical: 'https://reanker.com/pricing' },
   openGraph: {
-    title: '料金プラン｜Reanker',
+    title: '料金プラン｜ReAnker',
     description: 'フリープラン（無料）とスタンダードプラン（月額300円）の機能比較。',
     url: 'https://reanker.com/pricing',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '料金プラン｜Reanker',
+    title: '料金プラン｜ReAnker',
     description: 'フリープラン（無料）とスタンダードプラン（月額300円）。',
   },
 }
@@ -34,7 +34,7 @@ export default function PricingPage() {
   return (
     <LegalLayout title="料金プラン" updatedAt="2026年5月22日">
       <p className="text-sm text-gray-700 leading-relaxed mb-10">
-        リアンカーはフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
+        ReAnkerはフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
       </p>
 
       <div className="grid sm:grid-cols-2 gap-5 mb-10">

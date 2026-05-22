@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     title: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
     description: 'Reankerは、PR TIMESやGoogle Newsから競合企業の動きを自動取得し、Slackやメールで通知するBtoB向け競合監視SaaSです。',
     url: 'https://reanker.com',
-    siteName: 'Reanker',
+    siteName: 'ReAnker',
     locale: 'ja_JP',
     type: 'website',
   },
@@ -157,7 +157,7 @@ export default async function HomePage() {
             <p className="text-sm text-gray-600 leading-relaxed">
               既存の Web クリッピングサービスは法人向けの月額数千〜数万円が中心で、
               個人事業主・小規模チームには予算面で導入しづらい現状があります。
-              Reanker は同様の用途を月額300円から提供します。
+              ReAnker は同様の用途を月額300円から提供します。
             </p>
           </div>
 
@@ -167,7 +167,7 @@ export default async function HomePage() {
                 <tr className="border-b border-gray-200 bg-gray-50/50 text-xs text-gray-500">
                   <th className="text-left font-medium px-5 py-3 min-w-[180px]">項目</th>
                   <th className="text-left font-medium px-5 py-3 min-w-[140px]">
-                    <span className="text-gray-900 font-semibold">Reanker</span>
+                    <span className="text-gray-900 font-semibold">ReAnker</span>
                   </th>
                   <th className="text-left font-medium px-5 py-3 min-w-[180px]">PR TIMES Webクリッピング</th>
                   <th className="text-left font-medium px-5 py-3 min-w-[140px]">大手クリッピング各社</th>
@@ -667,7 +667,7 @@ function SlackNotifyPreview() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-1.5">
-              <span className="font-semibold text-gray-900 text-[13px]">Reanker</span>
+              <span className="font-semibold text-gray-900 text-[13px]">ReAnker</span>
               <span className="text-[10px] text-gray-400">APP</span>
               <span className="text-[10px] text-gray-400">9:00 AM</span>
             </div>

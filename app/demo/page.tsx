@@ -6,7 +6,7 @@ import { mockUser, mockKeywords, mockItems } from '@/lib/mock'
 
 export const metadata: Metadata = {
   title: 'デモ',
-  description: 'Reanker のダッシュボード画面をログイン不要で体験できます（ダミーデータ）。',
+  description: 'ReAnker のダッシュボード画面をログイン不要で体験できます（ダミーデータ）。',
   robots: { index: false, follow: false },
 }
 

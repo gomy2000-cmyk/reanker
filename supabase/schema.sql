@@ -1,4 +1,4 @@
--- リアンカー (reanker.com) DB スキーマ
+-- ReAnker (reanker.com) DB スキーマ
 
 create table if not exists users (
   id uuid primary key default gen_random_uuid(),

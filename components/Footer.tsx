@@ -11,7 +11,7 @@ export function Footer() {
               <Wordmark height={18} />
             </div>
             <p className="text-xs text-gray-500">競合のプレスリリース・ニュースを自動監視。</p>
-            <p className="text-[11px] text-gray-400 mt-2">© {new Date().getFullYear()} Reanker</p>
+            <p className="text-[11px] text-gray-400 mt-2">© {new Date().getFullYear()} ReAnker</p>
           </div>
 
           <nav className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs">

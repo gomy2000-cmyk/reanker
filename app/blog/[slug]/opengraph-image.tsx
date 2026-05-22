@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og'
 import { getBlogPost, getAllBlogSlugs } from '@/lib/blog'
 
 export const runtime = 'nodejs'
-export const alt = 'Reanker Blog'
+export const alt = 'ReAnker Blog'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -13,7 +13,7 @@ export async function generateStaticParams() {
 export default async function OG({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const post = getBlogPost(slug)
-  const title = post?.title ?? 'Reanker Blog'
+  const title = post?.title ?? 'ReAnker Blog'
   const category = post?.category ?? ''
 
   return new ImageResponse(

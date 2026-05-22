@@ -6,12 +6,12 @@ export const metadata: Metadata = {
   description: 'Reanker（reanker.com）の利用規約です。',
   alternates: { canonical: 'https://reanker.com/terms' },
   openGraph: {
-    title: '利用規約｜Reanker',
-    description: 'Reanker の利用規約です。',
+    title: '利用規約｜ReAnker',
+    description: 'ReAnker の利用規約です。',
     url: 'https://reanker.com/terms',
     type: 'website',
   },
-  twitter: { card: 'summary_large_image', title: '利用規約｜Reanker' },
+  twitter: { card: 'summary_large_image', title: '利用規約｜ReAnker' },
 }
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -25,7 +25,7 @@ export default function TermsPage() {
   return (
     <LegalLayout title="利用規約" updatedAt="2026年5月22日">
       <p className="text-sm text-gray-700 leading-relaxed mb-8">
-        この利用規約（以下「本規約」といいます）は、Reanker（以下「当方」といいます）が提供する競合監視SaaS「リアンカー」（以下「本サービス」といいます）の利用条件を定めるものです。本サービスを利用される方（以下「ユーザー」といいます）は、本規約に同意のうえご利用ください。
+        この利用規約（以下「本規約」といいます）は、Reanker（以下「当方」といいます）が提供する競合監視SaaS「ReAnker」（以下「本サービス」といいます）の利用条件を定めるものです。本サービスを利用される方（以下「ユーザー」といいます）は、本規約に同意のうえご利用ください。
       </p>
 
       <Section title="第1条（適用）">

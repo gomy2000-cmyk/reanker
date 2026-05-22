@@ -4,22 +4,22 @@ import { Mail, Clock, HelpCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'お問い合わせ',
-  description: 'Reanker へのお問い合わせはこちらから。サポート対応・解約手続き・個人情報開示請求・その他ご質問にご返信します。',
+  description: 'ReAnker へのお問い合わせはこちらから。サポート対応・解約手続き・個人情報開示請求・その他ご質問にご返信します。',
   alternates: { canonical: 'https://reanker.com/contact' },
   openGraph: {
-    title: 'お問い合わせ｜Reanker',
-    description: 'Reanker へのお問い合わせ窓口です。',
+    title: 'お問い合わせ｜ReAnker',
+    description: 'ReAnker へのお問い合わせ窓口です。',
     url: 'https://reanker.com/contact',
     type: 'website',
   },
-  twitter: { card: 'summary_large_image', title: 'お問い合わせ｜Reanker' },
+  twitter: { card: 'summary_large_image', title: 'お問い合わせ｜ReAnker' },
 }
 
 export default function ContactPage() {
   return (
     <LegalLayout title="お問い合わせ" updatedAt="2026年5月22日">
       <p className="text-sm text-gray-700 leading-relaxed mb-8">
-        リアンカーをご利用いただきありがとうございます。本サービスに関するお問い合わせは、以下の窓口へお寄せください。返信までに通常2〜3営業日いただいております。
+        ReAnkerをご利用いただきありがとうございます。本サービスに関するお問い合わせは、以下の窓口へお寄せください。返信までに通常2〜3営業日いただいております。
       </p>
 
       <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
