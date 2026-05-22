@@ -22,11 +22,16 @@ export const metadata: Metadata = {
 
 const features = [
   { label: 'アンカー（監視対象）の登録', free: '3件まで', standard: '無制限' },
-  { label: '記事の自動取得頻度', free: '隔日', standard: '毎日' },
+  { label: '記事の自動取得頻度', free: '週3回（月・水・金）', standard: '毎日' },
   { label: 'メール通知', free: '○', standard: '○' },
   { label: 'Slack通知', free: '×', standard: '○' },
-  { label: 'ダッシュボード閲覧', free: '○', standard: '○' },
-  { label: 'CSV / PDFエクスポート', free: '×', standard: '○' },
+  { label: '記事一覧 / 既読管理 / クリップ', free: '○', standard: '○' },
+  { label: 'ダッシュボード', free: '○', standard: '○' },
+  { label: 'CSVエクスポート', free: '×', standard: '○' },
+  { label: '週次サマリ', free: '×', standard: '○' },
+  { label: '月次サマリ', free: '×', standard: '○' },
+  { label: '過去レポート閲覧', free: '×', standard: '○' },
+  { label: 'Markdown コピー', free: '×', standard: '○' },
   { label: 'お問い合わせサポート', free: '○', standard: '○（優先対応）' },
 ]
 

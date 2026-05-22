@@ -113,13 +113,33 @@ export function SettingsClient({ user }: Props) {
       </Section>
 
       <Section title="通知連携">
-        <Field
-          label="Slack Webhook URL"
-          value={slackWebhook}
-          onChange={setSlackWebhook}
-          onSave={() => save({ slack_webhook_url: slackWebhook })}
-          placeholder="https://hooks.slack.com/services/..."
-        />
+        {user.plan !== 'standard' ? (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <p className="text-sm font-medium text-gray-900 mb-1">
+                  Slack Webhook URL
+                  <span className="ml-2 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">Standard</span>
+                </p>
+                <p className="text-xs text-gray-600">Slack通知はStandardプランで利用できます。</p>
+              </div>
+              <button
+                onClick={handleUpgrade}
+                className="text-xs bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-md whitespace-nowrap"
+              >
+                アップグレード
+              </button>
+            </div>
+          </div>
+        ) : (
+          <Field
+            label="Slack Webhook URL"
+            value={slackWebhook}
+            onChange={setSlackWebhook}
+            onSave={() => save({ slack_webhook_url: slackWebhook })}
+            placeholder="https://hooks.slack.com/services/..."
+          />
+        )}
         <Field
           label="通知メール"
           value={notifyEmail}

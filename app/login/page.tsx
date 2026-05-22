@@ -164,7 +164,7 @@ function LoginPageInner() {
                   <p className="text-[13px] font-semibold text-gray-900 mb-2">フリー</p>
                   <ul className="text-[11px] text-gray-600 space-y-1 leading-relaxed">
                     <li>アンカー3件まで</li>
-                    <li>隔日更新</li>
+                    <li>週3回更新（月・水・金）</li>
                     <li>メール通知</li>
                   </ul>
                 </div>
@@ -175,7 +175,7 @@ function LoginPageInner() {
                   </div>
                   <ul className="text-[11px] text-gray-600 space-y-1 leading-relaxed">
                     <li>アンカー無制限</li>
-                    <li>毎日更新</li>
+                    <li>毎日更新 &amp; 週次・月次サマリ</li>
                     <li>Slack通知</li>
                     <li>CSV・PDF出力</li>
                   </ul>

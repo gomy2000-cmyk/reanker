@@ -1,7 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
-import { canUseSlackNotification, normalizePlan, planLimitErrorBody } from '@/lib/plan'
+import { canUseSlackNotification, normalizePlan, planLimitErrorBody, PLAN_LIMITS } from '@/lib/plan'
+
+/**
+ * GET /api/user
+ * 現在ログイン中ユーザーの基本情報 + プラン + プラン制限情報を返す。
+ * UI側でプラン分岐に使う。
+ */
+export async function GET() {
+  const session = await getServerSession()
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { data: user } = await supabaseAdmin
+    .from('users')
+    .select('id, email, name, plan, slack_webhook_url, notify_email')
+    .eq('email', session.user.email)
+    .single()
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+  const plan = normalizePlan(user.plan)
+  const { count: anchorCount } = await supabaseAdmin
+    .from('pick_keywords')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  return NextResponse.json({
+    user: { ...user, plan },
+    limits: PLAN_LIMITS[plan],
+    anchorCount: anchorCount ?? 0,
+  })
+}
 
 export async function PATCH(req: NextRequest) {
   const session = await getServerSession()

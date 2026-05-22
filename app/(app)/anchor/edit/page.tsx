@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ChevronLeft, Trash2, AlertCircle } from 'lucide-react'
+import { ChevronLeft, Trash2, AlertCircle, Lock } from 'lucide-react'
 import type { PickKeyword, AnchorType, Source } from '@/lib/types'
 
 const TYPE_OPTIONS: { value: AnchorType; label: string; desc: string }[] = [
@@ -21,8 +21,30 @@ export default function AnchorEditPage() {
   const [type, setType] = useState<AnchorType>('service')
   const [queryValue, setQueryValue] = useState('')
   const [sources, setSources] = useState<Source[]>(['prtimes', 'googlenews'])
-  const [notifySlack, setNotifySlack] = useState(true)
-  const [notifyEmail, setNotifyEmail] = useState(false)
+  const [notifySlack, setNotifySlack] = useState(false)
+  const [notifyEmail, setNotifyEmail] = useState(true)
+  const [plan, setPlan] = useState<'free' | 'standard'>('free')
+  const [anchorCount, setAnchorCount] = useState(0)
+  const [maxAnchors, setMaxAnchors] = useState(3)
+
+  // ユーザープランを取得
+  useEffect(() => {
+    fetch('/api/user')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.user?.plan) setPlan(data.user.plan)
+        if (typeof data?.anchorCount === 'number') setAnchorCount(data.anchorCount)
+        if (data?.limits?.maxAnchors) {
+          setMaxAnchors(data.limits.maxAnchors === Infinity || data.limits.maxAnchors > 1000 ? Infinity : data.limits.maxAnchors)
+        }
+        // 新規 + Standard なら Slack デフォルトON
+        if (!editId && data?.user?.plan === 'standard') setNotifySlack(true)
+      })
+      .catch(() => {})
+  }, [editId])
+
+  const isFree = plan === 'free'
+  const atAnchorLimit = !editId && isFree && anchorCount >= maxAnchors
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -109,11 +131,52 @@ export default function AnchorEditPage() {
         戻る
       </button>
 
-      <h1 className="text-xl font-bold text-gray-900 mb-6">
+      <h1 className="text-xl font-bold text-gray-900 mb-2">
         {isEdit ? 'アンカーを編集' : '新規アンカー登録'}
       </h1>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
+      {!isEdit && (
+        <p className="text-xs text-gray-500 mb-6">
+          現在の登録数：
+          <span className={atAnchorLimit ? 'text-red-600 font-semibold' : 'text-gray-700 font-medium'}>
+            {anchorCount}
+          </span>
+          {' / '}
+          {maxAnchors === Infinity ? '無制限' : `${maxAnchors}件`}
+          {isFree && (
+            <span className="ml-2 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">Free</span>
+          )}
+        </p>
+      )}
+
+      {atAnchorLimit && (
+        <div className="mb-5 bg-white border border-gray-200 rounded-xl p-5 flex items-start gap-3">
+          <Lock size={16} className="text-gray-500 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-gray-900 mb-1">アンカー登録は3件までです</p>
+            <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+              Standardプランでは、アンカーを無制限に登録できます。
+              週次・月次サマリやSlack通知も利用できるようになります。
+            </p>
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+                  const data = await res.json()
+                  if (res.ok && data.url) window.location.href = data.url
+                  else alert(data.message ?? 'アップグレード処理に失敗しました')
+                } catch { alert('通信エラーが発生しました') }
+              }}
+              className="text-xs bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+            >
+              Standardにアップグレード
+            </button>
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className={`bg-white border border-gray-200 rounded-xl p-6 space-y-6 ${atAnchorLimit ? 'opacity-50 pointer-events-none' : ''}`}>
         {/* アンカー名 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -195,15 +258,19 @@ export default function AnchorEditPage() {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             通知先 <span className="text-red-500">*</span>
           </label>
-          <div className="flex gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
+          <div className="flex gap-4 flex-wrap">
+            <label className={`flex items-center gap-2 ${isFree ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
               <input
                 type="checkbox"
-                checked={notifySlack}
+                checked={!isFree && notifySlack}
+                disabled={isFree}
                 onChange={(e) => setNotifySlack(e.target.checked)}
                 className="accent-[#378ADD]"
               />
               <span className="text-sm text-gray-600">Slack</span>
+              {isFree && (
+                <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">Standard</span>
+              )}
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
