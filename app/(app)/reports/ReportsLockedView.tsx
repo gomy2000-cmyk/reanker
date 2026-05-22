@@ -2,16 +2,19 @@
 
 import { FileBarChart, Lock, ArrowRight } from 'lucide-react'
 import { useState } from 'react'
+import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 
 export function ReportsLockedView() {
   const [loading, setLoading] = useState(false)
 
   const handleUpgrade = async () => {
+    trackUpgradeClick('reports_locked')
     setLoading(true)
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' })
       const data = await res.json()
       if (res.ok && data.url) {
+        trackBeginCheckout('standard')
         window.location.href = data.url
       } else {
         alert(data.message ?? 'アップグレード処理に失敗しました。')

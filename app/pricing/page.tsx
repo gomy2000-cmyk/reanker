@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { LegalLayout } from '@/components/LegalLayout'
+import { PricingViewTracker } from '@/components/PricingViewTracker'
 import { Check, X } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -38,6 +39,7 @@ const features = [
 export default function PricingPage() {
   return (
     <LegalLayout title="料金プラン" updatedAt="2026年5月22日">
+      <PricingViewTracker />
       <p className="text-sm text-gray-700 leading-relaxed mb-10">
         ReAnker（リアンカー）はフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
       </p>

@@ -5,6 +5,7 @@ import {
   FileBarChart, Copy, CheckCircle2, ExternalLink, Loader2, ChevronDown, FileText, Lock, Sparkles, ArrowRight,
 } from 'lucide-react'
 import type { Report } from '@/lib/types'
+import { trackBeginCheckout, trackReportCopy, trackReportView, trackUpgradeClick } from '@/lib/analytics'
 
 interface ReportListItem {
   id: string
@@ -44,6 +45,12 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
 
   const currentList = type === 'weekly' ? weeklyList : monthlyList
 
+  // ページ表示 1 度だけ report_view を送る
+  useEffect(() => {
+    trackReportView({ is_preview: isPreview })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // タブ切替時の挙動 (プレビューモードは API なしなので何もしない)
   useEffect(() => {
     if (isPreview) return
@@ -64,11 +71,13 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
   }, [type])
 
   const handleUpgrade = async () => {
+    trackUpgradeClick('reports')
     setUpgradeLoading(true)
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' })
       const data = await res.json()
       if (res.ok && data.url) {
+        trackBeginCheckout('standard')
         window.location.href = data.url
       } else {
         alert(data.message ?? 'アップグレード処理に失敗しました。')
@@ -95,6 +104,7 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
     if (!report) return
     const text = buildPlainSummary(report)
     await navigator.clipboard.writeText(text)
+    trackReportCopy()
     setCopyState('plain')
     setTimeout(() => setCopyState('idle'), 2000)
   }
@@ -103,6 +113,7 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
     if (!report) return
     const md = buildMarkdownSummary(report)
     await navigator.clipboard.writeText(md)
+    trackReportCopy()
     setCopyState('md')
     setTimeout(() => setCopyState('idle'), 2000)
   }

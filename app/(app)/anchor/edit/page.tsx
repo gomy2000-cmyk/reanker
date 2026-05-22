@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronLeft, Trash2, AlertCircle, Lock } from 'lucide-react'
 import type { PickKeyword, AnchorType, Source } from '@/lib/types'
+import { trackAnchorCreate, trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 
 const TYPE_OPTIONS: { value: AnchorType; label: string; desc: string }[] = [
   { value: 'service', label: 'サービス名', desc: '例：Salesforce、kintone' },
@@ -104,6 +105,11 @@ export default function AnchorEditPage() {
       return
     }
 
+    // 新規作成成功時のみ送信（編集は対象外）
+    if (!isEdit) {
+      trackAnchorCreate({ plan, anchor_type: type })
+    }
+
     router.push('/dashboard')
     router.refresh()
   }
@@ -161,11 +167,14 @@ export default function AnchorEditPage() {
             <button
               type="button"
               onClick={async () => {
+                trackUpgradeClick('anchor_limit_modal')
                 try {
                   const res = await fetch('/api/stripe/checkout', { method: 'POST' })
                   const data = await res.json()
-                  if (res.ok && data.url) window.location.href = data.url
-                  else alert(data.message ?? 'アップグレード処理に失敗しました')
+                  if (res.ok && data.url) {
+                    trackBeginCheckout('standard')
+                    window.location.href = data.url
+                  } else alert(data.message ?? 'アップグレード処理に失敗しました')
                 } catch { alert('通信エラーが発生しました') }
               }}
               className="text-xs bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-md"

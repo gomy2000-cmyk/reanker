@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { TopNav } from '@/components/TopNav'
 import { SideNav } from '@/components/SideNav'
+import { AuthEvents } from '@/components/AuthEvents'
 import { supabaseAdmin } from '@/lib/supabase'
 import type { PickKeyword } from '@/lib/types'
 
@@ -27,6 +28,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex flex-col h-screen">
+      <AuthEvents />
       <TopNav />
       <div className="flex flex-1 overflow-hidden">
         <SideNav keywords={keywords} />

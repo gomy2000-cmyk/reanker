@@ -5,6 +5,7 @@ import { useMemo, useState, useRef, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { FileDown, Circle } from 'lucide-react'
 import type { User, PickKeyword, ItemWithKeyword } from '@/lib/types'
+import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 
 interface Props {
   user: User
@@ -301,10 +302,12 @@ export function DashboardClient({ user, keywords, items }: Props) {
 
 function UpgradeModal({ onClose }: { onClose: () => void }) {
   const handleUpgrade = async () => {
+    trackUpgradeClick('dashboard_modal')
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' })
       const data = await res.json()
       if (res.ok && data.url) {
+        trackBeginCheckout('standard')
         window.location.href = data.url
       } else {
         alert(data.message ?? 'アップグレード処理に失敗しました。時間をおいて再度お試しください。')

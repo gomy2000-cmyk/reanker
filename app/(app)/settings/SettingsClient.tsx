@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Check } from 'lucide-react'
 import type { User } from '@/lib/types'
+import { trackBeginCheckout, trackPurchase, trackUpgradeClick } from '@/lib/analytics'
 
 interface Props { user: User }
 
@@ -60,6 +61,21 @@ function Field({
 }
 
 export function SettingsClient({ user }: Props) {
+  // Stripe checkout 成功時の購入完了イベント（?upgraded=1 で戻ってきたとき）
+  const purchaseFired = useRef(false)
+  useEffect(() => {
+    if (purchaseFired.current) return
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('upgraded') !== '1') return
+    purchaseFired.current = true
+    trackPurchase({ plan: 'standard', value: 300, currency: 'JPY' })
+    // クエリを掃除して二重送信を防ぐ
+    const url = new URL(window.location.href)
+    url.searchParams.delete('upgraded')
+    window.history.replaceState({}, '', url.pathname + (url.search ? `?${url.searchParams}` : ''))
+  }, [])
+
   const [name, setName] = useState(user.name ?? '')
   const [email, setEmail] = useState(user.email)
   const [slackWebhook, setSlackWebhook] = useState(user.slack_webhook_url ?? '')
@@ -75,10 +91,12 @@ export function SettingsClient({ user }: Props) {
   }
 
   const handleUpgrade = async () => {
+    trackUpgradeClick('settings')
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' })
       const data = await res.json()
       if (res.ok && data.url) {
+        trackBeginCheckout('standard')
         window.location.href = data.url
       } else {
         alert(data.message ?? 'アップグレード処理に失敗しました。')

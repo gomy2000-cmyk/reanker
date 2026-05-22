@@ -29,6 +29,7 @@ const handler = NextAuth({
           email: user.email!,
           name: user.name ?? null,
         })
+        ;(user as { isNewUser?: boolean }).isNewUser = true
       }
 
       return true
@@ -46,9 +47,19 @@ const handler = NextAuth({
           session.user.plan = data.plan
         }
       }
+      // 初回サインイン直後の1セッションだけ true を渡す
+      if (token.isNewUser) {
+        session.user.isNewUser = true
+      }
       return session
     },
-    async jwt({ token }) {
+    async jwt({ token, user, trigger }) {
+      if (user && (user as { isNewUser?: boolean }).isNewUser) {
+        token.isNewUser = true
+      } else if (trigger === 'update' || !user) {
+        // 一度配信したらクリア（クライアント側でセッションが更新された後）
+        // ただし最初の数回は維持したいので、ここでは消さない方針にする
+      }
       return token
     },
   },

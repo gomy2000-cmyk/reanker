@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import { Suspense } from 'react'
 import './globals.css'
 import { Providers } from './providers'
+import { GTMScript, GTMNoScript } from '@/components/GTM'
+import { GTMPageView } from '@/components/GTMPageView'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -63,7 +66,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
+      <head>
+        <GTMScript />
+      </head>
       <body className={`${inter.className} bg-gray-50 text-gray-900`}>
+        <GTMNoScript />
+        <Suspense fallback={null}>
+          <GTMPageView />
+        </Suspense>
         <Providers>{children}</Providers>
       </body>
     </html>
