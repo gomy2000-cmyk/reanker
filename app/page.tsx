@@ -97,6 +97,64 @@ export default async function HomePage() {
       </section>
 
       {/* ============================================ */}
+      {/* PAIN POINTS（課題訴求）                         */}
+      {/* ============================================ */}
+      <section id="pains" className="border-b border-gray-200 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-4 py-10 sm:py-14">
+          <div className="max-w-2xl mb-8">
+            <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">PAIN POINTS</p>
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
+              競合の新サービス発表、<br />顧客に聞かれてから知っていませんか？
+            </h2>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              PR TIMES や Google News を毎日チェックする運用は続きません。
+              ReAnker（リアンカー）は、その手作業を置き換えるツールです。
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              {
+                title: 'Googleアラートでは追いつかない',
+                desc: 'ノイズが多くて読まなくなる。配信時刻も不定で、朝の業務に組み込みづらい。',
+              },
+              {
+                title: 'PR TIMES を毎日巡回する運用は続かない',
+                desc: '気づけば見落とし。「あの会社のリリース見た？」と聞かれて初めて知る、を繰り返す。',
+              },
+              {
+                title: '上司・顧客に聞かれてから把握する',
+                desc: '商談や定例で「ご存じですか？」と切り出され、後手に回る瞬間が積み重なる。',
+              },
+              {
+                title: '社内共有が毎回手作業',
+                desc: 'リンクを Slack に貼って要約を書いて…の繰り返しで、本来の仕事に時間が回らない。',
+              },
+            ].map((p) => (
+              <div key={p.title} className="bg-white border border-gray-200 rounded-lg p-5">
+                <p className="text-sm font-semibold text-gray-900 mb-2">{p.title}</p>
+                <p className="text-xs text-gray-600 leading-relaxed">{p.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 bg-white border border-[#378ADD]/30 rounded-lg p-5 flex items-start gap-4">
+            <div className="w-9 h-9 bg-[#378ADD]/10 rounded-lg flex items-center justify-center shrink-0">
+              <Bell size={16} className="text-[#378ADD]" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-900 mb-1">
+                PR TIMES・Google News を毎日チェックする作業を、ReAnker が代わりに行います。
+              </p>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                競合の新サービス、導入事例、資金調達、業務提携、キャンペーン発表を、毎朝まとめて確認できます。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
       {/* PRODUCT WALKTHROUGH                           */}
       {/* ============================================ */}
       <section id="product" className="border-b border-gray-200">
@@ -251,25 +309,35 @@ export default async function HomePage() {
             </h2>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
-                role: 'マーケティング',
-                situation: '競合5社のキャンペーン発表を朝のうちに把握',
-                detail: '自社施策との被りを回避したり、相手の発表に便乗するクロスキャンペーンの判断に。',
+                role: 'BtoBマーケター',
+                situation: '競合のセミナー・ホワイトペーパー・キャンペーン発表を毎朝確認',
+                detail: '自社施策の企画やメールマガジンのネタとして活用。被り回避や便乗のタイミング判断にも。',
               },
               {
-                role: '広報・PR',
-                situation: '業界全体の発信トレンドを毎朝チェック',
-                detail: '他社のリリース文体や時間帯を観察し、自社配信のベンチマークとして利用。',
+                role: '広報担当',
+                situation: '同業他社のリリース見出し・配信タイミング・カテゴリを把握',
+                detail: '自社プレスリリースの構成や訴求の改善材料に。業界全体の話題傾向を朝のうちに把握。',
+              },
+              {
+                role: '営業責任者',
+                situation: '競合の導入事例・提携・新サービスを商談前にチェック',
+                detail: '顧客から聞かれる前に把握。提案トークや競合切り替えの切り口に反映。',
               },
               {
                 role: '経営企画 / 事業開発',
-                situation: '注目市場5領域の新規参入・撤退・提携を追跡',
-                detail: '週次の役員定例で「最近の市場動向」レポートとして添付。',
+                situation: '注目市場の資金調達・業務提携・新規参入・撤退情報を追跡',
+                detail: '週次レポートや役員定例で「最近の市場動向」として添付。意思決定を高速化。',
+              },
+              {
+                role: '広告代理店・支援会社',
+                situation: '複数クライアントの競合ニュースをまとめて監視',
+                detail: '提案・定例報告の情報収集を効率化。「先週の競合の動き」を毎朝の集約で把握。',
               },
             ].map((c) => (
-              <div key={c.role} className="bg-white border border-gray-200 rounded-lg p-6">
+              <div key={c.role} className="bg-white border border-gray-200 rounded-lg p-5">
                 <p className="text-[11px] text-gray-500 font-medium mb-2">{c.role}</p>
                 <p className="text-[14px] font-semibold text-gray-900 mb-2 leading-snug">{c.situation}</p>
                 <p className="text-xs text-gray-600 leading-relaxed">{c.detail}</p>
@@ -349,11 +417,17 @@ export default async function HomePage() {
 
           <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-200">
             {[
-              { q: 'フリープランの利用に制限はありますか？', a: 'アンカー登録数3件・更新頻度は週3回（月・水・金）・通知はメールのみ・サマリレポート機能はStandard限定、という制限があります。記事一覧の閲覧、既読管理、クリップなど基本機能はすべて無料でご利用いただけます。クレジットカード登録も不要です。' },
+              { q: 'Googleアラートとの違いは何ですか？', a: 'Googleアラートは無料で便利ですが、配信タイミングが読めず、ブログや関連サイト含めノイズが多めです。ReAnker は PR TIMES と Google News に絞り、毎朝9時に「前日分だけ」を Slack/メールへまとめて配信します。既読・未読・クリップなど管理機能もあります。詳しくは比較ページをご覧ください。' },
+              { q: 'PR TIMES Webクリッピングとの違いは何ですか？', a: 'PR TIMES Webクリッピングは法人広報向けの純正サービスで、約2,900媒体を月額5,500円〜で網羅します。ReAnker は PR TIMES + Google News に絞り月額300円（税抜）から提供。個人・小規模チームでも導入しやすい構成です。' },
+              { q: '競合のプレスリリースを自動で監視できますか？', a: 'はい。サービス名・キーワード・ドメインの3軸でアンカーを登録すると、毎日 PR TIMES の検索結果から新着リリースを取得し、翌朝9時に Slack やメールへ通知します。' },
+              { q: 'Google News も監視できますか？', a: 'はい。同じアンカー登録で PR TIMES と Google News の両方をまとめて監視できます。アンカー設定でソースを選べます。' },
+              { q: 'Slack に通知できますか？', a: 'はい。Slack の Incoming Webhook URL を設定するだけで、指定したチャンネルに毎朝9時の集約通知が届きます。Standard プランで利用可能です。' },
+              { q: '無料プランでは何ができますか？', a: 'アンカー3件まで・週3回（月・水・金）の取得・メール通知・記事一覧/既読/クリップ管理が利用できます。クレジットカード登録は不要です。' },
+              { q: '個人でも利用できますか？', a: 'はい。Googleログインで30秒で開始でき、Stripe 経由でクレジットカード決済します。個人・フリーランス・小規模チームを主な想定としています。' },
+              { q: '法人の経費精算に使えますか？', a: 'はい。設定画面の「請求履歴を見る」から Stripe のカスタマーポータルにアクセスし、月次の請求書 PDF をダウンロードできます。' },
+              { q: '登録した翌日から通知されますか？', a: 'アンカー登録後、翌朝9時のサイクルから通知が始まります（warmup 仕様）。当日にバックログがまとめて飛んで埋もれる事故を防ぐためです。' },
+              { q: 'どんなキーワードを登録すればよいですか？', a: '競合企業のサービス名（例：Salesforce）、業界トピック（例：AI受発注）、ドメイン名（例：sansan.com）など。3軸を組み合わせると見落としが減ります。' },
               { q: '途中で解約はできますか？', a: '設定画面、または Stripe のカスタマーポータルからいつでも解約できます。解約後は当該課金期間の末日までスタンダード機能を引き続きご利用いただけます。日割り精算はありません。' },
-              { q: 'PR TIMES や Google News に掲載されていない情報も取得できますか？', a: '現在は PR TIMES と Google News の2ソースに限定しています。今後、独自RSS・他のニュースサイト等への対応を予定しています。要望があればお問い合わせフォームからお知らせください。' },
-              { q: 'チームで複数人利用できますか？', a: '現在は個人アカウント単位での提供です。チームでの情報共有は、Slack通知をチームチャンネルに飛ばすことで実質的に運用可能です。本格的なチームプランは順次検討中です。' },
-              { q: '請求書は発行できますか？', a: '設定画面の「請求履歴を見る」から Stripe のカスタマーポータルにアクセスし、過去の請求書をPDFでダウンロードいただけます。法人での経費精算にもご利用いただけます。' },
               { q: 'PR TIMES の仕様変更で取得が止まる可能性はありますか？', a: 'スクレイピング元のサイト仕様変更に依存するため、可能性はあります。検知次第すぐに復旧対応します。Google News側はSerpAPIを利用しているため安定性は高めです。' },
             ].map((item) => (
               <details key={item.q} className="group">
