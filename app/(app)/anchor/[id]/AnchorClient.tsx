@@ -289,12 +289,12 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr className="text-xs text-gray-500">
-                  <th className="text-left py-2 pl-3 w-6"></th>
+                  <th className="text-center py-2 pl-3 w-7"></th>
+                  <th className="text-center py-2 w-9"></th>
+                  <th className="text-center py-2 w-9"></th>
                   <th className="text-left py-2 font-medium">タイトル</th>
                   <th className="text-left py-2 font-medium w-24">ソース</th>
-                  <th className="text-left py-2 font-medium w-20">公開日</th>
-                  <th className="text-center py-2 font-medium w-9"></th>
-                  <th className="text-center py-2 font-medium w-9 pr-3"></th>
+                  <th className="text-left py-2 font-medium w-20 pr-3">公開日</th>
                 </tr>
               </thead>
               <tbody>
@@ -310,20 +310,9 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                           : 'hover:bg-gray-50'
                     }`}
                   >
-                    <td className="pl-3 py-2.5">
-                      {!item.is_read && <Circle size={6} className="fill-[#378ADD] text-[#378ADD]" />}
+                    <td className="pl-3 py-2.5 text-center">
+                      {!item.is_read && <Circle size={6} className="fill-[#378ADD] text-[#378ADD] inline-block" />}
                     </td>
-                    <td className="py-2.5 pr-2">
-                      <span className={`text-sm truncate block max-w-[380px] ${item.is_read ? 'text-gray-400' : 'text-gray-900 font-medium'}`}>
-                        {item.title}
-                      </span>
-                    </td>
-                    <td className="py-2.5">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[item.source]} ${item.is_read ? 'opacity-60' : ''}`}>
-                        {SOURCE_LABEL[item.source]}
-                      </span>
-                    </td>
-                    <td className={`py-2.5 text-xs ${item.is_read ? 'text-gray-400' : 'text-gray-500'}`}>{item.published_at}</td>
                     <td className="py-2.5 text-center">
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleClip(item) }}
@@ -335,7 +324,7 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                         <Bookmark size={14} fill={item.is_clipped ? 'currentColor' : 'none'} />
                       </button>
                     </td>
-                    <td className="py-2.5 pr-3 text-center">
+                    <td className="py-2.5 text-center">
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleRead(item) }}
                         className={`p-1 rounded hover:bg-gray-100 transition-colors ${
@@ -346,6 +335,17 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                         <Check size={14} />
                       </button>
                     </td>
+                    <td className="py-2.5 pr-2 pl-1">
+                      <span className={`text-sm truncate block max-w-[380px] ${item.is_read ? 'text-gray-400' : 'text-gray-900 font-medium'}`}>
+                        {item.title}
+                      </span>
+                    </td>
+                    <td className="py-2.5">
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[item.source]} ${item.is_read ? 'opacity-60' : ''}`}>
+                        {SOURCE_LABEL[item.source]}
+                      </span>
+                    </td>
+                    <td className={`py-2.5 pr-3 text-xs ${item.is_read ? 'text-gray-400' : 'text-gray-500'}`}>{item.published_at}</td>
                   </tr>
                 ))}
               </tbody>
