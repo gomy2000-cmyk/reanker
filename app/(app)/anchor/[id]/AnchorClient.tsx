@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
+import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2, Bookmark, Trash2 } from 'lucide-react'
 import type { User, PickKeyword, Item } from '@/lib/types'
 
 interface PreviewData {
@@ -26,7 +26,7 @@ const SOURCE_COLOR = { prtimes: 'bg-blue-100 text-blue-700', googlenews: 'bg-gra
 export function AnchorClient({ user, keyword, initialItems }: Props) {
   const router = useRouter()
   const [items, setItems] = useState(initialItems)
-  const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all')
+  const [filter, setFilter] = useState<'all' | 'unread' | 'read' | 'clipped'>('all')
   const [pageSize, setPageSize] = useState(25)
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<Item | null>(initialItems[0] ?? null)
@@ -94,14 +94,36 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
     }
   }
 
+  const counts = useMemo(() => ({
+    all: items.length,
+    unread: items.filter((i) => !i.is_read).length,
+    read: items.filter((i) => i.is_read).length,
+    clipped: items.filter((i) => i.is_clipped).length,
+  }), [items])
+
   const filtered = useMemo(() => {
     if (filter === 'unread') return items.filter((i) => !i.is_read)
     if (filter === 'read') return items.filter((i) => i.is_read)
+    if (filter === 'clipped') return items.filter((i) => i.is_clipped)
     return items
   }, [items, filter])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize)
+
+  /** 記事を選択（同時に未読なら自動既読に） */
+  const selectItem = (item: Item) => {
+    setSelected(item)
+    if (!item.is_read) {
+      // 楽観的更新 + サーバ同期
+      setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, is_read: true } : i)))
+      void fetch('/api/items', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item.id, is_read: true }),
+      })
+    }
+  }
 
   const toggleRead = async (item: Item) => {
     const newRead = !item.is_read
@@ -112,6 +134,28 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: item.id, is_read: newRead }),
     })
+  }
+
+  const toggleClip = async (item: Item) => {
+    const newClipped = !item.is_clipped
+    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, is_clipped: newClipped } : i)))
+    if (selected?.id === item.id) setSelected({ ...item, is_clipped: newClipped })
+    await fetch('/api/items', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: item.id, is_clipped: newClipped }),
+    })
+  }
+
+  const deleteItem = async (item: Item) => {
+    if (!confirm(`「${item.title.slice(0, 50)}${item.title.length > 50 ? '…' : ''}」を削除しますか？\n\n削除した記事は次回取得時にも再表示されません。`)) return
+    // 楽観的削除
+    setItems((prev) => prev.filter((i) => i.id !== item.id))
+    if (selected?.id === item.id) {
+      const remaining = items.filter((i) => i.id !== item.id)
+      setSelected(remaining[0] ?? null)
+    }
+    await fetch(`/api/items?id=${item.id}`, { method: 'DELETE' })
   }
 
   const handleExport = () => {
@@ -169,15 +213,27 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
             <RefreshCw size={13} className={fetching ? 'animate-spin' : ''} />
             {fetching ? '取得中...' : '今すぐ取得'}
           </button>
-          <select
-            value={filter}
-            onChange={(e) => { setFilter(e.target.value as any); setPage(1) }}
-            className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-600"
-          >
-            <option value="all">すべて</option>
-            <option value="unread">未読のみ</option>
-            <option value="read">既読のみ</option>
-          </select>
+          <div className="flex border border-gray-200 rounded-lg overflow-hidden text-xs bg-white">
+            {([
+              { key: 'all', label: 'すべて', count: counts.all },
+              { key: 'unread', label: '未読', count: counts.unread },
+              { key: 'read', label: '既読', count: counts.read },
+              { key: 'clipped', label: 'クリップ', count: counts.clipped },
+            ] as const).map((f) => (
+              <button
+                key={f.key}
+                onClick={() => { setFilter(f.key); setPage(1) }}
+                className={`px-3 py-1.5 transition-colors ${
+                  filter === f.key
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                {f.label}
+                <span className={`ml-1 text-[10px] ${filter === f.key ? 'text-white/70' : 'text-gray-400'}`}>{f.count}</span>
+              </button>
+            ))}
+          </div>
           <select
             value={pageSize}
             onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1) }}
@@ -236,38 +292,56 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                   <th className="text-left py-2 pl-3 w-6"></th>
                   <th className="text-left py-2 font-medium">タイトル</th>
                   <th className="text-left py-2 font-medium w-24">ソース</th>
-                  <th className="text-left py-2 font-medium w-24">公開日</th>
-                  <th className="text-center py-2 font-medium w-12 pr-3"></th>
+                  <th className="text-left py-2 font-medium w-20">公開日</th>
+                  <th className="text-center py-2 font-medium w-9"></th>
+                  <th className="text-center py-2 font-medium w-9 pr-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {paged.map((item) => (
                   <tr
                     key={item.id}
-                    onClick={() => setSelected(item)}
+                    onClick={() => selectItem(item)}
                     className={`border-b border-gray-50 cursor-pointer transition-colors ${
-                      selected?.id === item.id ? 'bg-[#378ADD]/5' : 'hover:bg-gray-50'
+                      selected?.id === item.id
+                        ? 'bg-[#378ADD]/5'
+                        : item.is_read
+                          ? 'bg-gray-50/30 hover:bg-gray-50'
+                          : 'hover:bg-gray-50'
                     }`}
                   >
                     <td className="pl-3 py-2.5">
                       {!item.is_read && <Circle size={6} className="fill-[#378ADD] text-[#378ADD]" />}
                     </td>
                     <td className="py-2.5 pr-2">
-                      <span className={`text-sm truncate block max-w-[400px] ${item.is_read ? 'text-gray-500' : 'text-gray-900 font-medium'}`}>
+                      <span className={`text-sm truncate block max-w-[380px] ${item.is_read ? 'text-gray-400' : 'text-gray-900 font-medium'}`}>
                         {item.title}
                       </span>
                     </td>
                     <td className="py-2.5">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[item.source]}`}>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[item.source]} ${item.is_read ? 'opacity-60' : ''}`}>
                         {SOURCE_LABEL[item.source]}
                       </span>
                     </td>
-                    <td className="py-2.5 text-xs text-gray-500">{item.published_at}</td>
+                    <td className={`py-2.5 text-xs ${item.is_read ? 'text-gray-400' : 'text-gray-500'}`}>{item.published_at}</td>
+                    <td className="py-2.5 text-center">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleClip(item) }}
+                        className={`p-1 rounded hover:bg-gray-100 transition-colors ${
+                          item.is_clipped ? 'text-amber-500' : 'text-gray-300 hover:text-gray-500'
+                        }`}
+                        title={item.is_clipped ? 'クリップを外す' : 'クリップする'}
+                      >
+                        <Bookmark size={14} fill={item.is_clipped ? 'currentColor' : 'none'} />
+                      </button>
+                    </td>
                     <td className="py-2.5 pr-3 text-center">
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleRead(item) }}
-                        className={`text-xs ${item.is_read ? 'text-[#378ADD]' : 'text-gray-300 hover:text-gray-500'}`}
-                        title={item.is_read ? '既読' : '未読にする'}
+                        className={`p-1 rounded hover:bg-gray-100 transition-colors ${
+                          item.is_read ? 'text-[#378ADD]' : 'text-gray-300 hover:text-gray-500'
+                        }`}
+                        title={item.is_read ? '未読に戻す' : '既読にする'}
                       >
                         <Check size={14} />
                       </button>
@@ -357,7 +431,7 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                   <p className="text-xs text-gray-400 mb-4">プレビュー取得失敗 — リンクから直接ご覧ください</p>
                 ) : null}
 
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                <div className="pt-3 border-t border-gray-100 space-y-2">
                   <a
                     href={selected.url}
                     target="_blank"
@@ -367,16 +441,38 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
                     <ExternalLink size={14} />
                     記事を開く
                   </a>
-                  <button
-                    onClick={() => toggleRead(selected)}
-                    className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
-                      selected.is_read
-                        ? 'border-gray-200 text-gray-500 hover:bg-gray-50'
-                        : 'border-[#378ADD] text-[#378ADD] hover:bg-[#378ADD]/5'
-                    }`}
-                  >
-                    {selected.is_read ? '未読に戻す' : '既読にする'}
-                  </button>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => toggleClip(selected)}
+                      className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border transition-colors ${
+                        selected.is_clipped
+                          ? 'border-amber-400 bg-amber-50 text-amber-700'
+                          : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <Bookmark size={12} fill={selected.is_clipped ? 'currentColor' : 'none'} />
+                      {selected.is_clipped ? 'クリップ済み' : 'クリップ'}
+                    </button>
+                    <button
+                      onClick={() => toggleRead(selected)}
+                      className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
+                        selected.is_read
+                          ? 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                          : 'border-[#378ADD] text-[#378ADD] hover:bg-[#378ADD]/5'
+                      }`}
+                    >
+                      {selected.is_read ? '未読に戻す' : '既読にする'}
+                    </button>
+                    <button
+                      onClick={() => deleteItem(selected)}
+                      className="ml-auto flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                      title="この記事を削除（再取得もされません）"
+                    >
+                      <Trash2 size={12} />
+                      削除
+                    </button>
+                  </div>
                 </div>
               </div>
             </article>

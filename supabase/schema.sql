@@ -36,14 +36,22 @@ create table if not exists items (
   published_at date not null,
   published_hour integer,
   is_read boolean default false,
+  is_clipped boolean default false,
   notified boolean default false,
+  deleted_at timestamptz,
   created_at timestamptz default now()
 );
+
+-- 既存テーブル向けマイグレーション
+alter table items add column if not exists is_clipped boolean default false;
+alter table items add column if not exists deleted_at timestamptz;
 
 -- インデックス
 create index if not exists idx_items_pickkw_id on items(pickkw_id);
 create index if not exists idx_items_published_at on items(published_at);
 create index if not exists idx_items_notified on items(notified);
+create index if not exists idx_items_is_clipped on items(is_clipped);
+create index if not exists idx_items_deleted_at on items(deleted_at);
 create index if not exists idx_pick_keywords_user_id on pick_keywords(user_id);
 
 -- Row Level Security

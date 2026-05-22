@@ -20,6 +20,7 @@ export default async function AnchorPage({ params }: { params: Promise<{ id: str
     .from('items')
     .select('*')
     .eq('pickkw_id', id)
+    .is('deleted_at', null)
     .order('published_at', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(500)

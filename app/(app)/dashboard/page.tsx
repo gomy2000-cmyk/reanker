@@ -20,6 +20,7 @@ export default async function DashboardPage() {
         .from('items')
         .select('*, pick_keywords(*)')
         .in('pickkw_id', keywordIds)
+        .is('deleted_at', null)
         .gte('published_at', sevenDaysAgo.toISOString().split('T')[0])
         .order('published_at', { ascending: false })
         .order('created_at', { ascending: false })

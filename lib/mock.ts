@@ -51,7 +51,9 @@ export const mockItems: ItemWithKeyword[] = titles.map(([title, kwId, source, ho
     published_at: daysAgo(i % 7),
     published_hour: hour as number,
     is_read: i % 3 === 0,
+    is_clipped: i % 5 === 0,
     notified: true,
+    deleted_at: null,
     created_at: '',
     pick_keywords: kw,
   }

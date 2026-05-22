@@ -38,7 +38,9 @@ export interface Item {
   published_at: string
   published_hour: number | null
   is_read: boolean
+  is_clipped: boolean
   notified: boolean
+  deleted_at: string | null
   created_at: string
 }
 
