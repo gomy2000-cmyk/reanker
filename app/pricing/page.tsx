@@ -5,7 +5,7 @@ import { Check, X } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: '料金プラン',
-  description: 'ReAnker の料金プラン。フリープラン（無料）とスタンダードプラン（月額300円・税込）の機能比較とよくあるご質問。',
+  description: 'ReAnker の料金プラン。フリープラン（無料）とスタンダードプラン（月額300円・税抜）の機能比較とよくあるご質問。',
   alternates: { canonical: 'https://reanker.com/pricing' },
   openGraph: {
     title: '料金プラン｜ReAnker',
@@ -59,7 +59,7 @@ export default function PricingPage() {
           </span>
           <h2 className="text-base font-bold text-gray-900 mb-1">スタンダードプラン</h2>
           <p className="text-xs text-gray-500 mb-4">本格的に競合監視を運用したい方に</p>
-          <p className="text-3xl font-bold text-gray-900 mb-1">¥300<span className="text-sm font-normal text-gray-500"> / 月（税込）</span></p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">¥300<span className="text-sm font-normal text-gray-500"> / 月（税抜）</span></p>
           <p className="text-xs text-gray-400 mb-6">クレジットカード決済</p>
           <Link
             href="/login"

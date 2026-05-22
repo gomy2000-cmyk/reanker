@@ -13,7 +13,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
       <Link href="/" className="text-gray-900 mb-8 hover:opacity-80 transition-opacity">
-        <Wordmark height={20} />
+        <Wordmark height={24} />
       </Link>
 
       <p className="text-xs text-gray-400 font-mono mb-3">404</p>

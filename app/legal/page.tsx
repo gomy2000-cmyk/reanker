@@ -51,7 +51,7 @@ export default function LegalPage() {
             <Row label="販売価格">
               <ul className="space-y-1">
                 <li>フリープラン：無料</li>
-                <li>スタンダードプラン：月額 300円（消費税込）</li>
+                <li>スタンダードプラン：月額 300円（消費税抜）</li>
               </ul>
               <p className="text-xs text-gray-500 mt-2">各プランの機能差異は、料金プラン案内ページに表示するとおりとします。</p>
             </Row>

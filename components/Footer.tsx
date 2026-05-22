@@ -8,7 +8,7 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           <div>
             <div className="text-gray-900 mb-2">
-              <Wordmark height={18} />
+              <Wordmark height={22} />
             </div>
             <p className="text-xs text-gray-500">競合のプレスリリース・ニュースを自動監視。</p>
             <p className="text-[11px] text-gray-400 mt-2">© {new Date().getFullYear()} ReAnker</p>

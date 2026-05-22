@@ -313,7 +313,7 @@ export default async function HomePage() {
             <PlanCard
               name="スタンダード"
               price="¥300"
-              priceSuffix="/月（税込）"
+              priceSuffix="/月（税抜）"
               note="いつでも解約可"
               features={[
                 'アンカー 無制限',

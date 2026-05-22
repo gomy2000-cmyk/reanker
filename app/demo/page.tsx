@@ -17,7 +17,7 @@ export default function DemoPage() {
       {/* トップナビ（デモ用簡易版） */}
       <header className="h-11 bg-white border-b border-gray-200 flex items-center px-4 justify-between shrink-0">
         <div className="flex items-center text-gray-900">
-          <Wordmark height={16} />
+          <Wordmark height={20} />
           <span className="ml-2 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">DEMO</span>
         </div>
         <div className="flex items-center gap-2">
