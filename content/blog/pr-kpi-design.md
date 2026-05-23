@@ -2,8 +2,8 @@
 title: "広報担当者のKPI設計｜数で評価するPRの実務指標"
 description: "広報・PRの成果を定量的に評価するKPI設計を解説。露出数だけでなく、認知率・SOV・営業貢献まで含めた3層の指標設計を整理します。"
 ogTitle: "広報担当者のKPI設計｜数で評価するPR"
-publishedAt: "2026-06-11"
-updatedAt: "2026-06-11"
+publishedAt: "2026-06-03"
+updatedAt: "2026-06-03"
 category: "pr-and-publicity"
 tags: ["広報", "KPI", "PR", "効果測定"]
 ---

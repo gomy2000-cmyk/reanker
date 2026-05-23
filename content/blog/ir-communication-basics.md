@@ -2,8 +2,8 @@
 title: "IR広報の基本｜投資家向け情報発信の役割と実務"
 description: "IR（Investor Relations）広報の基本を、開示資料・決算説明会・個人投資家向け発信の3軸で解説。上場準備中の企業が押さえるべき体制構築も整理します。"
 ogTitle: "IR広報の基本｜投資家向け情報発信"
-publishedAt: "2026-07-05"
-updatedAt: "2026-07-05"
+publishedAt: "2026-06-13"
+updatedAt: "2026-06-13"
 category: "pr-and-publicity"
 tags: ["IR", "投資家広報", "上場", "決算"]
 ---

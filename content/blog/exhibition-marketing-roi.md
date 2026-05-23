@@ -2,8 +2,8 @@
 title: "展示会マーケティングのROIを最大化する方法｜出展前・当日・出展後の実務"
 description: "BtoB展示会の費用対効果を最大化する実務フローを解説。出展前の準備、当日のリード獲得設計、出展後の追客までを時系列で整理します。"
 ogTitle: "展示会マーケティングのROI最大化"
-publishedAt: "2026-06-25"
-updatedAt: "2026-06-25"
+publishedAt: "2026-07-01"
+updatedAt: "2026-07-01"
 category: "btob-marketing"
 tags: ["展示会", "BtoB", "リード獲得", "ROI"]
 ---

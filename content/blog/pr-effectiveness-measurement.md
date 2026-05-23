@@ -2,8 +2,8 @@
 title: "PR効果測定の基本｜露出本数からビジネス指標への接続"
 description: "PR・広報の効果を、露出本数・広告換算費・認知率・ビジネス貢献の4段階で測定する実務フローを解説。BtoB企業で運用できる指標設計を整理します。"
 ogTitle: "PR効果測定｜露出本数から事業貢献まで"
-publishedAt: "2026-07-01"
-updatedAt: "2026-07-01"
+publishedAt: "2026-06-05"
+updatedAt: "2026-06-05"
 category: "pr-and-publicity"
 tags: ["PR効果測定", "広報", "露出", "ROI"]
 ---

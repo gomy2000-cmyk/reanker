@@ -2,8 +2,8 @@
 title: "BtoB SEOの基本｜検索意図・KW選定・E-E-A-T を実務目線で整理"
 description: "BtoBのSEOで成果を出すための基本を、検索意図の見極め、KW選定、E-E-A-T 対応、内部リンク設計の4軸で解説します。"
 ogTitle: "BtoB SEOの基本｜検索意図・KW選定・E-E-A-T"
-publishedAt: "2026-06-05"
-updatedAt: "2026-06-05"
+publishedAt: "2026-06-21"
+updatedAt: "2026-06-21"
 category: "btob-marketing"
 tags: ["BtoB", "SEO", "検索意図", "E-E-A-T", "KW選定"]
 ---
