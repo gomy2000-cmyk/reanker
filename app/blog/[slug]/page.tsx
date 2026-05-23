@@ -2,11 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getServerSession } from 'next-auth'
-import { ChevronLeft, ArrowRight } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
 import { getBlogPost, getRelatedPosts, getAllBlogPosts } from '@/lib/blog'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
 import { BlogSidebar } from '@/components/blog/BlogSidebar'
+import { BlogCTA } from '@/components/blog/BlogCTA'
 import './blog-content.css'
 
 interface Props {
@@ -145,32 +146,8 @@ export default async function BlogPostPage({ params }: Props) {
             dangerouslySetInnerHTML={{ __html: post.html }}
           />
 
-          {/* CTA */}
-          <div className="mt-14 border border-gray-200 rounded-lg p-6 sm:p-7 bg-gray-50">
-            <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">ReAnker について</p>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              競合のPR TIMES・Google Newsを毎日自動チェック
-            </h3>
-            <p className="text-sm text-gray-600 leading-relaxed mb-5">
-              監視したい競合を登録するだけ。毎朝9時、前日の新規リリースだけをSlackやメールに自動配信します。
-              月額300円から、個人や小規模チームでも本格的な競合監視を始められます。
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Link
-                href={isAuthenticated ? '/dashboard' : '/login'}
-                className="inline-flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
-              >
-                {isAuthenticated ? 'ダッシュボードへ' : '無料ではじめる'}
-                <ArrowRight size={15} />
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-white text-gray-700 text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
-              >
-                料金プランを見る
-              </Link>
-            </div>
-          </div>
+          {/* 共通CTA */}
+          <BlogCTA isAuthenticated={isAuthenticated} />
 
           {/* 関連記事 */}
           {related.length > 0 && (
