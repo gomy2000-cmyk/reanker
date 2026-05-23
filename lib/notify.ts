@@ -6,6 +6,20 @@ export interface AnchorSummary {
 }
 
 /**
+ * メール内リンクに UTM パラメータを付与する共通ヘルパー。
+ * utm_source=email / utm_medium=email は固定、utm_campaign と utm_content のみ指定する。
+ */
+function urlWithUtm(path: string, campaign: string, content?: string): string {
+  const params = new URLSearchParams({
+    utm_source: 'email',
+    utm_medium: 'email',
+    utm_campaign: campaign,
+  })
+  if (content) params.set('utm_content', content)
+  return `https://reanker.com${path}?${params}`
+}
+
+/**
  * Slack に1通の集約サマリーを送る。
  * - 複数のアンカーを1メッセージにグルーピング表示
  * - 0件のアンカーは含まれていない前提（呼び出し側でフィルタ済み）
@@ -79,8 +93,8 @@ export async function sendEmailDigest(
       ${sections}
       <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
       <p style="font-size:12px;color:#666;">
-        <a href="https://reanker.com/dashboard" style="color:#378ADD;">ダッシュボードで確認</a> ・
-        <a href="https://reanker.com/settings" style="color:#666;">通知設定を変更</a>
+        <a href="${urlWithUtm('/dashboard', 'daily_digest')}" style="color:#378ADD;">ダッシュボードで確認</a> ・
+        <a href="${urlWithUtm('/settings', 'daily_digest', 'settings_link')}" style="color:#666;">通知設定を変更</a>
       </p>
     </div>
   `
