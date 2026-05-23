@@ -1,6 +1,6 @@
 ---
-title: "競合ニュースを Slack に自動通知する方法"
-description: "競合のプレスリリース・ニュースを Slack に自動で流す方法を解説。RSS、Zapier、専用 SaaS の使い分けと、運用が定着するコツをまとめました。"
+title: "競合ニュースを Slack に自動通知する方法｜RSS・Zapier・SaaSの3手法比較"
+description: "競合のプレスリリース・ニュースを Slack に自動で流す方法を、RSS 連携・Zapier・専用 SaaS・クリッピング代行の4選択肢で比較。運用が定着する通知設計のコツも解説します。"
 ogTitle: "競合ニュースを Slack に自動通知する方法"
 publishedAt: "2026-05-22"
 updatedAt: "2026-05-22"

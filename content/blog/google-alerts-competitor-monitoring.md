@@ -1,6 +1,6 @@
 ---
 title: "Google アラートで競合監視はできる？限界と代替手段を解説"
-description: "Google アラートを使った競合監視の現実。実運用での詰まりやすいポイントと、PR TIMES や Google News を含めた現実的な代替手段を整理しました。"
+description: "Google アラートを使った競合監視の現実を解説。無料の強み、実運用で詰まる5つのポイント、代替手段（PR TIMES Webクリッピング・ReAnker・Feedly・代行）との使い分けを整理します。"
 ogTitle: "Google アラートで競合監視はできる？限界と代替"
 publishedAt: "2026-05-22"
 updatedAt: "2026-05-22"

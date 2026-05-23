@@ -1,6 +1,6 @@
 ---
 title: "SNS広報の運用設計｜公式アカウントの作法と継続のコツ"
-description: "BtoB企業のSNS広報運用を、媒体選定・投稿設計・運用体制・効果測定で整理。X・LinkedIn・Facebookの使い分けと、炎上防止の作法も解説します。"
+description: "BtoB 企業の SNS 広報運用を、媒体選定・投稿設計・運用体制・効果測定の4軸で整理。X・LinkedIn・Facebook の使い分け、投稿ミックス、炎上防止の3原則まで実務的に解説します。"
 ogTitle: "SNS広報の運用設計｜公式アカウントの作法"
 publishedAt: "2026-06-07"
 updatedAt: "2026-06-07"

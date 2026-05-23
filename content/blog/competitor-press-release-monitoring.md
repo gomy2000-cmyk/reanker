@@ -1,6 +1,6 @@
 ---
-title: "競合他社のプレスリリースを監視する方法｜PR TIMES・Google News を毎日チェックする仕組み"
-description: "競合のプレスリリースを毎日漏れなくチェックするための実務的な仕組みを解説。PR TIMES・Google News の特徴と、手動運用の限界、自動化までのステップを整理しました。"
+title: "競合プレスリリース監視の方法｜PR TIMES・Google News を毎日チェックする仕組み"
+description: "競合のプレスリリースを毎日漏れなくチェックする実務的な仕組みを解説。PR TIMES と Google News の特徴、手動運用の限界、5〜8社に絞る選定基準と自動化までのステップを整理します。"
 ogTitle: "競合プレスリリースの監視方法｜PR TIMES・Google News"
 publishedAt: "2026-05-22"
 updatedAt: "2026-05-22"
