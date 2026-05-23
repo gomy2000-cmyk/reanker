@@ -12,8 +12,8 @@ export function Footer() {
               <Wordmark height={26} />
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              競合のプレスリリース・ニュースを自動監視。
-              PR TIMES や Google News から、必要な情報だけを毎日お届けします。
+              競合のプレスリリースを毎日自動でチェックする <strong>競合リリース監視ツール</strong>。
+              PR TIMES の新着リリースと Google News の関連報道を1ツールで。
             </p>
           </div>
 

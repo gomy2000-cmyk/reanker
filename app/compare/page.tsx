@@ -9,12 +9,12 @@ import {
 } from '@/lib/compare'
 
 export const metadata: Metadata = {
-  title: '競合プレスリリース・ニュース監視ツール比較',
+  title: '競合リリース監視ツール比較',
   description:
-    'PR TIMES・Google News・Googleアラート・クリッピングサービスを比較。競合のプレスリリースやニュースを自動監視し、Slack・メールに通知できる ReAnker の特徴を解説します。',
+    'PR TIMES・Google News・Googleアラート・クリッピングサービスを比較。競合のプレスリリースを毎日自動でチェックし、Slack・メールに通知できる競合リリース監視ツール ReAnker の特徴を解説します。',
   alternates: { canonical: 'https://reanker.com/compare' },
   openGraph: {
-    title: '競合プレスリリース・ニュース監視ツール比較｜ReAnker',
+    title: '競合リリース監視ツール比較｜ReAnker',
     description:
       'Googleアラート・PR TIMES Webクリッピング・Feedly・クリッピング代行など主要ツール8種を、用途別に比較しました。',
     url: 'https://reanker.com/compare',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '競合プレスリリース・ニュース監視ツール比較｜ReAnker',
+    title: '競合リリース監視ツール比較｜ReAnker',
     description: '主要8ツールの機能・料金を一覧化。個人・小規模チーム向けの選び方も解説。',
   },
 }

@@ -11,12 +11,12 @@ import { AnchorMark } from '@/components/brand/AnchorMark'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
+    absolute: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
   },
-  description: 'Reankerは、PR TIMESやGoogle Newsから競合企業の動きを自動取得し、Slackやメールで通知するBtoB向け競合監視SaaSです。',
+  description: 'ReAnkerは、競合企業のプレスリリースを毎日自動でチェックし、新着リリースだけをSlack・メールで通知する競合リリース監視ツールです。PR TIMES と Google News の関連報道もまとめて把握できます。',
   openGraph: {
-    title: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
-    description: 'Reankerは、PR TIMESやGoogle Newsから競合企業の動きを自動取得し、Slackやメールで通知するBtoB向け競合監視SaaSです。',
+    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
+    description: 'ReAnkerは、競合企業のプレスリリースを毎日自動でチェックし、新着リリースだけをSlack・メールで通知する競合リリース監視ツールです。PR TIMES と Google News の関連報道もまとめて把握できます。',
     url: 'https://reanker.com',
     siteName: 'ReAnker',
     locale: 'ja_JP',
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
-    description: 'PR TIMES・Google Newsから競合企業の動きを自動取得・通知するBtoB向けSaaS。',
+    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
+    description: '競合のプレスリリースを毎日自動チェック・通知する競合リリース監視ツール。',
   },
   alternates: {
     canonical: 'https://reanker.com',
@@ -50,17 +50,17 @@ export default async function HomePage() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-[11px] font-medium px-2 py-0.5 rounded mb-3">
               <span className="w-1.5 h-1.5 bg-[#378ADD] rounded-full" />
-              競合監視SaaS · β版公開中
+              競合リリース監視ツール · β版公開中
             </div>
 
             <h1 className="text-[28px] sm:text-[40px] font-semibold text-gray-900 tracking-tight leading-[1.2] mb-3">
-              競合のPR TIMES・Google Newsを<br />
-              毎日自動チェック。
+              競合のリリースを、<br />
+              毎日自動でチェック。
             </h1>
 
             <p className="text-[14px] sm:text-[15px] text-gray-600 leading-relaxed mb-4 max-w-2xl">
-              監視したい競合・キーワード・ドメインを登録するだけ。毎朝9時、前日の新規リリースだけをSlackやメールに自動配信。
-              月額300円から、個人や小規模チームでも本格的な競合監視を始められます。
+              監視したい競合企業を登録するだけ。毎朝9時、前日に出た新着リリースだけをSlack・メールへ自動配信します。
+              PR TIMES と Google News の関連報道を1ツールでまとめて把握。月額300円から、個人や小規模チームでも本格的な競合リリース監視を始められます。
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2.5 mb-3">

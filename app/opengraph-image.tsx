@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'Reanker｜競合のプレスリリース・ニュースを自動監視'
+export const alt = 'ReAnker｜競合リリースを毎日自動チェックする監視ツール'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -57,7 +57,7 @@ export default async function OG() {
         {/* Headline */}
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
           <p style={{ fontSize: 22, color: '#378ADD', fontWeight: 600, marginBottom: 18, letterSpacing: '0.08em', display: 'flex' }}>
-            BtoB 競合監視 SaaS
+            競合リリース監視ツール
           </p>
           <h1
             style={{
@@ -71,8 +71,8 @@ export default async function OG() {
               flexDirection: 'column',
             }}
           >
-            <span>競合のプレスリリース・ニュースを</span>
-            <span>自動監視。</span>
+            <span>競合のリリースを、</span>
+            <span>毎日自動でチェック。</span>
           </h1>
         </div>
 

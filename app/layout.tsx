@@ -11,14 +11,14 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL('https://reanker.com'),
   title: {
-    default: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
+    default: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
     template: '%s｜ReAnker',
   },
-  description: 'Reankerは、PR TIMESやGoogle Newsから競合企業の動きを自動取得し、Slackやメールで通知するBtoB向け競合監視SaaSです。',
+  description: 'ReAnkerは、競合企業のプレスリリースを毎日自動でチェックし、新着リリースをSlackやメールに通知する競合リリース監視ツールです。PR TIMES と Google News の関連報道もまとめて把握できます。',
   applicationName: 'ReAnker',
   keywords: [
-    '競合監視', '競合分析', 'クリッピングサービス', 'プレスリリース', 'PR TIMES',
-    'Google News', 'Slack 通知', '広報PR', 'BtoB SaaS', 'ReAnker',
+    '競合リリース監視', '競合監視', '競合分析', 'プレスリリース監視', 'PR TIMES 監視',
+    'Google News', 'Slack 通知', '広報PR', '競合リリース', 'ReAnker',
   ],
   authors: [{ name: 'ReAnker' }],
   creator: 'ReAnker',
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
     locale: 'ja_JP',
     url: 'https://reanker.com',
     siteName: 'ReAnker',
-    title: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
-    description: 'PR TIMES・Google Newsから競合企業の動きを自動取得し、Slack・メールで通知するBtoB向け競合監視SaaS。月額300円から。',
+    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
+    description: '競合企業のプレスリリースを毎日自動で監視し、新着リリースだけをSlack・メールに通知する競合リリース監視ツール。月額300円から。',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Reanker｜競合のプレスリリース・ニュースを自動監視',
-    description: 'PR TIMES・Google Newsから競合の動きを毎日自動取得・通知するBtoB向けSaaS。',
+    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
+    description: '競合のプレスリリースを毎日自動チェック・通知する競合リリース監視ツール。',
   },
   alternates: {
     canonical: 'https://reanker.com',

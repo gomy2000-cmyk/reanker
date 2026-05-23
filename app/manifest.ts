@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'ReAnker — 競合のプレスリリース・ニュースを自動監視',
+    name: 'ReAnker — 競合リリースを毎日自動チェックする監視ツール',
     short_name: 'ReAnker',
-    description: 'PR TIMES・Google Newsから競合企業の動きを自動取得し、Slackやメールで通知するBtoB向け競合監視SaaS。',
+    description: '競合企業のプレスリリースを毎日自動でチェックし、新着リリースをSlack・メールに通知する競合リリース監視ツール。',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

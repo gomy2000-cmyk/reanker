@@ -23,13 +23,13 @@ export function BlogCTA({ isAuthenticated = false }: Props) {
       </div>
 
       <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight mb-3 leading-snug">
-        競合の動きを、毎日自動でチェックしませんか？
+        競合のリリースを、毎日自動でチェックしませんか？
       </h2>
 
       <p className="text-sm sm:text-[15px] text-gray-700 leading-relaxed mb-6">
-        ReAnker（リアンカー）は、PR TIMES や Google News などから競合企業・注目キーワードの新着情報を自動で収集し、
-        必要な情報だけを通知できる競合モニタリングツールです。
-        新サービスの発表、導入事例、資金調達、キャンペーン情報などを毎日チェックできます。
+        ReAnker（リアンカー）は、競合企業のプレスリリースを毎日自動でチェックする <strong>競合リリース監視ツール</strong> です。
+        PR TIMES の新着リリースと Google News の関連報道を1ツールでまとめて把握。
+        新サービス・資金調達・業務提携などの発表を、毎朝1通の通知で見逃しません。
       </p>
 
       <div className="flex flex-col sm:flex-row gap-2.5">
