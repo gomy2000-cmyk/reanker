@@ -2,8 +2,8 @@
 title: "BtoBコンテンツマーケティングの始め方｜KW設計から運用フローまで"
 description: "BtoBコンテンツマーケティングを6ヶ月で立ち上げる実務的な進め方。KW選定、編集体制、CV導線設計、効果測定までを順を追って解説します。"
 ogTitle: "BtoBコンテンツマーケの始め方"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-06-01"
+updatedAt: "2026-06-01"
 category: "btob-marketing"
 tags: ["コンテンツマーケティング", "BtoB", "SEO", "KW選定"]
 ---

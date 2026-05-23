@@ -2,8 +2,8 @@
 title: "PR TIMES と @Press の違い｜配信プラットフォーム5社の比較"
 description: "PR TIMES・@Press・共同通信PRワイヤー・Dream News・valuepressの違いを、料金・配信先メディア・SEO効果・操作性で比較。用途別の選び方を解説します。"
 ogTitle: "PR TIMES vs @Press 配信プラットフォーム比較"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-05-30"
+updatedAt: "2026-05-30"
 category: "pr-and-publicity"
 tags: ["PR TIMES", "@Press", "プレスリリース配信", "比較"]
 ---

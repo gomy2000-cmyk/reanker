@@ -2,8 +2,8 @@
 title: "BtoBリード獲得の手法10選｜オンライン・オフラインの実務的な打ち手"
 description: "BtoBのリード獲得手法を、コスト・成果が出るまでの期間・運用負荷で比較。オンライン・オフライン10種類の打ち手を、向き不向きと合わせて解説します。"
 ogTitle: "BtoBリード獲得 10の手法と選び方"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-05-28"
+updatedAt: "2026-05-28"
 category: "btob-marketing"
 tags: ["BtoB", "リード獲得", "施策", "比較"]
 ---

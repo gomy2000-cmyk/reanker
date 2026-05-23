@@ -2,8 +2,8 @@
 title: "ABM（アカウントベースドマーケティング）とは｜実務的な始め方"
 description: "ABMの基本概念と、中小企業でも始められる実務的な進め方を解説。ターゲットアカウント選定からチャネル設計、効果測定までのフローを整理します。"
 ogTitle: "ABMとは｜実務的な始め方"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-06-09"
+updatedAt: "2026-06-09"
 category: "btob-marketing"
 tags: ["ABM", "BtoB", "アカウントベース", "営業連携"]
 ---

@@ -50,17 +50,32 @@ export function getAllBlogSlugs(): string[] {
     .map((f) => f.replace(/\.md$/, ''))
 }
 
-export function getBlogPost(slug: string): BlogPost | null {
+export function getBlogPost(slug: string, includeFuture = false): BlogPost | null {
   try {
-    return readFrontmatter(slug)
+    const post = readFrontmatter(slug)
+    if (!includeFuture && !isPublished(post.publishedAt)) return null
+    return post
   } catch {
     return null
   }
 }
 
-export function getAllBlogPosts(): BlogPost[] {
+/**
+ * 未来日付の記事は「予約投稿」として一覧から除外する。
+ * publishedAt が今日（ローカル日付）より後の記事は出さない。
+ * detail ページ（getBlogPost）は直接URLで触れるが、sitemap・一覧には載らない。
+ */
+function isPublished(publishedAt: string): boolean {
+  if (!publishedAt) return true
+  // 'YYYY-MM-DD' 比較で十分（ISO 文字列でも先頭10文字が日付）
+  const today = new Date().toISOString().slice(0, 10)
+  return publishedAt.slice(0, 10) <= today
+}
+
+export function getAllBlogPosts(includeFuture = false): BlogPost[] {
   return getAllBlogSlugs()
     .map((slug) => readFrontmatter(slug))
+    .filter((p) => includeFuture || isPublished(p.publishedAt))
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
 

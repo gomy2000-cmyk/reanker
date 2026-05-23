@@ -2,8 +2,8 @@
 title: "BtoB SaaSのマーケファネル設計｜AIDA から PLG まで使い分け"
 description: "BtoB SaaSのマーケファネル設計を、AIDA・AARRR・PLGモデルの3軸で整理。プロダクトの特性に応じた選び方と、各ステージのKPIまで解説します。"
 ogTitle: "BtoB SaaSのマーケファネル設計"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-06-21"
+updatedAt: "2026-06-21"
 category: "btob-marketing"
 tags: ["BtoB SaaS", "ファネル", "AIDA", "AARRR", "PLG"]
 ---

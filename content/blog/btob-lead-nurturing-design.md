@@ -2,8 +2,8 @@
 title: "BtoBナーチャリングの設計｜リード育成フローを6ステップで組む"
 description: "BtoBのリードナーチャリングを、ステージ分け・コンテンツ設計・配信頻度・営業引き渡しまで実務的に解説。MA運用と組み合わせた基本フローを整理します。"
 ogTitle: "BtoBナーチャリングの設計"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-06-17"
+updatedAt: "2026-06-17"
 category: "btob-marketing"
 tags: ["ナーチャリング", "リード育成", "BtoB", "MA"]
 ---

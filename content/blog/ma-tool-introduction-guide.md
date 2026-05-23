@@ -2,8 +2,8 @@
 title: "BtoB向けMAツール導入の進め方｜選定基準と運用設計の実務"
 description: "BtoBのMA（マーケティングオートメーション）ツール導入を、選定基準・運用体制・初期設定の優先順位で整理。導入後に失敗しがちなポイントも解説します。"
 ogTitle: "BtoB向けMAツール導入の進め方"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-06-13"
+updatedAt: "2026-06-13"
 category: "btob-marketing"
 tags: ["MA", "マーケティングオートメーション", "BtoB", "ツール選定"]
 ---

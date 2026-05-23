@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { ChevronLeft, ArrowRight } from 'lucide-react'
-import { getBlogPost, getAllBlogSlugs, getRelatedPosts, getAllBlogPosts } from '@/lib/blog'
+import { getBlogPost, getRelatedPosts, getAllBlogPosts } from '@/lib/blog'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
 import { BlogSidebar } from '@/components/blog/BlogSidebar'
@@ -14,7 +14,8 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return getAllBlogSlugs().map((slug) => ({ slug }))
+  // 未来日付（予約投稿）の記事はビルド時に生成しない
+  return getAllBlogPosts().map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

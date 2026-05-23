@@ -2,8 +2,8 @@
 title: "BtoBカスタマーサクセスとマーケの連携｜LTV最大化のための分業設計"
 description: "BtoBカスタマーサクセス（CS）とマーケティングの連携で、LTV・解約率・アップセル率を改善する実務フローを解説。CSが持つ顧客知見をマーケに活かす設計を整理します。"
 ogTitle: "BtoBカスタマーサクセスとマーケの連携"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-07-07"
+updatedAt: "2026-07-07"
 category: "btob-marketing"
 tags: ["カスタマーサクセス", "BtoB", "LTV", "解約防止"]
 ---

@@ -2,8 +2,8 @@
 title: "BtoBマーケのKPI設計｜リード数だけでは見えない指標を実務で組む"
 description: "BtoBマーケのKPIを、リード数・商談化数・受注金額の3層で設計する実務的な方法を解説。チャネル別・施策別の指標の組み方も整理します。"
 ogTitle: "BtoBマーケのKPI設計"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-07-03"
+updatedAt: "2026-07-03"
 category: "btob-marketing"
 tags: ["KPI", "BtoB", "マーケティング指標", "目標設計"]
 ---

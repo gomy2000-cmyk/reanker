@@ -2,8 +2,8 @@
 title: "ウェビナー運用の基本｜BtoBマーケで成果を出す設計と運営フロー"
 description: "BtoBウェビナーを継続的に運用して成果を出すための実務フロー。テーマ選定・集客・当日運営・追客の4フェーズを整理し、定着のコツを解説します。"
 ogTitle: "ウェビナー運用の基本｜BtoBマーケ"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-06-29"
+updatedAt: "2026-06-29"
 category: "btob-marketing"
 tags: ["ウェビナー", "BtoB", "リード獲得", "マーケティング"]
 ---

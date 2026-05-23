@@ -2,8 +2,8 @@
 title: "BtoBマーケティングとは？基礎・BtoCとの違い・主要施策を実務目線で解説"
 description: "BtoBマーケティングの全体像を、実務担当者の視点で整理。BtoCとの違い、リード獲得から商談化までの基本ファネル、押さえるべき主要施策を解説します。"
 ogTitle: "BtoBマーケティングとは｜基礎と主要施策"
-publishedAt: "2026-05-23"
-updatedAt: "2026-05-23"
+publishedAt: "2026-05-24"
+updatedAt: "2026-05-24"
 category: "btob-marketing"
 tags: ["BtoBマーケティング", "基礎", "リード獲得", "ファネル"]
 ---
