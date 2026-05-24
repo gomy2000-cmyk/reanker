@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
+import { GoogleTagManager } from '@next/third-parties/google'
 import './globals.css'
 import { Providers } from './providers'
-import { GTMScript, GTMNoScript } from '@/components/GTM'
 import { GTMPageView } from '@/components/GTMPageView'
+
+// 診断のため：env var が空でもハードコード値で必ず GTM を出す
+// （Vercel の NEXT_PUBLIC_GTM_ID 設定確認後、フォールバックは削除して `|| ''` に戻してよい）
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-MQBBQ2C4'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -66,11 +70,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <head>
-        <GTMScript />
-      </head>
+      {/* Next.js 16 公式の Google Tag Manager コンポーネント。
+          <html> 直下に置くのが正しい（<head> 内に raw <script> を入れる旧手法は
+          App Router の <head> 管理と干渉して出力されないことがある）。
+          GoogleTagManager が <script> + noscript <iframe> を両方適切に出力する。 */}
+      <GoogleTagManager gtmId={GTM_ID} />
       <body className={`${inter.className} bg-gray-50 text-gray-900`}>
-        <GTMNoScript />
         <Suspense fallback={null}>
           <GTMPageView />
         </Suspense>
