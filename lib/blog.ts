@@ -50,10 +50,18 @@ export function getAllBlogSlugs(): string[] {
     .map((f) => f.replace(/\.md$/, ''))
 }
 
-export function getBlogPost(slug: string, includeFuture = false): BlogPost | null {
+/**
+ * 詳細ページ用：未来日付の記事もデフォルトで返す（直接URLアクセスは許可）。
+ * 一覧・sitemap には載らないが、記事内のリンクから辿った場合は読める。
+ * これにより記事間の内部リンクが常に有効になる（404を回避）。
+ *
+ * もし「直接URLでも未来記事を完全に隠したい」場合は
+ * getBlogPost(slug, { onlyPublished: true }) を渡す。
+ */
+export function getBlogPost(slug: string, opts: { onlyPublished?: boolean } = {}): BlogPost | null {
   try {
     const post = readFrontmatter(slug)
-    if (!includeFuture && !isPublished(post.publishedAt)) return null
+    if (opts.onlyPublished && !isPublished(post.publishedAt)) return null
     return post
   } catch {
     return null
@@ -79,10 +87,11 @@ export function getAllBlogPosts(includeFuture = false): BlogPost[] {
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
 
-/** 関連記事：同カテゴリ・同タグから N 件（自分自身は除く） */
+/** 関連記事：同カテゴリ・同タグから N 件（自分自身は除く、未公開記事は表示しない） */
 export function getRelatedPosts(slug: string, limit = 3): BlogPostMeta[] {
-  const all = getAllBlogPosts()
-  const target = all.find((p) => p.slug === slug)
+  const all = getAllBlogPosts() // 公開済みのみ
+  // target が未来記事の場合は all に含まれないので、自分のメタを別途取得
+  const target = all.find((p) => p.slug === slug) || readFrontmatter(slug)
   if (!target) return []
   const others = all.filter((p) => p.slug !== slug)
   // スコア: 同カテゴリ +2, タグの一致1個ごとに +1

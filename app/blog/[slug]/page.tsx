@@ -54,6 +54,21 @@ function formatDate(iso: string): string {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
 
+/**
+ * 記事HTMLを中盤の <h2> で2分割する。
+ * 中部CTAを挿入するため。
+ * H2が2つ以上ある記事のみ分割、それ以下はそのまま全文を返す。
+ */
+function splitAtMiddleH2(html: string): [string, string] | null {
+  const h2Positions: number[] = []
+  const re = /<h2\b/gi
+  let m: RegExpExecArray | null
+  while ((m = re.exec(html))) h2Positions.push(m.index)
+  if (h2Positions.length < 4) return null // 中部CTA挿入するには H2 4個以上ほしい
+  const mid = h2Positions[Math.floor(h2Positions.length / 2)]
+  return [html.slice(0, mid), html.slice(mid)]
+}
+
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
   const post = getBlogPost(slug)
@@ -140,14 +155,33 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           )}
 
-          {/* 本文 */}
-          <div
-            className="blog-content"
-            dangerouslySetInnerHTML={{ __html: post.html }}
-          />
+          {/* === CTA: 記事上部（compact） === */}
+          <BlogCTA isAuthenticated={isAuthenticated} variant="compact" />
 
-          {/* 共通CTA */}
-          <BlogCTA isAuthenticated={isAuthenticated} />
+          {/* 本文（中盤H2で分割し、中部CTAを挟む） */}
+          {(() => {
+            const split = splitAtMiddleH2(post.html)
+            if (!split) {
+              return (
+                <div
+                  className="blog-content"
+                  dangerouslySetInnerHTML={{ __html: post.html }}
+                />
+              )
+            }
+            const [first, second] = split
+            return (
+              <>
+                <div className="blog-content" dangerouslySetInnerHTML={{ __html: first }} />
+                {/* === CTA: 記事中部（compact） === */}
+                <BlogCTA isAuthenticated={isAuthenticated} variant="compact" />
+                <div className="blog-content" dangerouslySetInnerHTML={{ __html: second }} />
+              </>
+            )
+          })()}
+
+          {/* === CTA: 記事最下部（full + ダッシュボード画像） === */}
+          <BlogCTA isAuthenticated={isAuthenticated} variant="full" />
 
           {/* 関連記事 */}
           {related.length > 0 && (
