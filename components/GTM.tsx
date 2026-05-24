@@ -1,16 +1,21 @@
-import Script from 'next/script'
-import { GTM_ENABLED, GTM_ID } from '@/lib/analytics'
+import { GTM_ID } from '@/lib/analytics'
 
 /**
- * <head> に挿入する GTM スニペット。
- * 本番 (NODE_ENV === 'production') かつ NEXT_PUBLIC_GTM_ID が設定されている場合のみ読み込む。
+ * <head> に挿入する GTM スニペット（生の <script>）。
+ *
+ * 仕様：
+ * - NEXT_PUBLIC_GTM_ID が設定されている場合のみ出力する
+ * - 値が空なら何も出さない（アプリは落ちない）
+ * - next/script ではなく素の <script> を server-render することで、
+ *   first-paint 前から HTML に確実に含まれる（View Source でも見える）
+ * - NODE_ENV のゲートは外した。Vercel 側で Production 環境にだけ
+ *   NEXT_PUBLIC_GTM_ID をセットすれば、結果として本番のみで動く
  */
 export function GTMScript() {
-  if (!GTM_ENABLED) return null
+  if (!GTM_ID) return null
   return (
-    <Script
-      id="gtm-init"
-      strategy="afterInteractive"
+    <script
+      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{
         __html: `
 (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -28,7 +33,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
  * <body> 直後に挿入する noscript フォールバック。
  */
 export function GTMNoScript() {
-  if (!GTM_ENABLED) return null
+  if (!GTM_ID) return null
   return (
     <noscript>
       <iframe

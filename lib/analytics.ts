@@ -8,10 +8,12 @@ declare global {
 }
 
 export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || ''
-export const GTM_ENABLED =
-  typeof GTM_ID === 'string' &&
-  GTM_ID.length > 0 &&
-  process.env.NODE_ENV === 'production'
+/**
+ * GTM が有効か。NEXT_PUBLIC_GTM_ID が設定されていれば有効。
+ * 本番のみで動かしたい場合は Vercel の Environment を Production に絞って
+ * 環境変数をセットすれば、結果として本番のみ動く。
+ */
+export const GTM_ENABLED = typeof GTM_ID === 'string' && GTM_ID.length > 0
 
 /**
  * dataLayer.push の薄いラッパー。
