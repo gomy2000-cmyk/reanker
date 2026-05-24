@@ -1,14 +1,12 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
-import { GoogleTagManager } from '@next/third-parties/google'
 import './globals.css'
 import { Providers } from './providers'
 import { GTMPageView } from '@/components/GTMPageView'
 
-// 診断のため：env var が空でもハードコード値で必ず GTM を出す
-// （Vercel の NEXT_PUBLIC_GTM_ID 設定確認後、フォールバックは削除して `|| ''` に戻してよい）
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-MQBBQ2C4'
+// 診断用：env var ではなくハードコード直書きで本番HTMLに出るか切り分け
+const GTM_ID = 'GTM-MQBBQ2C4'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -67,15 +65,39 @@ export const viewport: Viewport = {
   themeColor: '#378ADD',
 }
 
+// Google Tag Manager - 古典的スニペット（inline script + noscript iframe）
+// 診断のため、env var ではなくハードコードで直書きする。
+// インライン script 内に 'https://www.googletagmanager.com/gtm.js?id=GTM-MQBBQ2C4' の
+// URL文字列が含まれるため、curl での grep 確認が可能。
+const GTM_HEAD_SCRIPT = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      {/* Next.js 16 公式の Google Tag Manager コンポーネント。
-          <html> 直下に置くのが正しい（<head> 内に raw <script> を入れる旧手法は
-          App Router の <head> 管理と干渉して出力されないことがある）。
-          GoogleTagManager が <script> + noscript <iframe> を両方適切に出力する。 */}
-      <GoogleTagManager gtmId={GTM_ID} />
+      <head>
+        {/* Google Tag Manager - 古典的スニペット（head 内 inline script） */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: GTM_HEAD_SCRIPT }}
+        />
+        {/* End Google Tag Manager */}
+      </head>
       <body className={`${inter.className} bg-gray-50 text-gray-900`}>
+        {/* Google Tag Manager (noscript) - body 開始直後 */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
+
         <Suspense fallback={null}>
           <GTMPageView />
         </Suspense>
