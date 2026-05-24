@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/terms`,    lastModified: now, changeFrequency: 'yearly',  priority: 0.4 },
     { url: `${SITE_URL}/privacy`,  lastModified: now, changeFrequency: 'yearly',  priority: 0.4 },
     { url: `${SITE_URL}/legal`,    lastModified: now, changeFrequency: 'yearly',  priority: 0.4 },
+    { url: `${SITE_URL}/operator`, lastModified: now, changeFrequency: 'yearly',  priority: 0.4 },
   ]
 
   const posts = getAllBlogPosts().map<MetadataRoute.Sitemap[number]>((post) => ({

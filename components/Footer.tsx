@@ -41,6 +41,7 @@ export function Footer() {
           <div>
             <p className="text-[11px] font-semibold text-gray-500 tracking-wider uppercase mb-3">法務</p>
             <ul className="space-y-2 text-xs">
+              <li><Link href="/operator" className="text-gray-600 hover:text-[#378ADD] transition-colors">運営者情報</Link></li>
               <li><Link href="/terms" className="text-gray-600 hover:text-[#378ADD] transition-colors">利用規約</Link></li>
               <li><Link href="/privacy" className="text-gray-600 hover:text-[#378ADD] transition-colors">プライバシーポリシー</Link></li>
               <li><Link href="/legal" className="text-gray-600 hover:text-[#378ADD] transition-colors">特定商取引法に基づく表記</Link></li>
@@ -53,7 +54,9 @@ export function Footer() {
             © {new Date().getFullYear()} ReAnker. All rights reserved.
           </p>
           <p className="text-[11px] text-gray-400">
-            運営：Shoebill ／ お問い合わせ：<a href="mailto:support@reanker.com" className="hover:text-[#378ADD]">support@reanker.com</a>
+            運営：<Link href="/operator" className="hover:text-[#378ADD]">商陣 / SYOJIN</Link>
+            <span className="mx-1">／</span>
+            お問い合わせ：<a href="mailto:support@reanker.com" className="hover:text-[#378ADD]">support@reanker.com</a>
           </p>
         </div>
       </div>

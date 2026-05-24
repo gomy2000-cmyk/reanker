@@ -32,14 +32,14 @@ export default function LegalPage() {
         <table className="w-full">
           <tbody>
             <Row label="販売事業者名">
-              {/* TODO: 個人事業主の場合は屋号ではなく本名を記載するのが原則。法人化後は法人名 */}
-              Reanker（運営者：[氏名を入力してください]）
+              商陣 / SYOJIN（運営サービス：ReAnker）
             </Row>
             <Row label="運営責任者">
-              [氏名を入力してください]
+              小林 豪
             </Row>
             <Row label="所在地">
-              請求があり次第、遅滞なく開示いたします。ご希望の方は下記お問い合わせ先までご連絡ください。
+              神奈川県横浜市
+              <p className="text-xs text-gray-500 mt-1">詳細な所在地は、請求があり次第、遅滞なく開示いたします。下記お問い合わせ先までご連絡ください。</p>
             </Row>
             <Row label="電話番号">
               請求があり次第、遅滞なく開示いたします。ご希望の方は下記お問い合わせ先までご連絡ください。
