@@ -27,6 +27,12 @@ const SOURCE_COLOR = { prtimes: 'bg-blue-100 text-blue-700', googlenews: 'bg-gra
 export function AnchorClient({ user, keyword, initialItems }: Props) {
   const router = useRouter()
   const [items, setItems] = useState(initialItems)
+
+  // router.refresh() 後に Server Component から新しい initialItems が来たとき state を同期する
+  // （useState の初期値は初回マウント時にしか使われないため、明示的に同期が必要）
+  useEffect(() => {
+    setItems(initialItems)
+  }, [initialItems])
   const [filter, setFilter] = useState<'all' | 'unread' | 'read' | 'clipped'>('all')
   const [pageSize, setPageSize] = useState(25)
   const [page, setPage] = useState(1)
