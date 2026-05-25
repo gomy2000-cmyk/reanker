@@ -1,113 +1,118 @@
 /**
- * プラン制御の共通ロジック。
+ * プラン制御ロジック。
+ * Free / Standard の違いをここに集約する。
  *
- * 重要: UI 表示制御だけでなく、API ルートと Cron 内でも必ずこのモジュールで判定すること。
- * フロントだけで隠しても curl/Postman で叩かれたら破られる。
+ * Free  : アンカー3件まで、月・水・金のみ取得、Slack通知不可、レポート閲覧不可
+ * Standard: アンカー無制限、毎日取得、Slack + メール両対応、レポート閲覧可
  */
 
-export type Plan = 'free' | 'standard'
+import type { Plan } from './types'
 
-export interface PlanLimits {
-  /** 同時登録可能なアンカー数 */
-  maxAnchors: number
-  /** JST 基準で取得を実行する曜日（0=日 〜 6=土） */
-  fetchDays: readonly number[]
-  /** UI 表示用の頻度ラベル */
-  fetchFrequencyLabel: string
-  /** Slack 通知が使えるか */
-  slackNotification: boolean
-  /** メール通知が使えるか */
-  emailNotification: boolean
-  /** CSV/PDF エクスポートが使えるか */
-  export: boolean
-  /** /reports（週次/月次サマリ）の詳細閲覧が可能か */
-  reports: boolean
-  /** Markdown コピーが使えるか */
-  reportCopy: boolean
-}
+export type { Plan }
 
-export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
+// ---------- プラン上限定義 ----------
+
+export const PLAN_LIMITS: Record<Plan, {
+  maxAnchors: number       // 登録できるアンカー数（-1 = 無制限）
+  fetchDaysPerWeek: number // 週に何日取得するか
+  slackNotify: boolean     // Slack通知の可否
+  emailNotify: boolean     // メール通知の可否
+  reports: boolean         // レポート機能の可否
+}> = {
   free: {
     maxAnchors: 3,
-    // JS Date.getDay(): 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
-    fetchDays: [1, 3, 5], // 月・水・金
-    fetchFrequencyLabel: '週3回（月・水・金）',
-    slackNotification: false,
-    emailNotification: true,
-    export: false,
+    fetchDaysPerWeek: 3,
+    slackNotify: false,
+    emailNotify: true,
     reports: false,
-    reportCopy: false,
   },
   standard: {
-    maxAnchors: Number.POSITIVE_INFINITY,
-    fetchDays: [0, 1, 2, 3, 4, 5, 6],
-    fetchFrequencyLabel: '毎日',
-    slackNotification: true,
-    emailNotification: true,
-    export: true,
+    maxAnchors: -1,
+    fetchDaysPerWeek: 7,
+    slackNotify: true,
+    emailNotify: true,
     reports: true,
-    reportCopy: true,
   },
-} as const
+}
 
-/** plan 文字列を安全に Plan 型に正規化（DBの想定外値に備える） */
+// ---------- ユーティリティ ----------
+
+/**
+ * DB の plan 文字列を型安全な Plan に正規化する。
+ * 未知の値や null は 'free' として扱う。
+ */
 export function normalizePlan(plan: string | null | undefined): Plan {
   return plan === 'standard' ? 'standard' : 'free'
 }
 
-export function isStandardPlan(plan: string | null | undefined): boolean {
-  return normalizePlan(plan) === 'standard'
+export function isStandardPlan(plan: Plan): boolean {
+  return plan === 'standard'
 }
 
-/** アンカーをさらに登録できるか */
-export function canCreateAnchor(plan: Plan, currentCount: number): boolean {
-  return currentCount < PLAN_LIMITS[plan].maxAnchors
+/**
+ * そのプランで今日（JST基準）取得を実行すべきか判定する。
+ * - Standard: 毎日 true
+ * - Free    : 月(1) / 水(3) / 金(5) のみ true
+ *
+ * @param now UTC の Date オブジェクト（Vercel サーバー時刻）
+ */
+export function isFetchDayJST(plan: Plan, now: Date): boolean {
+  if (plan === 'standard') return true
+
+  // UTC → JST (+9h) に変換して曜日を取得
+  const jstMs = now.getTime() + 9 * 60 * 60 * 1000
+  const jst = new Date(jstMs)
+  const dow = jst.getUTCDay() // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+
+  // Free は月(1)・水(3)・金(5) のみ
+  return dow === 1 || dow === 3 || dow === 5
 }
 
+/**
+ * そのプランで Slack 通知を送れるか。
+ * Free は Slack 不可（メールのみ）。
+ */
 export function canUseSlackNotification(plan: Plan): boolean {
-  return PLAN_LIMITS[plan].slackNotification
+  return PLAN_LIMITS[plan].slackNotify
 }
 
-export function canUseExport(plan: Plan): boolean {
-  return PLAN_LIMITS[plan].export
+/**
+ * そのプランで新しいアンカーを作成できるか。
+ * Free は上限3件。Standard は無制限（-1）。
+ */
+export function canCreateAnchor(plan: Plan, currentCount: number): boolean {
+  const max = PLAN_LIMITS[plan].maxAnchors
+  if (max === -1) return true
+  return currentCount < max
 }
 
+/**
+ * そのプランでレポート機能を使えるか。
+ * Standard のみ。
+ */
 export function canUseReports(plan: Plan): boolean {
   return PLAN_LIMITS[plan].reports
 }
 
-export function canUseReportCopy(plan: Plan): boolean {
-  return PLAN_LIMITS[plan].reportCopy
-}
-
 /**
- * 「今日（JST基準）」が、与えられたプランの取得対象曜日か。
- * Vercel Cron は UTC で動くので、今を JST に変換してから判定する。
+ * プラン制限エラーのレスポンスボディを生成する。
+ * API ルートで `return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })` のように使う。
+ *
+ * @param reason  どの制限に引っかかったかのキー（ログ・デバッグ用）
  */
-export function isFetchDayJST(plan: Plan, now: Date = new Date()): boolean {
-  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
-  const day = jst.getUTCDay() // 0..6
-  return PLAN_LIMITS[plan].fetchDays.includes(day)
-}
-
-/** JST の現在日付の曜日（0..6）を返す */
-export function getJSTDay(now: Date = new Date()): number {
-  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
-  return jst.getUTCDay()
-}
-
-/** プラン制限エラーのレスポンス body 生成（API側で共通使用） */
-export function planLimitErrorBody(reason: 'anchor_limit' | 'slack' | 'export' | 'reports') {
-  const messages: Record<typeof reason, string> = {
-    anchor_limit:
-      'Freeプランで登録できるアンカーは3件までです。Standardプランにアップグレードすると、アンカーを無制限に登録できます。',
-    slack: 'Slack通知はStandardプランで利用できます。',
-    export: 'エクスポート機能はStandardプランで利用できます。',
-    reports: '週次・月次サマリはStandardプランで利用できます。',
+export function planLimitErrorBody(reason: 'anchor_limit' | 'slack' | 'reports' | string): {
+  error: string
+  reason: string
+  upgrade: boolean
+} {
+  const messages: Record<string, string> = {
+    anchor_limit: 'アンカーの登録数が上限に達しています。スタンダードプランにアップグレードすると無制限に登録できます。',
+    slack: 'Slack通知はスタンダードプランでご利用いただけます。',
+    reports: 'レポート機能はスタンダードプランでご利用いただけます。',
   }
   return {
-    error: 'PLAN_LIMIT',
+    error: messages[reason] ?? 'この機能はスタンダードプランでご利用いただけます。',
     reason,
-    message: messages[reason],
+    upgrade: true,
   }
 }
