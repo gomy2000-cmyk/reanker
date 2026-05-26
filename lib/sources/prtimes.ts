@@ -32,6 +32,11 @@ export const prtimesSource: SourceFetcher = {
       const res = await fetch(url, { headers: { 'User-Agent': UA } })
       const duration_ms = Date.now() - start
 
+      // PR TIMES は検索結果0件のとき HTTP 404 を返す → これは「ヒットなし」、エラー扱いしない
+      if (res.status === 404) {
+        return { items: [], http_status: 404, error: null, duration_ms }
+      }
+
       if (!res.ok) {
         return {
           items: [],
@@ -44,11 +49,18 @@ export const prtimesSource: SourceFetcher = {
       const html = await res.text()
       const items = parsePRTimesHtml(html, targetDate)
 
-      // 構造変化検知: HTMLは返ってきたのに記事カードが0件 → セレクタ崩壊の疑い
-      if (items.length === 0) {
+      // 構造変化検知:
+      //   - 「検索結果: 0件」テキストが含まれる → 本当にヒット0件（正常）
+      //   - そのテキストすら無い + カード0件 → セレクタ崩壊の疑い（要修正）
+      if (items.length === 0 && !targetDate) {
         const $ = cheerio.load(html)
         const cardCount = $('article[class*="release-card_article"]').length
-        if (cardCount === 0 && !targetDate) {
+        const totalText = $('[class*="search-result-total"]').text() // "検索結果：N件"
+        const isGenuineZero =
+          /検索結果[：:]\s*0\s*件/.test(totalText) ||
+          /検索結果[：:]\s*0\s*件/.test(html)
+
+        if (cardCount === 0 && !isGenuineZero) {
           return {
             items: [],
             http_status: res.status,
