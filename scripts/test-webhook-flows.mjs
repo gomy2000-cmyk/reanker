@@ -3,7 +3,7 @@
 import crypto from 'node:crypto'
 
 const WEBHOOK_URL = 'https://www.reanker.com/api/stripe/webhook'
-const WEBHOOK_SECRET = 'whsec_1dgC4hJ6H0lM5wpUmWRqKwNPJRVp7LPI'
+const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? (() => { throw new Error('STRIPE_WEBHOOK_SECRET env var required') })()
 
 function sign(payload, secret) {
   const timestamp = Math.floor(Date.now() / 1000)
