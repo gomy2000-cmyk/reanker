@@ -13,15 +13,22 @@ const PRTIMES_BASE = 'https://prtimes.jp'
 const UA = 'Mozilla/5.0 (compatible; ReankerBot/1.0; +https://reanker.com)'
 
 /**
- * PR TIMES のキーワード検索結果ページから記事をスクレイピング。
- * URL例: https://prtimes.jp/topics/keywords/{query}
+ * PR TIMES の検索結果ページから記事をスクレイピング。
+ * URL: https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word={query}
  *
- * 実HTML構造（2026-05時点）:
- *   <article class="item item-ordinary">
- *     <h3 class="title-item"><a href="/main/html/rd/p/..."> タイトル </a></h3>
- *     <time datetime="2026-05-21T11:26:52+0900">22時間前</time>
- *     <a class="link-name-company"> 会社名 </a>
+ * （/topics/keywords/ は編集されたサブセットしか出ないため使わない）
+ *
+ * 実HTML構造（2026-05時点 / CSSモジュール）:
+ *   <article class="release-card_article__HASH">
+ *     <a class="release-card_link__HASH" href="/main/html/rd/p/...">
+ *       <h3 class="release-card_title__HASH"> タイトル </h3>
+ *       <time>21時間前</time>  または  <time>2026年5月22日 15時30分</time>
+ *     </a>
+ *     <a class="release-card_companyLink__HASH"> 会社名 </a>
  *   </article>
+ *
+ * 注意: クラス名末尾のハッシュはビルド毎に変わる可能性があるので、
+ * `[class*="release-card_article"]` のような部分一致セレクタを使う。
  *
  * @param query 検索キーワード（サービス名・キーワード・ドメインいずれも）
  * @param targetDate 取得対象日（YYYY-MM-DD、JST基準）。
@@ -31,7 +38,9 @@ export async function fetchPRTimes(
   query: string,
   targetDate: string | null
 ): Promise<ScrapedItem[]> {
-  const url = `${PRTIMES_BASE}/topics/keywords/${encodeURIComponent(query)}`
+  const url =
+    `${PRTIMES_BASE}/main/action.php?run=html&page=searchkey` +
+    `&search_word=${encodeURIComponent(query)}`
 
   try {
     const res = await fetch(url, { headers: { 'User-Agent': UA } })
@@ -44,23 +53,23 @@ export async function fetchPRTimes(
 
     const items: ScrapedItem[] = []
 
-    $('article.item').each((_, el) => {
+    $('article[class*="release-card_article"]').each((_, el) => {
       const $el = $(el)
 
-      // タイトル + URL: <h3 class="title-item"><a href="...">
-      const $titleLink = $el.find('h3.title-item a').first()
-      const title = $titleLink.text().trim()
+      // タイトル + URL: <a class="release-card_link_..."><h3 class="release-card_title_...">
+      const $titleLink = $el.find('a[class*="release-card_link"]').first()
       const href = $titleLink.attr('href')
+      const title = $titleLink.find('h3[class*="release-card_title"]').first().text().trim()
 
-      // 公開日時: <time datetime="2026-05-21T11:26:52+0900">
-      const datetime = $el.find('time[datetime]').first().attr('datetime')
+      // 公開日時: <time>21時間前</time> または <time>2026年5月22日 15時30分</time>
+      const timeText = $titleLink.find('time').first().text().trim()
 
       // 会社名（要約代わり）
-      const company = $el.find('.link-name-company').first().text().trim()
+      const company = $el.find('a[class*="release-card_companyLink"]').first().text().trim()
 
-      if (!title || !href || !datetime) return
+      if (!title || !href || !timeText) return
 
-      const parsed = parseISODateJST(datetime)
+      const parsed = parsePRTimesDate(timeText)
       if (!parsed) return
       if (targetDate && parsed.date !== targetDate) return
 
@@ -77,8 +86,7 @@ export async function fetchPRTimes(
     })
 
     if (items.length === 0 && targetDate) {
-      // デバッグ用：何件取得しようとして 0 件だったか
-      const allCount = $('article.item').length
+      const allCount = $('article[class*="release-card_article"]').length
       console.info(`[prtimes] "${query}" → ${allCount}件中 ${targetDate} 該当: 0`)
     }
 
@@ -87,6 +95,48 @@ export async function fetchPRTimes(
     console.error(`[prtimes] scrape error for "${query}":`, e)
     return []
   }
+}
+
+/**
+ * PR TIMES の <time> 内文字列を JST 基準の date + hour に変換。
+ * - "21時間前" / "5分前" / "30秒前" → 現在時刻 - N
+ * - "1日前" → 現在時刻 - 1日
+ * - "2026年5月22日 15時30分" → 絶対表記
+ */
+function parsePRTimesDate(input: string): { date: string; hour: number | null } | null {
+  if (!input) return null
+
+  // 絶対表記: "2026年5月22日 15時30分"
+  const abs = input.match(/(\d{4})年(\d{1,2})月(\d{1,2})日(?:\s+(\d{1,2})時(\d{1,2})分)?/)
+  if (abs) {
+    const date = `${abs[1]}-${abs[2].padStart(2, '0')}-${abs[3].padStart(2, '0')}`
+    return { date, hour: abs[4] ? Number(abs[4]) : null }
+  }
+
+  // 相対表記
+  const now = new Date()
+  const rel = input.match(/(\d+)\s*(秒|分|時間|日|週間|ヶ月)前/)
+  if (rel) {
+    const n = Number(rel[1])
+    const unit = rel[2]
+    const msPerUnit: Record<string, number> = {
+      '秒': 1000,
+      '分': 60 * 1000,
+      '時間': 60 * 60 * 1000,
+      '日': 24 * 60 * 60 * 1000,
+      '週間': 7 * 24 * 60 * 60 * 1000,
+      'ヶ月': 30 * 24 * 60 * 60 * 1000,
+    }
+    const past = new Date(now.getTime() - n * msPerUnit[unit])
+    const jstMs = past.getTime() + 9 * 60 * 60 * 1000
+    const jst = new Date(jstMs)
+    return {
+      date: jst.toISOString().split('T')[0],
+      hour: jst.getUTCHours(),
+    }
+  }
+
+  return null
 }
 
 /**
