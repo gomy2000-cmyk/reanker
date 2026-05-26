@@ -38,100 +38,134 @@ async function main() {
   const allAnchors = anchors as unknown as AnchorRow[]
   console.log(`\n=== Found ${allAnchors.length} anchors across ${new Set(allAnchors.map(a => a.user_id)).size} users ===\n`)
 
-  // ---------- Test 1: Smoke test ----------
-  console.log('## Test 1: 全アンカー Smoke')
+  // ---------- Test 1: Smoke test (status='ok' のみ pass) ----------
+  console.log('## Test 1: 全アンカー Smoke (status=ok 限定)')
   {
-    const errs: string[] = []
+    const issues: string[] = []
     for (const a of allAnchors) {
       const r = await runFetch(a.id, 'test', null)
-      if (r.status === 'error') {
-        errs.push(`${a.name} (${a.users.email}): ${r.error_message}`)
+      if (r.status !== 'ok') {
+        issues.push(`${a.name}: ${r.status} - ${JSON.stringify(r.sources)}`)
       }
     }
     record(
       'Test1: Smoke',
-      errs.length === 0,
-      errs.length === 0 ? `${allAnchors.length}件すべて ok/partial` : `失敗: ${errs.join(', ')}`
+      issues.length === 0,
+      issues.length === 0 ? `${allAnchors.length}件すべて status=ok` : `partial/error あり:\n   ${issues.join('\n   ')}`
     )
   }
 
-  // ---------- Test 2: アカウント間分離 ----------
-  console.log('## Test 2: アカウント間分離（警備フォース x 2ユーザー）')
+  // ---------- Test 2: アカウント間分離 + URL重複確認 ----------
+  console.log('## Test 2: アカウント間分離（両ユーザーで同一URLが個別保存されている）')
   {
     const keibiAnchors = allAnchors.filter(a => a.name === '警備フォース')
     if (keibiAnchors.length !== 2) {
       record('Test2: 分離', false, `期待 2件、実際 ${keibiAnchors.length}件`)
     } else {
       const [a1, a2] = keibiAnchors
-      const { count: c1 } = await supabaseAdmin
-        .from('items').select('id', { count: 'exact', head: true })
-        .eq('pickkw_id', a1.id).is('deleted_at', null)
-      const { count: c2 } = await supabaseAdmin
-        .from('items').select('id', { count: 'exact', head: true })
-        .eq('pickkw_id', a2.id).is('deleted_at', null)
-      const isolated = (c1 ?? 0) > 0 && (c2 ?? 0) > 0
+      // 両ユーザーで保存されている URL を比較し、重なりを検出する
+      const { data: items1 } = await supabaseAdmin
+        .from('items').select('url').eq('pickkw_id', a1.id).is('deleted_at', null)
+      const { data: items2 } = await supabaseAdmin
+        .from('items').select('url').eq('pickkw_id', a2.id).is('deleted_at', null)
+      const urls1 = new Set((items1 ?? []).map(i => i.url))
+      const urls2 = new Set((items2 ?? []).map(i => i.url))
+      const overlap = [...urls1].filter(u => urls2.has(u)).length
+      // 真の検証: 両ユーザーが「同一URLを共有」しつつ、pickkw_id 別に独立保存されている
+      const ok = overlap > 0 && urls1.size > 0 && urls2.size > 0
       record(
         'Test2: 分離',
-        isolated,
-        `${a1.users.email}=${c1}件, ${a2.users.email}=${c2}件 (両方>0なら分離OK)`
+        ok,
+        `user1=${urls1.size}件, user2=${urls2.size}件, 共有URL=${overlap}件 (overlap>0で「同URLを別pickkw_idに保存」=正しい分離)`
       )
     }
   }
 
-  // ---------- Test 3: 冪等性 ----------
-  console.log('## Test 3: 冪等性（同一アンカーで2連続）')
+  // -------- ヘルパー：一時アンカー作成 + items クリア --------
+  async function createCleanAnchor(name: string, query: string, userId: string) {
+    const { data } = await supabaseAdmin
+      .from('pick_keywords')
+      .insert({
+        user_id: userId, name, type: 'keyword', query_value: query,
+        sources: ['prtimes', 'googlenews'],
+        warmup_until: new Date(Date.now() + 86400000).toISOString(),
+      })
+      .select('id').single()
+    return data!.id as string
+  }
+  async function cleanup(anchorId: string) {
+    await supabaseAdmin.from('pick_keywords').delete().eq('id', anchorId)
+  }
+
+  const testUserId = allAnchors[0].user_id
+
+  // ---------- Test 3: 冪等性（クリーンなアンカーで saved→dup を確認） ----------
+  console.log('## Test 3: 冪等性（新規anchor: 1回目saved>0, 2回目全dup）')
   {
-    const anchor = allAnchors[0]
-    const r1 = await runFetch(anchor.id, 'test', null)
-    const r2 = await runFetch(anchor.id, 'test', null)
-    // 2回目は全件 dup or 0 saved + 0 errors であるべき
-    const idempotent = r2.total_errors === 0 && r2.total_saved === 0
+    const tmpId = await createCleanAnchor('__test3_idempotent__', 'kintone', testUserId)
+    const r1 = await runFetch(tmpId, 'test', null)
+    const r2 = await runFetch(tmpId, 'test', null)
+    const ok =
+      r1.total_saved > 0 &&            // 1回目は実際に保存
+      r2.total_saved === 0 &&          // 2回目は何も保存しない
+      r2.total_duplicate === r1.total_saved && // すべて dup
+      r2.total_errors === 0
     record(
       'Test3: 冪等',
-      idempotent,
-      `2回目: found=${r2.total_found} saved=${r2.total_saved} dup=${r2.total_duplicate} errors=${r2.total_errors}`
+      ok,
+      `r1: saved=${r1.total_saved} | r2: saved=${r2.total_saved} dup=${r2.total_duplicate} errors=${r2.total_errors}`
     )
+    await cleanup(tmpId)
   }
 
-  // ---------- Test 4: 並行実行 ----------
-  console.log('## Test 4: 並行実行（同一アンカーで Promise.all）')
+  // ---------- Test 4: 並行実行（クリーンanchor 3並列で正しく dedupされる） ----------
+  console.log('## Test 4: 並行実行（クリーンanchorに3並列：誰か1人がsaved、残りはdup、errors=0）')
   {
-    const anchor = allAnchors[0]
+    const tmpId = await createCleanAnchor('__test4_race__', 'Slack', testUserId)
     const [r1, r2, r3] = await Promise.all([
-      runFetch(anchor.id, 'test', null),
-      runFetch(anchor.id, 'test', null),
-      runFetch(anchor.id, 'test', null),
+      runFetch(tmpId, 'test', null),
+      runFetch(tmpId, 'test', null),
+      runFetch(tmpId, 'test', null),
     ])
-    const noFatal = r1.status !== 'error' && r2.status !== 'error' && r3.status !== 'error'
     const totalSaved = r1.total_saved + r2.total_saved + r3.total_saved
-    // 並行3回でも UNIQUE 違反は dup に吸収され errors=0 になるはず
+    const totalDup = r1.total_duplicate + r2.total_duplicate + r3.total_duplicate
     const totalErrors = r1.total_errors + r2.total_errors + r3.total_errors
+    const totalFoundSum = r1.total_found + r2.total_found + r3.total_found
+
+    // 実際に保存された unique URL 数
+    const { count: actualItems } = await supabaseAdmin
+      .from('items').select('id', { count: 'exact', head: true })
+      .eq('pickkw_id', tmpId).is('deleted_at', null)
+
+    // 期待値: errors=0、(saved+dup) === sum(found)、actualItems === totalSaved
+    const ok =
+      totalErrors === 0 &&
+      totalSaved > 0 &&
+      (totalSaved + totalDup) === totalFoundSum &&
+      actualItems === totalSaved
     record(
       'Test4: 並行',
-      noFatal && totalErrors === 0,
-      `3並行: saved合計=${totalSaved} errors合計=${totalErrors} (errors=0なら正常)`
+      ok,
+      `found合計=${totalFoundSum} saved=${totalSaved} dup=${totalDup} errors=${totalErrors} | DB実件数=${actualItems}`
     )
+    await cleanup(tmpId)
   }
 
-  // ---------- Test 5: fetch_runs / items 整合 ----------
-  console.log('## Test 5: fetch_runs の total_saved が実DBに反映されている')
+  // ---------- Test 5: fetch_runs.total_saved == 実DB差分 ----------
+  console.log('## Test 5: fetch_runs.total_saved と items 差分が一致（クリーンanchor）')
   {
-    const anchor = allAnchors[2] // 一旦clean に近い anchor を選ぶ
-    // 新規 anchor を作って取得→count検証する方が確実だが、既存anchorで確認
-    const before = await supabaseAdmin
+    const tmpId = await createCleanAnchor('__test5_integrity__', 'Notion', testUserId)
+    const r = await runFetch(tmpId, 'test', null)
+    const { count } = await supabaseAdmin
       .from('items').select('id', { count: 'exact', head: true })
-      .eq('pickkw_id', anchor.id).is('deleted_at', null)
-    const r = await runFetch(anchor.id, 'test', null)
-    const after = await supabaseAdmin
-      .from('items').select('id', { count: 'exact', head: true })
-      .eq('pickkw_id', anchor.id).is('deleted_at', null)
-    const delta = (after.count ?? 0) - (before.count ?? 0)
-    const match = delta === r.total_saved
+      .eq('pickkw_id', tmpId).is('deleted_at', null)
+    const ok = r.total_saved > 0 && count === r.total_saved
     record(
       'Test5: 整合',
-      match,
-      `runで saved=${r.total_saved}, items差分=${delta} (一致なら整合OK)`
+      ok,
+      `run.total_saved=${r.total_saved} / DB実件数=${count}`
     )
+    await cleanup(tmpId)
   }
 
   // ---------- Test 6: 存在しないアンカー ----------
