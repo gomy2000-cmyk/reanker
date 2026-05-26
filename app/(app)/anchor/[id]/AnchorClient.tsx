@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2, Bookmark, Trash2, Clock } from 'lucide-react'
 import type { User, PickKeyword, Item } from '@/lib/types'
 import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
+import { AnchorOnboardingHint } from '@/components/OnboardingBanner'
 
 interface FetchRun {
   id: string
@@ -323,6 +324,8 @@ export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props)
           </button>
         </div>
       </div>
+
+      <AnchorOnboardingHint hasItems={items.length > 0} />
 
       {fetchResult && (
         <div

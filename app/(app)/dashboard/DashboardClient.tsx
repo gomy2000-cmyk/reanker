@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { FileDown, Circle } from 'lucide-react'
 import type { User, PickKeyword, ItemWithKeyword } from '@/lib/types'
 import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
+import { OnboardingBanner } from '@/components/OnboardingBanner'
 
 interface Props {
   user: User
@@ -125,6 +126,13 @@ export function DashboardClient({ user, keywords, items }: Props) {
 
   return (
     <div>
+      {/* 新規ユーザー向けオンボーディング */}
+      <OnboardingBanner
+        anchorCount={keywords.length}
+        totalItems={items.length}
+        firstAnchorId={keywords[0]?.id}
+      />
+
       {/* ヘッダー */}
       <div className="flex items-center justify-between mb-6">
         <div>
