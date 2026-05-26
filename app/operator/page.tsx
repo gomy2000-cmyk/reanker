@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <tr className="border-b border-gray-100 last:border-0">
-    <th className="text-left text-xs font-medium text-gray-500 py-4 pr-4 align-top w-40 sm:w-48">{label}</th>
-    <td className="text-sm text-gray-800 py-4 leading-relaxed">{children}</td>
+    <th className="text-left text-xs font-medium text-gray-500 py-4 pl-5 sm:pl-6 pr-4 align-top w-40 sm:w-48">{label}</th>
+    <td className="text-sm text-gray-800 py-4 pr-5 sm:pr-6 leading-relaxed">{children}</td>
   </tr>
 )
 
