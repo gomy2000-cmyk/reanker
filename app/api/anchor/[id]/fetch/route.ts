@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
-import { fetchAndSaveForAnchor } from '@/lib/fetchAndSave'
+import { runFetch } from '@/lib/runFetch'
 
 export const maxDuration = 60
 
 /**
  * 個別アンカーの「今すぐ取得」エンドポイント。
  * UI から手動でトリガーする想定。日付フィルタなしで全件取得。
+ *
+ * すべての取得は lib/runFetch.ts の runFetch() を通る（cron と共通の入口）。
+ * 実行結果は fetch_runs テーブルに記録される。
  */
 export async function POST(
   _req: NextRequest,
@@ -19,7 +22,7 @@ export async function POST(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // 所有者チェック
+  // 所有者チェック（service_role を使うので RLS バイパス、明示的にチェックする）
   const { data: user } = await supabaseAdmin
     .from('users')
     .select('id')
@@ -29,7 +32,7 @@ export async function POST(
 
   const { data: anchor } = await supabaseAdmin
     .from('pick_keywords')
-    .select('id, query_value, sources, user_id')
+    .select('id, user_id')
     .eq('id', id)
     .single()
 
@@ -38,17 +41,18 @@ export async function POST(
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  // 日付フィルタなし → 検索結果ページに出ている分（最大10件）すべて取得
-  const result = await fetchAndSaveForAnchor(
-    { id: anchor.id, query_value: anchor.query_value, sources: anchor.sources },
-    null
-  )
+  const result = await runFetch(id, 'manual', null)
 
   return NextResponse.json({
-    ok: true,
-    found: result.found,
-    saved: result.saved,
-    skipped: result.skipped,
-    errors: result.errors,
+    ok: result.status !== 'error',
+    status: result.status,
+    run_id: result.run_id,
+    found: result.total_found,
+    saved: result.total_saved,
+    duplicate: result.total_duplicate,
+    errors: result.total_errors,
+    sources: result.sources,
+    duration_ms: result.duration_ms,
+    error_message: result.error_message,
   })
 }

@@ -1,4 +1,4 @@
-import type { SavedItem } from './fetchAndSave'
+import type { SavedItem } from './runFetch'
 
 export interface AnchorSummary {
   anchorName: string

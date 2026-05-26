@@ -3,9 +3,39 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2, Bookmark, Trash2 } from 'lucide-react'
+import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2, Bookmark, Trash2, Clock } from 'lucide-react'
 import type { User, PickKeyword, Item } from '@/lib/types'
 import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
+
+interface FetchRun {
+  id: string
+  trigger: 'manual' | 'cron' | 'test'
+  status: 'running' | 'ok' | 'partial' | 'error'
+  started_at: string
+  finished_at: string | null
+  sources: Record<string, {
+    found: number; saved: number; duplicate: number; errors: number
+    error_sample: string | null; http_status: number | null; duration_ms: number
+  }>
+  total_found: number
+  total_saved: number
+  total_duplicate: number
+  total_errors: number
+  duration_ms: number | null
+  error_message: string | null
+}
+
+function formatTimeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const m = Math.floor(diff / 60000)
+  if (m < 1) return 'たった今'
+  if (m < 60) return `${m}分前`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}時間前`
+  const d = Math.floor(h / 24)
+  if (d < 30) return `${d}日前`
+  return new Date(iso).toLocaleDateString('ja-JP')
+}
 
 interface PreviewData {
   title?: string
@@ -19,12 +49,13 @@ interface Props {
   user: User
   keyword: PickKeyword
   initialItems: Item[]
+  recentRuns: FetchRun[]
 }
 
 const SOURCE_LABEL = { prtimes: 'PR TIMES', googlenews: 'Google News' }
 const SOURCE_COLOR = { prtimes: 'bg-blue-100 text-blue-700', googlenews: 'bg-gray-100 text-gray-600' }
 
-export function AnchorClient({ user, keyword, initialItems }: Props) {
+export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props) {
   const router = useRouter()
   const [items, setItems] = useState(initialItems)
 
@@ -79,27 +110,39 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
       const res = await fetch(`/api/anchor/${keyword.id}/fetch`, { method: 'POST' })
       const data = await res.json()
       if (!res.ok) {
-        setFetchResult({ kind: 'err', message: data.error ?? '取得に失敗しました' })
+        setFetchResult({ kind: 'err', message: data.error ?? data.message ?? '取得に失敗しました' })
       } else {
-        const { found = 0, saved = 0, skipped = 0 } = data
+        const { found = 0, saved = 0, duplicate = 0, errors = 0, sources = {}, status = 'ok' } = data
+        const sourceSummary = Object.entries(sources as Record<string, { saved: number; duplicate: number; errors: number; error_sample: string | null }>)
+          .map(([name, s]) => {
+            const label = name === 'prtimes' ? 'PR TIMES' : 'Google News'
+            if (s.error_sample) return `${label}: エラー(${s.error_sample.slice(0, 30)})`
+            return `${label}: 新規${s.saved}件/既存${s.duplicate}件`
+          }).join(' / ')
+
         if (saved > 0) {
-          setFetchResult({ kind: 'ok', message: `新着 ${saved}件を取得しました（既存 ${skipped}件はスキップ）` })
-          // 新着があったら一覧をリロード
+          setFetchResult({ kind: 'ok', message: `✓ 新規 ${saved}件保存（${sourceSummary}）` })
           router.refresh()
+        } else if (errors > 0 && status === 'error') {
+          setFetchResult({ kind: 'err', message: `取得失敗: ${sourceSummary}` })
         } else if (found > 0) {
-          setFetchResult({ kind: 'ok', message: `新着なし（取得 ${found}件はすべて取得済）` })
+          setFetchResult({ kind: 'ok', message: `新着なし - ${sourceSummary}` })
         } else {
           setFetchResult({ kind: 'ok', message: '取得対象の記事がありませんでした' })
         }
+        // 履歴も更新するため router.refresh
+        router.refresh()
       }
     } catch (e: any) {
       setFetchResult({ kind: 'err', message: '通信エラーが発生しました' })
     } finally {
       setFetching(false)
-      // 5秒後にメッセージを消す
-      setTimeout(() => setFetchResult(null), 5000)
+      setTimeout(() => setFetchResult(null), 8000)
     }
   }
+
+  const lastRun = recentRuns[0]
+  const lastSuccessfulRun = recentRuns.find((r) => r.status === 'ok' || r.status === 'partial')
 
   const counts = useMemo(() => ({
     all: items.length,
@@ -207,6 +250,23 @@ export function AnchorClient({ user, keyword, initialItems }: Props) {
           <p className="text-xs text-gray-500 mt-0.5">
             {keyword.type === 'service' ? 'サービス名' : keyword.type === 'keyword' ? 'キーワード' : 'ドメイン'}
             ・<span className="font-mono">{keyword.query_value}</span>
+            {lastSuccessfulRun && (
+              <>
+                <span className="mx-1.5">・</span>
+                <Clock size={10} className="inline-block mr-1 -mt-0.5 text-gray-400" />
+                最終取得 {formatTimeAgo(lastSuccessfulRun.started_at)}
+                {lastSuccessfulRun.status === 'partial' && (
+                  <span className="ml-1 text-amber-600">⚠ 一部失敗</span>
+                )}
+              </>
+            )}
+            {lastRun && lastRun.status === 'error' && (
+              <>
+                <span className="mx-1.5">・</span>
+                <AlertCircle size={10} className="inline-block mr-1 -mt-0.5 text-red-500" />
+                <span className="text-red-600">前回取得失敗</span>
+              </>
+            )}
           </p>
         </div>
 

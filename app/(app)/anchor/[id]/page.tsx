@@ -16,14 +16,29 @@ export default async function AnchorPage({ params }: { params: Promise<{ id: str
 
   if (!keyword) notFound()
 
-  const { data: items } = await supabaseAdmin
-    .from('items')
-    .select('*')
-    .eq('pickkw_id', id)
-    .is('deleted_at', null)
-    .order('published_at', { ascending: false })
-    .order('created_at', { ascending: false })
-    .limit(500)
+  const [{ data: items }, { data: runs }] = await Promise.all([
+    supabaseAdmin
+      .from('items')
+      .select('*')
+      .eq('pickkw_id', id)
+      .is('deleted_at', null)
+      .order('published_at', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(500),
+    supabaseAdmin
+      .from('fetch_runs')
+      .select('id, trigger, status, started_at, finished_at, sources, total_found, total_saved, total_duplicate, total_errors, duration_ms, error_message')
+      .eq('pickkw_id', id)
+      .order('started_at', { ascending: false })
+      .limit(10),
+  ])
 
-  return <AnchorClient user={user} keyword={keyword} initialItems={items ?? []} />
+  return (
+    <AnchorClient
+      user={user}
+      keyword={keyword}
+      initialItems={items ?? []}
+      recentRuns={runs ?? []}
+    />
+  )
 }
