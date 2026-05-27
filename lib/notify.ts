@@ -147,8 +147,9 @@ export async function sendEmailDigest(
       <hr style="border:none;border-top:1px solid #eee;margin:28px 0 20px;">
       <div style="text-align:center;margin-bottom:24px;">
         <a href="${escapeAttr(dashboardUrl)}"
-           style="display:inline-block;background:#378ADD;color:#fff;text-decoration:none;
-                  font-size:14px;font-weight:600;padding:12px 32px;border-radius:6px;letter-spacing:.3px;">
+           style="display:inline-block;background:#111111;color:#ffffff;text-decoration:none;
+                  font-size:14px;font-weight:600;padding:12px 32px;border-radius:6px;letter-spacing:.3px;
+                  border-top:3px solid #378ADD;">
           ダッシュボードで全件確認 →
         </a>
       </div>

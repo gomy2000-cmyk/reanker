@@ -42,6 +42,18 @@ interface ErrorRow {
   issues: string[]
 }
 
+interface DupItem {
+  title: string
+  source: string
+  url: string
+  published_at: string
+}
+
+interface DupGroup {
+  representative: string
+  items: DupItem[]
+}
+
 interface Props {
   summary: {
     users_total: number
@@ -56,6 +68,7 @@ interface Props {
   anchors: AnchorRow[]
   dailyStats: DailyStat[]
   errors: ErrorRow[]
+  duplicates: DupGroup[]
 }
 
 function fmtDate(iso: string | null): string {
@@ -98,8 +111,22 @@ function Stat({ icon, label, value, sub, intent }: {
   )
 }
 
-export function AdminDashboard({ summary, users, anchors, dailyStats, errors }: Props) {
-  const [tab, setTab] = useState<'users' | 'anchors' | 'errors'>('users')
+const SOURCE_LABEL: Record<string, { label: string; cls: string }> = {
+  prtimes:    { label: 'PR TIMES',    cls: 'bg-blue-100 text-blue-700 border border-blue-200' },
+  googlenews: { label: 'Google ニュース', cls: 'bg-gray-100 text-gray-600 border border-gray-200' },
+}
+
+function SourceBadge({ source }: { source: string }) {
+  const s = SOURCE_LABEL[source] ?? { label: source, cls: 'bg-gray-100 text-gray-500 border border-gray-200' }
+  return (
+    <span className={`inline-block text-[10px] font-medium px-1.5 py-0.5 rounded whitespace-nowrap ${s.cls}`}>
+      {s.label}
+    </span>
+  )
+}
+
+export function AdminDashboard({ summary, users, anchors, dailyStats, errors, duplicates }: Props) {
+  const [tab, setTab] = useState<'users' | 'anchors' | 'errors' | 'duplicates'>('users')
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -173,7 +200,7 @@ export function AdminDashboard({ summary, users, anchors, dailyStats, errors }: 
         </section>
 
         {/* タブ */}
-        <div className="flex gap-1 mb-3 text-xs">
+        <div className="flex gap-1 mb-3 text-xs flex-wrap">
           <button
             onClick={() => setTab('users')}
             className={`px-3 py-1.5 rounded-md ${tab === 'users' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
@@ -185,6 +212,16 @@ export function AdminDashboard({ summary, users, anchors, dailyStats, errors }: 
             className={`px-3 py-1.5 rounded-md ${tab === 'anchors' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
           >
             アンカー ({anchors.length})
+          </button>
+          <button
+            onClick={() => setTab('duplicates')}
+            className={`px-3 py-1.5 rounded-md ${tab === 'duplicates' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}
+          >
+            重複記事 {duplicates.length > 0 && (
+              <span className={`ml-1 font-bold ${tab === 'duplicates' ? 'text-white' : 'text-amber-600'}`}>
+                ({duplicates.length})
+              </span>
+            )}
           </button>
           <button
             onClick={() => setTab('errors')}
@@ -244,12 +281,12 @@ export function AdminDashboard({ summary, users, anchors, dailyStats, errors }: 
 
         {/* アンカー一覧 */}
         {tab === 'anchors' && (
-          <section className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <section className="bg-white border border-gray-200 rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-100 text-xs text-gray-500">
                 <tr>
                   <th className="text-left px-4 py-2">ユーザー</th>
-                  <th className="text-left px-4 py-2">名前長さ</th>
+                  <th className="text-left px-4 py-2">アンカー名</th>
                   <th className="text-left px-4 py-2">タイプ</th>
                   <th className="text-left px-4 py-2">ソース</th>
                   <th className="text-right px-4 py-2">記事</th>
@@ -260,14 +297,18 @@ export function AdminDashboard({ summary, users, anchors, dailyStats, errors }: 
               <tbody>
                 {anchors.map((a, idx) => (
                   <tr key={idx} className="text-xs border-b border-gray-50 last:border-0 hover:bg-gray-50">
-                    <td className="px-4 py-2 font-mono text-gray-700">{a.user_short}</td>
-                    <td className="px-4 py-2 text-gray-500">{a.name_masked}</td>
-                    <td className="px-4 py-2 text-gray-500">{a.type}</td>
-                    <td className="px-4 py-2 text-gray-500">{a.sources.join(', ')}</td>
-                    <td className={`px-4 py-2 text-right font-medium ${a.items === 0 ? 'text-red-500' : 'text-gray-700'}`}>
+                    <td className="px-4 py-2 font-mono text-gray-700 whitespace-nowrap">{a.user_short}</td>
+                    <td className="px-4 py-2 text-gray-800 font-medium">{a.name_masked}</td>
+                    <td className="px-4 py-2 text-gray-500 whitespace-nowrap">{a.type}</td>
+                    <td className="px-4 py-2">
+                      <div className="flex flex-wrap gap-1">
+                        {a.sources.map((src) => <SourceBadge key={src} source={src} />)}
+                      </div>
+                    </td>
+                    <td className={`px-4 py-2 text-right font-medium whitespace-nowrap ${a.items === 0 ? 'text-red-500' : 'text-gray-700'}`}>
                       {a.items.toLocaleString()}
                     </td>
-                    <td className="px-4 py-2 text-gray-600">
+                    <td className="px-4 py-2 text-gray-600 whitespace-nowrap">
                       {timeAgo(a.last_fetch_at)}
                       {a.last_status === 'error' && (
                         <span className="ml-1 text-red-500" title="最終取得エラー">●</span>
@@ -276,11 +317,59 @@ export function AdminDashboard({ summary, users, anchors, dailyStats, errors }: 
                         <span className="ml-1 text-amber-500" title="一部失敗">●</span>
                       )}
                     </td>
-                    <td className="px-4 py-2 text-gray-500">{fmtDate(a.created_at)}</td>
+                    <td className="px-4 py-2 text-gray-500 whitespace-nowrap">{fmtDate(a.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </section>
+        )}
+
+        {/* 重複記事一覧 */}
+        {tab === 'duplicates' && (
+          <section className="bg-white border border-gray-200 rounded-xl p-5">
+            <p className="text-xs text-gray-500 mb-4">
+              直近7日・同一アンカー内でタイトルが10文字以上共通する記事グループ（クロスソース限定）。
+              メール送信時は2件目以降が自動除外されます。
+            </p>
+            {duplicates.length === 0 ? (
+              <p className="text-xs text-gray-400 text-center py-8">重複記事なし 🎉</p>
+            ) : (
+              <ul className="space-y-5">
+                {duplicates.map((g, idx) => (
+                  <li key={idx} className="border border-gray-100 rounded-lg overflow-hidden">
+                    {/* ヘッダー行 */}
+                    <div className="bg-gray-50 px-4 py-2 flex items-start gap-2">
+                      <span className="text-[10px] bg-amber-100 text-amber-700 border border-amber-200 font-medium px-1.5 py-0.5 rounded whitespace-nowrap mt-0.5">
+                        {g.items.length}件重複
+                      </span>
+                      <span className="text-xs text-gray-700 font-medium leading-relaxed">{g.representative}</span>
+                    </div>
+                    {/* 各記事行 */}
+                    <ul className="divide-y divide-gray-50">
+                      {g.items.map((item, i) => (
+                        <li key={i} className="px-4 py-2.5 flex items-start gap-3">
+                          <SourceBadge source={item.source} />
+                          <div className="flex-1 min-w-0">
+                            <a
+                              href={item.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#378ADD] hover:underline break-all leading-relaxed"
+                            >
+                              {item.title}
+                            </a>
+                          </div>
+                          <span className="text-[10px] text-gray-400 whitespace-nowrap shrink-0 mt-0.5">
+                            {item.published_at ? new Date(item.published_at).toLocaleString('ja-JP', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—'}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         )}
 

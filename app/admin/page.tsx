@@ -3,6 +3,23 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { isAdminSession, anonymizeUserId } from '@/lib/admin'
 import { AdminDashboard } from './AdminDashboard'
 
+// ---- タイトル類似度判定（メールの dedup と同じアルゴリズム） ----
+function longestCommonSubstring(a: string, b: string): number {
+  const m = a.length, n = b.length
+  let max = 0
+  const dp: number[] = new Array(n + 1).fill(0)
+  for (let i = 1; i <= m; i++) {
+    let prev = 0
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j]
+      if (a[i - 1] === b[j - 1]) { dp[j] = prev + 1; if (dp[j] > max) max = dp[j] }
+      else dp[j] = 0
+      prev = tmp
+    }
+  }
+  return max
+}
+
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
@@ -130,9 +147,7 @@ export default async function AdminPage() {
 
     anchorRows.push({
       user_short: anonymizeUserId(a.user_id),
-      // アンカー名は1文字目+伏字+末尾1文字 だと運営者でも見えにくいので、
-      // 長さだけマスク表示（"7文字" のように）
-      name_masked: `${a.name.length}文字`,
+      name_masked: a.name,   // 管理者は実名表示
       type: a.type,
       sources: a.sources,
       items: itemCount ?? 0,
@@ -184,6 +199,58 @@ export default async function AdminPage() {
     }
   })
 
+  // ---------- 重複記事検出（直近7日・クロスソース限定） ----------
+  const { data: recentItems } = await supabaseAdmin
+    .from('items')
+    .select('id, title, source, url, published_at, pickkw_id')
+    .is('deleted_at', null)
+    .gte('published_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+    .order('published_at', { ascending: false })
+    .limit(300)
+
+  // アンカー別にグルーピングしてから類似タイトルを検出
+  const byAnchor = new Map<string, { title: string; source: string; url: string; published_at: string }[]>()
+  for (const item of recentItems ?? []) {
+    if (!byAnchor.has(item.pickkw_id)) byAnchor.set(item.pickkw_id, [])
+    byAnchor.get(item.pickkw_id)!.push({
+      title: item.title,
+      source: item.source,
+      url: item.url,
+      published_at: item.published_at,
+    })
+  }
+
+  interface DupGroup {
+    representative: string
+    items: { title: string; source: string; url: string; published_at: string }[]
+  }
+  const dupGroups: DupGroup[] = []
+  for (const [, items] of byAnchor) {
+    const groups: DupGroup[] = []
+    for (const item of items) {
+      const found = groups.find((g) =>
+        g.items.some((gi) => longestCommonSubstring(gi.title, item.title) >= 10)
+      )
+      if (found) {
+        found.items.push(item)
+      } else {
+        groups.push({ representative: item.title, items: [item] })
+      }
+    }
+    for (const g of groups) {
+      const sources = new Set(g.items.map((i) => i.source))
+      if (g.items.length >= 2 && sources.size >= 2) {
+        dupGroups.push(g)
+      }
+    }
+  }
+  // 新しい順にソート（グループ内最新 published_at 基準）
+  dupGroups.sort((a, b) => {
+    const latestA = a.items[0]?.published_at ?? ''
+    const latestB = b.items[0]?.published_at ?? ''
+    return latestB.localeCompare(latestA)
+  })
+
   // ---------- 集計 ----------
   const summary = {
     users_total: userRows.length,
@@ -202,6 +269,7 @@ export default async function AdminPage() {
       anchors={anchorRows}
       dailyStats={dailyStats}
       errors={errorRows}
+      duplicates={dupGroups}
     />
   )
 }
