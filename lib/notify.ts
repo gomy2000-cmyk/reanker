@@ -50,22 +50,71 @@ export async function sendSlackDigest(
 }
 
 /**
+ * タイトルが SHARED_CHARS 文字以上共通する記事を重複とみなして除去する。
+ * 同じリリースが PR TIMES / Google News 両方で取得された場合などを排除する。
+ */
+const SHARED_CHARS = 10
+
+function longestCommonSubstring(a: string, b: string): number {
+  const m = a.length, n = b.length
+  let max = 0
+  // dp[i][j] = a[i-1]とb[j-1]で終わる共通部分文字列の長さ
+  const dp: number[] = new Array(n + 1).fill(0)
+  for (let i = 1; i <= m; i++) {
+    let prev = 0
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j]
+      if (a[i - 1] === b[j - 1]) {
+        dp[j] = prev + 1
+        if (dp[j] > max) max = dp[j]
+      } else {
+        dp[j] = 0
+      }
+      prev = tmp
+    }
+  }
+  return max
+}
+
+function deduplicateByTitle(items: SavedItem[]): SavedItem[] {
+  const kept: SavedItem[] = []
+  for (const item of items) {
+    const isDup = kept.some(
+      (k) => longestCommonSubstring(k.title, item.title) >= SHARED_CHARS
+    )
+    if (!isDup) kept.push(item)
+  }
+  return kept
+}
+
+/**
  * メールに1通の集約サマリーを送る。
+ * - タイトルが10文字以上共通する記事は重複として除外
  */
 export async function sendEmailDigest(
   to: string,
   summaries: AnchorSummary[]
 ): Promise<void> {
-  const totalItems = summaries.reduce((sum, s) => sum + s.items.length, 0)
-  if (totalItems === 0) return
-
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
     console.warn('[notify] RESEND_API_KEY not set, skipping email')
     return
   }
 
-  const sections = summaries
+  // 重複タイトル除去
+  const dedupedSummaries = summaries
+    .map((s) => ({ ...s, items: deduplicateByTitle(s.items) }))
+    .filter((s) => s.items.length > 0)
+
+  const totalItems = dedupedSummaries.reduce((sum, s) => sum + s.items.length, 0)
+  if (totalItems === 0) return
+
+  const dateStr = new Date().toLocaleDateString('ja-JP', {
+    year: 'numeric', month: 'long', day: 'numeric', weekday: 'short',
+  })
+  const dashboardUrl = urlWithUtm('/dashboard', 'daily_digest')
+
+  const sections = dedupedSummaries
     .map(
       (s) => `
     <h3 style="font-size:14px;margin:24px 0 8px;color:#111;border-bottom:1px solid #eee;padding-bottom:6px;">
@@ -88,13 +137,23 @@ export async function sendEmailDigest(
 
   const html = `
     <div style="font-family:-apple-system,'Segoe UI',sans-serif;max-width:600px;color:#222;">
-      <h2 style="font-size:18px;margin:0 0 4px;">【ReAnker】今日の新着 ${totalItems}件</h2>
-      <p style="font-size:12px;color:#666;margin:0 0 16px;">${new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' })}</p>
+      <h2 style="font-size:18px;margin:0 0 4px;color:#111;">【ReAnker】今日の新着 ${totalItems}件</h2>
+      <p style="font-size:12px;color:#888;margin:0 0 12px;">${dateStr}</p>
+      <p style="font-size:14px;color:#444;margin:0 0 20px;line-height:1.7;">
+        本日の競合・業界の新着プレスリリースをお届けします。<br>
+        気になる記事はリンクから原文をご確認ください。
+      </p>
       ${sections}
-      <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
-      <p style="font-size:12px;color:#666;">
-        <a href="${urlWithUtm('/dashboard', 'daily_digest')}" style="color:#378ADD;">ダッシュボードで確認</a> ・
-        <a href="${urlWithUtm('/settings', 'daily_digest', 'settings_link')}" style="color:#666;">通知設定を変更</a>
+      <hr style="border:none;border-top:1px solid #eee;margin:28px 0 20px;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <a href="${escapeAttr(dashboardUrl)}"
+           style="display:inline-block;background:#378ADD;color:#fff;text-decoration:none;
+                  font-size:14px;font-weight:600;padding:12px 32px;border-radius:6px;letter-spacing:.3px;">
+          ダッシュボードで全件確認 →
+        </a>
+      </div>
+      <p style="font-size:11px;color:#aaa;text-align:center;margin:0;">
+        <a href="${urlWithUtm('/settings', 'daily_digest', 'settings_link')}" style="color:#aaa;">通知設定を変更</a>
       </p>
     </div>
   `
