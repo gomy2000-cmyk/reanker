@@ -1,12 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
-import Script from 'next/script'
 import './globals.css'
 import { Providers } from './providers'
 import { GTMPageView } from '@/components/GTMPageView'
-
-const GA4_ID = 'G-Q54M9ZZ3YM'
+import { GTMScript, GTMNoScript } from '@/components/GTM'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -68,24 +66,15 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <head />
+      <head>
+        {/* GTM スニペット: <head> 内にできるだけ早く配置 */}
+        <GTMScript />
+      </head>
       <body className={`${inter.className} bg-gray-50 text-gray-900`}>
-        {/* Google tag (gtag.js) - GA4 直接設置 */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA4_ID}', { send_page_view: false });
-          `}
-        </Script>
-        {/* End Google tag */}
+        {/* GTM noscript フォールバック: <body> 直後 */}
+        <GTMNoScript />
 
-        {/* SPA クライアント遷移でも page_view を送る */}
+        {/* SPA クライアント遷移の page_view を dataLayer に push */}
         <Suspense fallback={null}>
           <GTMPageView />
         </Suspense>

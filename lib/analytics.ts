@@ -1,32 +1,24 @@
-// GA4 直接タグ（gtag.js）ヘルパー
-// GTM は廃止。gtag() 経由でイベントを送る。
+// GTM 経由で GA4 計測。GA4測定IDはGTMコンソール側で管理する。
 
 declare global {
   interface Window {
     dataLayer?: Record<string, unknown>[]
-    gtag?: (...args: unknown[]) => void
   }
 }
 
-export const GA4_ID = 'G-Q54M9ZZ3YM'
-export const GTM_ID = ''         // GTM廃止。GTM.tsx が参照するが '' のため何も出力しない
-export const GA4_ENABLED = true
-export const GTM_ENABLED = GA4_ENABLED  // 後方互換（GTMPageView が参照）
+export const GTM_ID = 'GTM-MQBBQ2C4'
+export const GA4_ID = 'G-Q54M9ZZ3YM' // GTMコンソール側で設定済み（コード側では参照のみ）
+export const GTM_ENABLED = true
+export const GA4_ENABLED = GTM_ENABLED
 
 /**
- * gtag('event', ...) の薄いラッパー。
- * - SSR では何もしない
- * - gtag.js ロード前は dataLayer にキューされ、ロード後に処理される
+ * GTM の dataLayer に任意のイベントをプッシュする。
+ * GTM コンソール側で対応するカスタムイベントトリガー + GA4 イベントタグを設定すること。
  */
 export function pushEvent(event: string, params: Record<string, unknown> = {}) {
   if (typeof window === 'undefined') return
-  if (typeof window.gtag === 'function') {
-    window.gtag('event', event, params)
-  } else {
-    // gtag.js ロード前のキュー
-    window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({ event, ...params })
-  }
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({ event, ...params })
 }
 
 // === 主要イベント ===
