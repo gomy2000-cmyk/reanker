@@ -1,31 +1,32 @@
-// GTM / dataLayer ヘルパー
-// GA4 は GTM 管理画面側で設定する。コードからは event 名と最小限の属性のみ送る。
+// GA4 直接タグ（gtag.js）ヘルパー
+// GTM は廃止。gtag() 経由でイベントを送る。
 
 declare global {
   interface Window {
     dataLayer?: Record<string, unknown>[]
+    gtag?: (...args: unknown[]) => void
   }
 }
 
-export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || ''
-/**
- * GTM が有効か。NEXT_PUBLIC_GTM_ID が設定されていれば有効。
- * 本番のみで動かしたい場合は Vercel の Environment を Production に絞って
- * 環境変数をセットすれば、結果として本番のみ動く。
- */
-export const GTM_ENABLED = typeof GTM_ID === 'string' && GTM_ID.length > 0
+export const GA4_ID = 'G-Q54M9ZZ3YM'
+export const GTM_ID = ''         // GTM廃止。GTM.tsx が参照するが '' のため何も出力しない
+export const GA4_ENABLED = true
+export const GTM_ENABLED = GA4_ENABLED  // 後方互換（GTMPageView が参照）
 
 /**
- * dataLayer.push の薄いラッパー。
- * - SSR / 未設定環境では何もしない
- * - GTM 未読込でも window.dataLayer は GTM スニペット側で初期化されるが、
- *   念のためここでも初期化しておく
+ * gtag('event', ...) の薄いラッパー。
+ * - SSR では何もしない
+ * - gtag.js ロード前は dataLayer にキューされ、ロード後に処理される
  */
 export function pushEvent(event: string, params: Record<string, unknown> = {}) {
   if (typeof window === 'undefined') return
-  if (!GTM_ENABLED) return
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({ event, ...params })
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', event, params)
+  } else {
+    // gtag.js ロード前のキュー
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event, ...params })
+  }
 }
 
 // === 主要イベント ===

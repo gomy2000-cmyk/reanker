@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
+import Script from 'next/script'
 import './globals.css'
 import { Providers } from './providers'
 import { GTMPageView } from '@/components/GTMPageView'
 
-// 診断用：env var ではなくハードコード直書きで本番HTMLに出るか切り分け
-const GTM_ID = 'GTM-MQBBQ2C4'
+const GA4_ID = 'G-Q54M9ZZ3YM'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -65,39 +65,27 @@ export const viewport: Viewport = {
   themeColor: '#378ADD',
 }
 
-// Google Tag Manager - 古典的スニペット（inline script + noscript iframe）
-// 診断のため、env var ではなくハードコードで直書きする。
-// インライン script 内に 'https://www.googletagmanager.com/gtm.js?id=GTM-MQBBQ2C4' の
-// URL文字列が含まれるため、curl での grep 確認が可能。
-const GTM_HEAD_SCRIPT = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GTM_ID}');`
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <head>
-        {/* Google Tag Manager - 古典的スニペット（head 内 inline script） */}
-        <script
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: GTM_HEAD_SCRIPT }}
-        />
-        {/* End Google Tag Manager */}
-      </head>
+      <head />
       <body className={`${inter.className} bg-gray-50 text-gray-900`}>
-        {/* Google Tag Manager (noscript) - body 開始直後 */}
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
-        {/* End Google Tag Manager (noscript) */}
+        {/* Google tag (gtag.js) - GA4 直接設置 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA4_ID}', { send_page_view: false });
+          `}
+        </Script>
+        {/* End Google tag */}
 
+        {/* SPA クライアント遷移でも page_view を送る */}
         <Suspense fallback={null}>
           <GTMPageView />
         </Suspense>
