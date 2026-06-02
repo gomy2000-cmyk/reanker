@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { runFetch } from '@/lib/runFetch'
+import { daysAgoJST } from '@/lib/scraper'
 
 export const maxDuration = 60
 
 /**
  * 個別アンカーの「今すぐ取得」エンドポイント。
- * UI から手動でトリガーする想定。日付フィルタなしで全件取得。
+ * UI から手動でトリガーする想定。直近14日分を取得する。
+ * （全件取得すると検索結果に混ざる数年前の古い記事まで保存してしまうため）
  *
  * すべての取得は lib/runFetch.ts の runFetch() を通る（cron と共通の入口）。
  * 実行結果は fetch_runs テーブルに記録される。
@@ -41,7 +43,7 @@ export async function POST(
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const result = await runFetch(id, 'manual', null)
+  const result = await runFetch(id, 'manual', daysAgoJST(14))
 
   return NextResponse.json({
     ok: result.status !== 'error',

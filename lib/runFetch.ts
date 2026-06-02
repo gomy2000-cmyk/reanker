@@ -63,12 +63,13 @@ const SOURCE_REGISTRY: Record<SourceName, SourceFetcher> = {
  *
  * @param anchorId   pick_keywords.id
  * @param trigger    'manual' (今すぐ取得) / 'cron' / 'test'
- * @param targetDate YYYY-MM-DD で取得対象日を絞る。null なら検索結果ページの全件。
+ * @param sinceDate  YYYY-MM-DD。この日以降（>=）に公開された記事のみ採用する下限。
+ *                   null なら日付フィルタなし（全件）。
  */
 export async function runFetch(
   anchorId: string,
   trigger: FetchTrigger,
-  targetDate: string | null = null
+  sinceDate: string | null = null
 ): Promise<FetchRunResult> {
   const start = Date.now()
 
@@ -113,7 +114,7 @@ export async function runFetch(
         duration_ms: 0,
       } as SourceFetchResult] as const
     }
-    const result = await fetcher.fetch(anchor.query_value, targetDate)
+    const result = await fetcher.fetch(anchor.query_value, sinceDate)
     return [name, result] as const
   })
   const fetchResults = await Promise.all(fetchPromises)

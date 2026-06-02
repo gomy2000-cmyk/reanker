@@ -22,7 +22,7 @@ const UA = 'Mozilla/5.0 (compatible; ReankerBot/1.0; +https://reanker.com)'
 
 export const prtimesSource: SourceFetcher = {
   name: 'prtimes',
-  async fetch(query, targetDate): Promise<SourceFetchResult> {
+  async fetch(query, sinceDate): Promise<SourceFetchResult> {
     const start = Date.now()
     const url =
       `${PRTIMES_BASE}/main/action.php?run=html&page=searchkey` +
@@ -47,12 +47,12 @@ export const prtimesSource: SourceFetcher = {
       }
 
       const html = await res.text()
-      const items = parsePRTimesHtml(html, targetDate)
+      const items = parsePRTimesHtml(html, sinceDate)
 
       // 構造変化検知:
       //   - 「検索結果: 0件」テキストが含まれる → 本当にヒット0件（正常）
       //   - そのテキストすら無い + カード0件 → セレクタ崩壊の疑い（要修正）
-      if (items.length === 0 && !targetDate) {
+      if (items.length === 0 && !sinceDate) {
         const $ = cheerio.load(html)
         const cardCount = $('article[class*="release-card_article"]').length
         const totalText = $('[class*="search-result-total"]').text() // "検索結果：N件"
@@ -82,7 +82,7 @@ export const prtimesSource: SourceFetcher = {
   },
 }
 
-function parsePRTimesHtml(html: string, targetDate: string | null): ScrapedItem[] {
+function parsePRTimesHtml(html: string, sinceDate: string | null): ScrapedItem[] {
   const $ = cheerio.load(html)
   const items: ScrapedItem[] = []
   const seen = new Set<string>()
@@ -99,7 +99,7 @@ function parsePRTimesHtml(html: string, targetDate: string | null): ScrapedItem[
 
     const parsed = parsePRTimesDate(timeText)
     if (!parsed) return
-    if (targetDate && parsed.date !== targetDate) return
+    if (sinceDate && parsed.date < sinceDate) return
 
     const fullUrl = href.startsWith('http') ? href : `${PRTIMES_BASE}${href}`
     if (seen.has(fullUrl)) return

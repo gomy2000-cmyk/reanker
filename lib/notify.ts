@@ -42,11 +42,14 @@ export async function sendSlackDigest(
     `【ReAnker】今日の新着 ${totalItems}件\n\n${blocks}\n\n` +
     `ダッシュボードで詳細を見る: https://reanker.com/dashboard`
 
-  await fetch(webhookUrl, {
+  const res = await fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text }),
   })
+  if (!res.ok) {
+    throw new Error(`Slack webhook failed: HTTP ${res.status} ${await res.text()}`)
+  }
 }
 
 /**
@@ -159,7 +162,7 @@ export async function sendEmailDigest(
     </div>
   `
 
-  await fetch('https://api.resend.com/emails', {
+  const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -172,6 +175,9 @@ export async function sendEmailDigest(
       html,
     }),
   })
+  if (!res.ok) {
+    throw new Error(`Resend failed: HTTP ${res.status} ${await res.text()}`)
+  }
 }
 
 function escapeHtml(s: string): string {

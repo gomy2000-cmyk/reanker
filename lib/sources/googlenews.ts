@@ -17,14 +17,14 @@ function isValidSerpApiKey(key: string | undefined): boolean {
 
 export const googlenewsSource: SourceFetcher = {
   name: 'googlenews',
-  async fetch(query, targetDate): Promise<SourceFetchResult> {
+  async fetch(query, sinceDate): Promise<SourceFetchResult> {
     const start = Date.now()
     const useSerpApi = isValidSerpApiKey(process.env.SERPAPI_KEY)
 
     // SerpAPI が使えるなら優先（高品質）。失敗したら RSS にフォールバック。
     if (useSerpApi) {
       try {
-        const items = await fetchViaSerpApi(query, targetDate)
+        const items = await fetchViaSerpApi(query, sinceDate)
         return { items, http_status: 200, error: null, duration_ms: Date.now() - start }
       } catch (e: any) {
         console.warn(`[googlenews] SerpAPI failed (${e?.message ?? e}), falling back to RSS`)
@@ -33,7 +33,7 @@ export const googlenewsSource: SourceFetcher = {
     }
 
     try {
-      const items = await fetchViaRss(query, targetDate)
+      const items = await fetchViaRss(query, sinceDate)
       return { items, http_status: 200, error: null, duration_ms: Date.now() - start }
     } catch (e: any) {
       return {
@@ -55,7 +55,7 @@ interface SerpApiNewsResult {
   date?: string
 }
 
-async function fetchViaSerpApi(query: string, targetDate: string | null): Promise<ScrapedItem[]> {
+async function fetchViaSerpApi(query: string, sinceDate: string | null): Promise<ScrapedItem[]> {
   const apiKey = process.env.SERPAPI_KEY!
   const url =
     `https://serpapi.com/search.json?engine=google&tbm=nws` +
@@ -76,7 +76,7 @@ async function fetchViaSerpApi(query: string, targetDate: string | null): Promis
   for (const n of news) {
     const parsed = parseRelativeOrISO(n.date)
     if (!parsed) continue
-    if (targetDate && parsed.date !== targetDate) continue
+    if (sinceDate && parsed.date < sinceDate) continue
     if (seen.has(n.link)) continue
     seen.add(n.link)
     items.push({
@@ -93,7 +93,7 @@ async function fetchViaSerpApi(query: string, targetDate: string | null): Promis
 
 // -------------------- Google News RSS（無料フォールバック） --------------------
 
-async function fetchViaRss(query: string, targetDate: string | null): Promise<ScrapedItem[]> {
+async function fetchViaRss(query: string, sinceDate: string | null): Promise<ScrapedItem[]> {
   const url =
     `https://news.google.com/rss/search?q=${encodeURIComponent(query)}` +
     `&hl=ja&gl=JP&ceid=JP:ja`
@@ -108,10 +108,10 @@ async function fetchViaRss(query: string, targetDate: string | null): Promise<Sc
   }
 
   const xml = await res.text()
-  return parseGoogleNewsRss(xml, targetDate)
+  return parseGoogleNewsRss(xml, sinceDate)
 }
 
-function parseGoogleNewsRss(xml: string, targetDate: string | null): ScrapedItem[] {
+function parseGoogleNewsRss(xml: string, sinceDate: string | null): ScrapedItem[] {
   const items: ScrapedItem[] = []
   const seen = new Set<string>()
 
@@ -129,7 +129,7 @@ function parseGoogleNewsRss(xml: string, targetDate: string | null): ScrapedItem
 
     const parsed = parsePubDate(pubDate)
     if (!parsed) continue
-    if (targetDate && parsed.date !== targetDate) continue
+    if (sinceDate && parsed.date < sinceDate) continue
     if (seen.has(link)) continue
     seen.add(link)
 

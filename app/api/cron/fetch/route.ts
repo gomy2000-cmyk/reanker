@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { yesterdayJST } from '@/lib/scraper'
+import { daysAgoJST } from '@/lib/scraper'
 import { runFetch, type SavedItem } from '@/lib/runFetch'
 import { sendSlackDigest, sendEmailDigest, type AnchorSummary } from '@/lib/notify'
 import { isFetchDayJST, canUseSlackNotification, normalizePlan, type Plan } from '@/lib/plan'
@@ -41,8 +41,12 @@ export async function GET(req: NextRequest) {
 
   const dateParam = req.nextUrl.searchParams.get('date')
   const notifyEnabled = req.nextUrl.searchParams.get('notify') !== 'false'
-  const targetDate: string | null =
-    dateParam === 'any' ? null : (dateParam ?? yesterdayJST())
+  // 直近ウィンドウの下限日。完全一致ではなく「この日以降」を採用する。
+  //   - News/PR TIMES は関連度順で古い記事も返すため、完全一致(=昨日)では取りこぼす。
+  //   - cron は毎日走るが、取りこぼし・実行時刻・相対日付の誤差を吸収するため3日遡る。
+  //   - 重複は items の UNIQUE(pickkw_id, url) で自然にスキップされるので窓を広げても安全。
+  const sinceDate: string | null =
+    dateParam === 'any' ? null : (dateParam ?? daysAgoJST(3))
 
   const now = new Date()
 
@@ -79,7 +83,7 @@ export async function GET(req: NextRequest) {
     }
 
     processed++
-    const result = await runFetch(anchor.id, 'cron', targetDate)
+    const result = await runFetch(anchor.id, 'cron', sinceDate)
     totalSaved += result.total_saved
     totalDuplicate += result.total_duplicate
 
@@ -150,7 +154,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
-    target_date: targetDate,
+    since_date: sinceDate,
     notify_enabled: notifyEnabled,
     processed,
     skipped_by_plan: skippedByPlan,

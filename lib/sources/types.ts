@@ -29,9 +29,12 @@ export interface SourceFetchResult {
 
 /**
  * ソースの実装インターフェース。
- * fetch(query, targetDate) を実装すれば追加可能。
+ * fetch(query, sinceDate) を実装すれば追加可能。
+ *
+ * sinceDate: YYYY-MM-DD（JST）。この日以降（>=）に公開された記事のみ採用する下限。
+ *            null なら日付フィルタなし（全件）。
  */
 export interface SourceFetcher {
   name: SourceName
-  fetch(query: string, targetDate: string | null): Promise<SourceFetchResult>
+  fetch(query: string, sinceDate: string | null): Promise<SourceFetchResult>
 }
