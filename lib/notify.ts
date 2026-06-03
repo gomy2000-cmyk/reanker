@@ -6,6 +6,31 @@ export interface AnchorSummary {
 }
 
 /**
+ * 429（レート制限）と一時的な5xxを吸収する fetch ラッパー。
+ * Resend は「毎秒2リクエストまで」の制限があり、複数ユーザーへ連続送信すると
+ * 3通目以降が 429 で弾かれる。Retry-After を尊重しつつ指数バックオフで再試行する。
+ */
+async function fetchWithRetry(
+  url: string,
+  init: RequestInit,
+  { retries = 4, baseDelayMs = 600 }: { retries?: number; baseDelayMs?: number } = {}
+): Promise<Response> {
+  let lastRes: Response | null = null
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const res = await fetch(url, init)
+    if (res.status !== 429 && res.status < 500) return res
+    lastRes = res
+    if (attempt === retries) break
+    const retryAfter = Number(res.headers.get('retry-after'))
+    const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
+      ? retryAfter * 1000
+      : baseDelayMs * Math.pow(2, attempt) // 600, 1200, 2400, 4800ms
+    await new Promise((r) => setTimeout(r, waitMs))
+  }
+  return lastRes!
+}
+
+/**
  * メール内リンクに UTM パラメータを付与する共通ヘルパー。
  * utm_source=email / utm_medium=email は固定、utm_campaign と utm_content のみ指定する。
  */
@@ -42,7 +67,7 @@ export async function sendSlackDigest(
     `【ReAnker】今日の新着 ${totalItems}件\n\n${blocks}\n\n` +
     `ダッシュボードで詳細を見る: https://reanker.com/dashboard`
 
-  const res = await fetch(webhookUrl, {
+  const res = await fetchWithRetry(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text }),
@@ -162,7 +187,7 @@ export async function sendEmailDigest(
     </div>
   `
 
-  const res = await fetch('https://api.resend.com/emails', {
+  const res = await fetchWithRetry('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

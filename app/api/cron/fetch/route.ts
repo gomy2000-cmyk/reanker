@@ -128,7 +128,11 @@ export async function GET(req: NextRequest) {
   let emailNotifications = 0
   const notifyErrors: string[] = []
 
+  let userIndex = 0
   for (const [userId, bucket] of userNotificationBuckets) {
+    // Resend は毎秒2リクエスト制限。ユーザー間に間隔を空けて 429 を予防する
+    // （sendEmailDigest/sendSlackDigest 側にも 429 リトライがあるので二重防御）。
+    if (userIndex++ > 0) await new Promise((r) => setTimeout(r, 600))
     try {
       if (bucket.slack.length > 0 && bucket.user.slack_webhook_url) {
         await sendSlackDigest(bucket.user.slack_webhook_url, bucket.slack)
