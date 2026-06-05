@@ -108,3 +108,41 @@ create policy "Users can update own items" on items
   for update using (
     pickkw_id in (select id from pick_keywords where user_id = auth.uid()::uuid)
   );
+
+-- ============================================================
+-- notification_logs : Slack/メール通知の送信結果を記事×チャンネル単位で記録
+--   どの記事を / どの通知先に / いつ送信し / 成功か失敗か / 失敗理由は何か を追える。
+-- ============================================================
+create table if not exists notification_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete cascade,
+  item_id uuid references items(id) on delete cascade,
+  channel text not null check (channel in ('slack', 'email')),
+  status text not null check (status in ('success', 'failed', 'skipped')),
+  error_message text,
+  sent_at timestamptz,
+  created_at timestamptz default now()
+);
+create index if not exists idx_notification_logs_user_id on notification_logs(user_id);
+create index if not exists idx_notification_logs_item_id on notification_logs(item_id);
+create index if not exists idx_notification_logs_status  on notification_logs(status);
+-- 参照は service role のみ（ポリシー未定義＝anon/authユーザーは遮断）
+alter table notification_logs enable row level security;
+
+-- ============================================================
+-- billing_events : Stripe Webhookイベントの保存・二重処理防止
+--   checkout.session.completed / customer.subscription.updated / .deleted などが
+--   正しく届いたかを確認できるようにする。stripe_event_id はユニーク（再送を弾く）。
+-- ============================================================
+create table if not exists billing_events (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete set null,
+  stripe_event_id text unique not null,
+  event_type text not null,
+  status text not null default 'received',  -- received / processed / ignored / error
+  raw_payload jsonb,
+  created_at timestamptz default now()
+);
+create index if not exists idx_billing_events_user_id    on billing_events(user_id);
+create index if not exists idx_billing_events_event_type on billing_events(event_type);
+alter table billing_events enable row level security;

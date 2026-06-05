@@ -95,3 +95,24 @@ export interface ReportNotableItem {
 export interface ItemWithKeyword extends Item {
   pick_keywords: PickKeyword
 }
+
+export interface NotificationLog {
+  id: string
+  user_id: string
+  item_id: string
+  channel: 'slack' | 'email'
+  status: 'success' | 'failed' | 'skipped'
+  error_message: string | null
+  sent_at: string | null
+  created_at: string
+}
+
+export interface BillingEvent {
+  id: string
+  user_id: string | null
+  stripe_event_id: string
+  event_type: string
+  status: string
+  raw_payload: unknown
+  created_at: string
+}

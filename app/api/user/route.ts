@@ -47,15 +47,32 @@ export async function PATCH(req: NextRequest) {
 
   const plan = normalizePlan(user.plan)
   const body = await req.json()
-  const allowed = ['name', 'email', 'slack_webhook_url', 'notify_email']
+  // ログイン用 email は更新対象から除外（変更不可）。通知先は notify_email のみ編集可。
+  const allowed = ['name', 'slack_webhook_url', 'notify_email']
   const updates: Record<string, any> = {}
   for (const k of allowed) if (k in body) updates[k] = body[k]
+
+  // 通知先メール: 空 → null（送信時はログインメールにフォールバック）、非空 → メール形式を検証
+  if ('notify_email' in updates) {
+    const raw = typeof updates.notify_email === 'string' ? updates.notify_email.trim() : ''
+    if (raw === '') {
+      updates.notify_email = null
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) {
+      return NextResponse.json({ error: 'メールアドレスの形式が正しくありません。' }, { status: 400 })
+    } else {
+      updates.notify_email = raw
+    }
+  }
 
   // Free は Slack Webhook URL の設定不可（空文字でクリアは OK）
   if ('slack_webhook_url' in updates && updates.slack_webhook_url) {
     if (!canUseSlackNotification(plan)) {
       return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })
     }
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({ ok: true })
   }
 
   const { error } = await supabaseAdmin

@@ -2,10 +2,48 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { daysAgoJST } from '@/lib/scraper'
 import { runFetch, type SavedItem } from '@/lib/runFetch'
-import { sendSlackDigest, sendEmailDigest, type AnchorSummary } from '@/lib/notify'
+import { sendSlackDigest, sendEmailDigest, type AnchorSummary, type NotifyResult } from '@/lib/notify'
 import { isFetchDayJST, canUseSlackNotification, normalizePlan, type Plan } from '@/lib/plan'
 
 export const maxDuration = 300
+
+type NotificationLogInsert = {
+  user_id: string
+  item_id: string
+  channel: 'slack' | 'email'
+  status: 'success' | 'failed' | 'skipped'
+  error_message: string | null
+  sent_at: string | null
+}
+
+/** Postgres/PostgREST のテーブル未作成エラー判定（schema.sql 未適用の検知用）。 */
+function isMissingTableError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) return false
+  return (
+    error.code === '42P01' ||       // undefined_table (Postgres)
+    error.code === 'PGRST205' ||    // PostgREST: table not found in schema cache
+    /does not exist|could not find the table/i.test(error.message ?? '')
+  )
+}
+
+/**
+ * notification_logs への記録。
+ * テーブル未作成・INSERT失敗でも通知処理本体は落とさない（握りつぶさず console.error で可視化）。
+ */
+async function logNotifications(rows: NotificationLogInsert[]): Promise<void> {
+  if (rows.length === 0) return
+  try {
+    const { error } = await supabaseAdmin.from('notification_logs').insert(rows)
+    if (error) {
+      const hint = isMissingTableError(error)
+        ? '（notification_logs テーブル未作成の可能性。supabase/schema.sql のSQLを適用してください）'
+        : ''
+      console.error(`[notify] notification_logs への記録に失敗${hint}:`, error.message)
+    }
+  } catch (e: any) {
+    console.error('[notify] notification_logs への記録で例外:', e?.message ?? e)
+  }
+}
 
 interface AnchorRow {
   id: string
@@ -100,8 +138,26 @@ export async function GET(req: NextRequest) {
 
     const warmupActive = new Date(anchor.warmup_until) > now
     if (warmupActive || !notifyEnabled) {
+      // 登録直後の初回取得分・過去記事は通知対象にしない（従来どおり notified=true で抑制）。
       const ids = result.saved_items.map((i: SavedItem) => i.id)
       await supabaseAdmin.from('items').update({ notified: true }).in('id', ids)
+      // 送信せず抑制した分は skipped として記録（追える状態にする）。
+      const channels: ('slack' | 'email')[] = []
+      if (anchor.notify_slack && canUseSlackNotification(plan)) channels.push('slack')
+      if (anchor.notify_email) channels.push('email')
+      const reason = warmupActive ? 'warmup' : 'notify disabled'
+      await logNotifications(
+        channels.flatMap((ch) =>
+          ids.map((id) => ({
+            user_id: anchor.user_id,
+            item_id: id,
+            channel: ch,
+            status: 'skipped' as const,
+            error_message: reason,
+            sent_at: null,
+          }))
+        )
+      )
       continue
     }
 
@@ -134,22 +190,78 @@ export async function GET(req: NextRequest) {
     // （sendEmailDigest/sendSlackDigest 側にも 429 リトライがあるので二重防御）。
     if (userIndex++ > 0) await new Promise((r) => setTimeout(r, 600))
     try {
-      if (bucket.slack.length > 0 && bucket.user.slack_webhook_url) {
-        await sendSlackDigest(bucket.user.slack_webhook_url, bucket.slack)
-        slackNotifications++
-      }
-      if (bucket.email.length > 0) {
-        const to = bucket.user.notify_email || bucket.user.email
-        if (to) {
-          await sendEmailDigest(to, bucket.email)
-          emailNotifications++
+      // チャンネルごとに送信対象の item id を集計（notified 判定に使う）。
+      const slackItemIds = bucket.slack.flatMap((s) => s.items.map((i) => i.id))
+      const emailItemIds = bucket.email.flatMap((s) => s.items.map((i) => i.id))
+
+      // ---- Slack 送信 ----
+      let slackResult: NotifyResult = { status: 'skipped', error: 'no slack target' }
+      if (bucket.slack.length > 0) {
+        slackResult = bucket.user.slack_webhook_url
+          ? await sendSlackDigest(bucket.user.slack_webhook_url, bucket.slack)
+          : { status: 'skipped', error: 'no slack_webhook_url' }
+        if (slackResult.status === 'success') slackNotifications++
+        else if (slackResult.status === 'failed') {
+          notifyErrors.push(`user ${userId} [slack]: ${slackResult.error ?? 'failed'}`)
         }
       }
-      if (bucket.allSavedItemIds.length > 0) {
-        await supabaseAdmin
-          .from('items')
-          .update({ notified: true })
-          .in('id', bucket.allSavedItemIds)
+
+      // ---- メール送信 ----
+      let emailResult: NotifyResult = { status: 'skipped', error: 'no email target' }
+      if (bucket.email.length > 0) {
+        const to = bucket.user.notify_email || bucket.user.email
+        emailResult = to
+          ? await sendEmailDigest(to, bucket.email)
+          : { status: 'skipped', error: 'no recipient' }
+        if (emailResult.status === 'success') emailNotifications++
+        else if (emailResult.status === 'failed') {
+          notifyErrors.push(`user ${userId} [email]: ${emailResult.error ?? 'failed'}`)
+        }
+      }
+
+      // ---- notification_logs に記事×チャンネル単位で記録 ----
+      const nowIso = new Date().toISOString()
+      await logNotifications([
+        ...slackItemIds.map((id) => ({
+          user_id: userId,
+          item_id: id,
+          channel: 'slack' as const,
+          status: slackResult.status,
+          error_message: slackResult.error ?? null,
+          sent_at: slackResult.status === 'success' ? nowIso : null,
+        })),
+        ...emailItemIds.map((id) => ({
+          user_id: userId,
+          item_id: id,
+          channel: 'email' as const,
+          status: emailResult.status,
+          error_message: emailResult.error ?? null,
+          sent_at: emailResult.status === 'success' ? nowIso : null,
+        })),
+      ])
+
+      // ---- notified 判定：対象チャンネルがすべて success の記事だけ true ----
+      // メール失敗・skipped（RESEND未設定含む）の記事は notified=false のまま残す（自動再送はしない）。
+      const slackOk = slackResult.status === 'success'
+      const emailOk = emailResult.status === 'success'
+      const slackSet = new Set(slackItemIds)
+      const emailSet = new Set(emailItemIds)
+      const toMark: string[] = []
+      for (const id of bucket.allSavedItemIds) {
+        const inSlack = slackSet.has(id)
+        const inEmail = emailSet.has(id)
+        if (!inSlack && !inEmail) {
+          // 通知対象チャンネルなし＝送るものが無いので従来どおり true。
+          toMark.push(id)
+          continue
+        }
+        const slackPass = !inSlack || slackOk
+        const emailPass = !inEmail || emailOk
+        if (slackPass && emailPass) toMark.push(id)
+      }
+      const uniqueMark = [...new Set(toMark)]
+      if (uniqueMark.length > 0) {
+        await supabaseAdmin.from('items').update({ notified: true }).in('id', uniqueMark)
       }
     } catch (e: any) {
       notifyErrors.push(`user ${userId}: ${e?.message ?? e}`)

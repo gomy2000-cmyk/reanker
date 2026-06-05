@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Check } from 'lucide-react'
 import type { User } from '@/lib/types'
-import { trackBeginCheckout, trackPurchase, trackUpgradeClick } from '@/lib/analytics'
+import { trackBeginCheckout, trackPurchase, trackSubscribe, trackUpgradeClick } from '@/lib/analytics'
 
 interface Props { user: User }
 
@@ -70,6 +70,7 @@ export function SettingsClient({ user }: Props) {
     if (params.get('upgraded') !== '1') return
     purchaseFired.current = true
     trackPurchase({ plan: 'standard', value: 300, currency: 'JPY' })
+    trackSubscribe({ plan: 'standard' })
     // クエリを掃除して二重送信を防ぐ
     const url = new URL(window.location.href)
     url.searchParams.delete('upgraded')
@@ -77,7 +78,6 @@ export function SettingsClient({ user }: Props) {
   }, [])
 
   const [name, setName] = useState(user.name ?? '')
-  const [email, setEmail] = useState(user.email)
   const [slackWebhook, setSlackWebhook] = useState(user.slack_webhook_url ?? '')
   const [notifyEmail, setNotifyEmail] = useState(user.notify_email ?? user.email)
   const [invoiceMonth, setInvoiceMonth] = useState(new Date().toISOString().slice(0, 7))
@@ -126,7 +126,7 @@ export function SettingsClient({ user }: Props) {
 
       <Section title="アカウント情報">
         <Field label="名前" value={name} onChange={setName} onSave={() => save({ name })} />
-        <Field label="メールアドレス" value={email} onChange={setEmail} onSave={() => save({ email })} />
+        <Field label="メールアドレス（ログイン用・変更不可）" value={user.email} readOnly />
         <Field label="ログイン方法" value="Googleアカウント連携中" readOnly />
       </Section>
 

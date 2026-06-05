@@ -6,6 +6,20 @@ export interface AnchorSummary {
 }
 
 /**
+ * 通知送信の結果。
+ * - success: 実際に送信し成功
+ * - failed : 送信を試みたが失敗（HTTPエラー等）
+ * - skipped: 送信していない（APIキー未設定・送信先なし・対象0件など）
+ * 呼び出し側はこの結果を見て items.notified を更新し、notification_logs に記録する。
+ * このモジュールは例外を投げず、必ず NotifyResult を返す。
+ */
+export type NotifyStatus = 'success' | 'failed' | 'skipped'
+export interface NotifyResult {
+  status: NotifyStatus
+  error?: string
+}
+
+/**
  * 429（レート制限）と一時的な5xxを吸収する fetch ラッパー。
  * Resend は「毎秒2リクエストまで」の制限があり、複数ユーザーへ連続送信すると
  * 3通目以降が 429 で弾かれる。Retry-After を尊重しつつ指数バックオフで再試行する。
@@ -52,9 +66,9 @@ function urlWithUtm(path: string, campaign: string, content?: string): string {
 export async function sendSlackDigest(
   webhookUrl: string,
   summaries: AnchorSummary[]
-): Promise<void> {
+): Promise<NotifyResult> {
   const totalItems = summaries.reduce((sum, s) => sum + s.items.length, 0)
-  if (totalItems === 0) return
+  if (totalItems === 0) return { status: 'skipped', error: 'no items' }
 
   const blocks = summaries
     .map((s) => {
@@ -67,13 +81,18 @@ export async function sendSlackDigest(
     `【ReAnker】今日の新着 ${totalItems}件\n\n${blocks}\n\n` +
     `ダッシュボードで詳細を見る: https://reanker.com/dashboard`
 
-  const res = await fetchWithRetry(webhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
-  })
-  if (!res.ok) {
-    throw new Error(`Slack webhook failed: HTTP ${res.status} ${await res.text()}`)
+  try {
+    const res = await fetchWithRetry(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    })
+    if (!res.ok) {
+      return { status: 'failed', error: `Slack webhook failed: HTTP ${res.status} ${await res.text()}` }
+    }
+    return { status: 'success' }
+  } catch (e: any) {
+    return { status: 'failed', error: `Slack webhook error: ${e?.message ?? e}` }
   }
 }
 
@@ -122,11 +141,12 @@ function deduplicateByTitle(items: SavedItem[]): SavedItem[] {
 export async function sendEmailDigest(
   to: string,
   summaries: AnchorSummary[]
-): Promise<void> {
+): Promise<NotifyResult> {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
+    // 未設定時は「送信成功」扱いにしない。skipped を返し、呼び出し側で notified=true にしない。
     console.warn('[notify] RESEND_API_KEY not set, skipping email')
-    return
+    return { status: 'skipped', error: 'RESEND_API_KEY not set' }
   }
 
   // 重複タイトル除去
@@ -135,7 +155,7 @@ export async function sendEmailDigest(
     .filter((s) => s.items.length > 0)
 
   const totalItems = dedupedSummaries.reduce((sum, s) => sum + s.items.length, 0)
-  if (totalItems === 0) return
+  if (totalItems === 0) return { status: 'skipped', error: 'no items' }
 
   const dateStr = new Date().toLocaleDateString('ja-JP', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'short',
@@ -187,21 +207,26 @@ export async function sendEmailDigest(
     </div>
   `
 
-  const res = await fetchWithRetry('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      from: 'ReAnker <noreply@reanker.com>',
-      to,
-      subject: `【ReAnker】今日の新着 ${totalItems}件`,
-      html,
-    }),
-  })
-  if (!res.ok) {
-    throw new Error(`Resend failed: HTTP ${res.status} ${await res.text()}`)
+  try {
+    const res = await fetchWithRetry('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        from: 'ReAnker <noreply@reanker.com>',
+        to,
+        subject: `【ReAnker】今日の新着 ${totalItems}件`,
+        html,
+      }),
+    })
+    if (!res.ok) {
+      return { status: 'failed', error: `Resend failed: HTTP ${res.status} ${await res.text()}` }
+    }
+    return { status: 'success' }
+  } catch (e: any) {
+    return { status: 'failed', error: `Resend error: ${e?.message ?? e}` }
   }
 }
 
