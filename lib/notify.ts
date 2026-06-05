@@ -207,6 +207,10 @@ export async function sendEmailDigest(
     </div>
   `
 
+  // 送信元は Resend で認証した syojin.com に集約（ローカル部でサービスを分ける）。
+  // 既存の reanker.com 認証を外す移行に対応。RESEND_FROM_EMAIL で上書き可。
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'ReAnker <reanker@syojin.com>'
+
   try {
     const res = await fetchWithRetry('https://api.resend.com/emails', {
       method: 'POST',
@@ -215,7 +219,7 @@ export async function sendEmailDigest(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: 'ReAnker <noreply@reanker.com>',
+        from: fromEmail,
         to,
         subject: `【ReAnker】今日の新着 ${totalItems}件`,
         html,
