@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Check } from 'lucide-react'
 import type { User } from '@/lib/types'
-import { trackBeginCheckout, trackPurchase, trackSubscribe, trackUpgradeClick } from '@/lib/analytics'
+import { trackBeginCheckout, trackPurchase, trackUpgradeClick } from '@/lib/analytics'
 
 interface Props { user: User }
 
@@ -70,7 +70,6 @@ export function SettingsClient({ user }: Props) {
     if (params.get('upgraded') !== '1') return
     purchaseFired.current = true
     trackPurchase({ plan: 'standard', value: 300, currency: 'JPY' })
-    trackSubscribe({ plan: 'standard' })
     // クエリを掃除して二重送信を防ぐ
     const url = new URL(window.location.href)
     url.searchParams.delete('upgraded')
