@@ -2,8 +2,8 @@
 title: "BtoBマーケのツール選定｜MarTechスタックの組み方"
 description: "BtoBマーケのMarTech（マーテック）スタックの組み方を解説。CRM・MA・SFA・分析・CMSなどカテゴリ別の役割、選定の優先順位、連携の考え方、ツールを増やしすぎない判断まで、実務目線で整理します。"
 ogTitle: "BtoBマーケのツール選定｜MarTech"
-publishedAt: "2026-09-25"
-updatedAt: "2026-09-25"
+publishedAt: "2026-07-22T17:00:00+09:00"
+updatedAt: "2026-07-22"
 category: "btob-marketing"
 tags: ["BtoB", "MarTech", "ツール選定", "MA", "CRM"]
 ---

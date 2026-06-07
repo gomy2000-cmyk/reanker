@@ -2,8 +2,8 @@
 title: "BtoB広告運用の基本｜リスティング・SNS広告の使い分け"
 description: "BtoB広告運用の基本を解説。リスティング・ディスプレイ・SNS広告の使い分け、ターゲティング、予算配分、ランディングページとCV設計、効果測定まで、成果につながる広告運用を実務目線で整理します。"
 ogTitle: "BtoB広告運用の基本｜媒体の使い分け"
-publishedAt: "2026-09-19"
-updatedAt: "2026-09-19"
+publishedAt: "2026-07-21T09:00:00+09:00"
+updatedAt: "2026-07-21"
 category: "btob-marketing"
 tags: ["BtoB", "広告運用", "リスティング", "SNS広告", "デジタル広告"]
 ---

@@ -2,8 +2,8 @@
 title: "4C分析とは｜顧客視点のマーケティングミックス"
 description: "4C分析（Customer Value・Cost・Convenience・Communication）とは何かを解説。4Pとの違い、顧客視点で考える重要性、各要素の意味、4Pとの対応関係、実務での使い方まで、わかりやすく整理します。"
 ogTitle: "4C分析とは｜顧客視点のマーケミックス"
-publishedAt: "2026-10-11"
-updatedAt: "2026-10-11"
+publishedAt: "2026-07-26T17:00:00+09:00"
+updatedAt: "2026-07-26"
 category: "marketing-theory"
 tags: ["マーケティング理論", "4C", "マーケティングミックス", "顧客視点", "フレームワーク"]
 ---

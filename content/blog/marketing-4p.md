@@ -2,8 +2,8 @@
 title: "マーケティングの4Pとは｜製品・価格・流通・販促の基本"
 description: "マーケティングの4P（Product・Price・Place・Promotion）とは何かを解説。それぞれの意味、4要素を一貫させる重要性、4Cとの関係、BtoBでの考え方、よくある誤解まで、マーケティングの基本フレームを整理します。"
 ogTitle: "マーケティングの4Pとは｜基本フレーム"
-publishedAt: "2026-10-09"
-updatedAt: "2026-10-09"
+publishedAt: "2026-07-26T09:00:00+09:00"
+updatedAt: "2026-07-26"
 category: "marketing-theory"
 tags: ["マーケティング理論", "4P", "マーケティングミックス", "フレームワーク", "戦略"]
 ---

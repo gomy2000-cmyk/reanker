@@ -2,8 +2,8 @@
 title: "RSS・Feedlyで競合監視を組む実務ガイド｜設定から運用まで"
 description: "RSS・Feedly で競合監視を組む手順を、フィード収集・整理・通知の3ステップで解説。PR TIMES や企業ブログのRSS取得、Feedlyの設定、限界と自動化への移行ポイントまで実務的にまとめます。"
 ogTitle: "RSS・Feedlyで競合監視を組む方法"
-publishedAt: "2026-07-05"
-updatedAt: "2026-07-05"
+publishedAt: "2026-07-02T09:00:00+09:00"
+updatedAt: "2026-07-02"
 category: "competitor-monitoring"
 tags: ["競合監視", "RSS", "Feedly", "自動化", "情報収集"]
 ---

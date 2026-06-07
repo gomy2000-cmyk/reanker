@@ -2,8 +2,8 @@
 title: "競合の新機能・新製品リリースを追う方法｜プロダクト競合監視"
 description: "競合の新製品・新機能リリースを追う方法を解説。リリースノート・changelog・プレスリリース・SNSの監視ポイント、SaaS競合のアップデート追跡、自社ロードマップへの反映まで実務目線で整理します。"
 ogTitle: "競合の新機能リリースを追う方法"
-publishedAt: "2026-07-19"
-updatedAt: "2026-07-19"
+publishedAt: "2026-07-05T17:00:00+09:00"
+updatedAt: "2026-07-05"
 category: "competitor-monitoring"
 tags: ["競合監視", "新機能", "プロダクト", "リリースノート", "SaaS"]
 ---

@@ -2,8 +2,8 @@
 title: "BtoBマーケのROI測定・アトリビューションの実務"
 description: "BtoBマーケのROI測定とアトリビューションを解説。なぜ測定が難しいのか、見るべき指標、アトリビューションモデルの考え方、長い検討期間への対応、レポート設計まで、実務目線で整理します。"
 ogTitle: "BtoBマーケのROI測定・アトリビューション"
-publishedAt: "2026-09-27"
-updatedAt: "2026-09-27"
+publishedAt: "2026-07-23T09:00:00+09:00"
+updatedAt: "2026-07-23"
 category: "btob-marketing"
 tags: ["BtoB", "ROI", "アトリビューション", "効果測定", "マーケティング"]
 ---

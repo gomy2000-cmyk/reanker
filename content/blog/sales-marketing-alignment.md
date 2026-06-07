@@ -2,8 +2,8 @@
 title: "営業とマーケの連携（セールスイネーブルメント）｜SLAと分業設計"
 description: "営業とマーケの連携を解説。よくある対立の原因、リード定義（MQL/SQL）の合意、SLAの結び方、フィードバックループ、セールスイネーブルメントの実務まで、成果につなげる分業設計を整理します。"
 ogTitle: "営業とマーケの連携｜SLAと分業設計"
-publishedAt: "2026-09-09"
-updatedAt: "2026-09-09"
+publishedAt: "2026-07-18T17:00:00+09:00"
+updatedAt: "2026-07-18"
 category: "btob-marketing"
 tags: ["BtoB", "営業連携", "セールスイネーブルメント", "MQL", "SLA"]
 ---

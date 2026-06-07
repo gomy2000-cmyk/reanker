@@ -2,8 +2,8 @@
 title: "BtoBサイトのCVR改善｜問い合わせを増やす導線設計"
 description: "BtoBサイトのCVR改善を解説。コンバージョンの定義、離脱の原因、CTA・フォーム・導線の改善、信頼要素の配置、検証（A/Bテスト）の進め方まで、問い合わせを増やすための実務を整理します。"
 ogTitle: "BtoBサイトのCVR改善｜導線設計"
-publishedAt: "2026-09-17"
-updatedAt: "2026-09-17"
+publishedAt: "2026-07-20T17:00:00+09:00"
+updatedAt: "2026-07-20"
 category: "btob-marketing"
 tags: ["BtoB", "CVR", "コンバージョン", "サイト改善", "フォーム"]
 ---

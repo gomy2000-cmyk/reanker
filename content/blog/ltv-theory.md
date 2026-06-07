@@ -2,8 +2,8 @@
 title: "顧客生涯価値（LTV）とは｜考え方と高め方"
 description: "顧客生涯価値（LTV）とは何かを解説。計算方法、CAC（顧客獲得コスト）との関係（LTV/CAC）、LTVを高める3つの方法、サブスク・SaaSでの重要性、注意点まで、収益の核心となる指標を整理します。"
 ogTitle: "顧客生涯価値（LTV）とは｜考え方と高め方"
-publishedAt: "2026-12-10"
-updatedAt: "2026-12-10"
+publishedAt: "2026-08-10T17:00:00+09:00"
+updatedAt: "2026-08-10"
 category: "marketing-theory"
 tags: ["マーケティング理論", "LTV", "CAC", "サブスク", "収益"]
 ---

@@ -2,8 +2,8 @@
 title: "料金ページの作り方｜BtoB SaaSのCVを高める設計"
 description: "BtoB SaaSの料金ページの作り方を解説。料金を出すか問い合わせ型にするか、プラン設計と見せ方、不安を解消する要素、CTA、価格改定の伝え方まで、CVを高める料金ページの設計を実務目線で整理します。"
 ogTitle: "料金ページの作り方｜BtoB SaaSのCV"
-publishedAt: "2026-10-01"
-updatedAt: "2026-10-01"
+publishedAt: "2026-07-24T09:00:00+09:00"
+updatedAt: "2026-07-24"
 category: "btob-marketing"
 tags: ["BtoB", "料金ページ", "プライシング", "CVR", "SaaS"]
 ---

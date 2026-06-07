@@ -2,8 +2,8 @@
 title: "競合情報をチームで蓄積・共有する仕組み｜Notion・Slack運用"
 description: "競合情報をチームで蓄積・共有する仕組みを解説。Notion・Slack・スプレッドシートを使った情報ストック設計、収集→整理→共有→活用のフロー、属人化と形骸化を防ぐ運用ルールまで実務目線でまとめます。"
 ogTitle: "競合情報をチームで共有する仕組み"
-publishedAt: "2026-07-25"
-updatedAt: "2026-07-25"
+publishedAt: "2026-07-07T09:00:00+09:00"
+updatedAt: "2026-07-07"
 category: "competitor-monitoring"
 tags: ["競合監視", "情報共有", "Notion", "Slack", "チーム運用"]
 ---

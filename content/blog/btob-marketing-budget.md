@@ -2,8 +2,8 @@
 title: "BtoBマーケ予算の立て方｜配分とKPI連動の考え方"
 description: "BtoBマーケティング予算の立て方を解説。予算規模の決め方、費用項目、チャネル配分、KPIとの連動、効果測定に基づく見直し、限られた予算での優先順位まで、実務目線で整理します。"
 ogTitle: "BtoBマーケ予算の立て方｜配分の考え方"
-publishedAt: "2026-10-07"
-updatedAt: "2026-10-07"
+publishedAt: "2026-07-25T17:00:00+09:00"
+updatedAt: "2026-07-25"
 category: "btob-marketing"
 tags: ["BtoB", "マーケティング予算", "予算", "配分", "ROI"]
 ---

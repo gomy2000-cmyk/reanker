@@ -2,8 +2,8 @@
 title: "真実の瞬間（MOT）とZMOTとは｜購買の決定的瞬間"
 description: "真実の瞬間（MOT）とZMOTとは何かを解説。FMOT・SMOT・ZMOTの違い、デジタル時代に「購買前の検索」が勝負になった理由、各瞬間で企業がすべきこと、BtoBへの応用まで整理します。"
 ogTitle: "真実の瞬間（MOT）とZMOTとは"
-publishedAt: "2026-10-25"
-updatedAt: "2026-10-25"
+publishedAt: "2026-07-30T09:00:00+09:00"
+updatedAt: "2026-07-30"
 category: "marketing-theory"
 tags: ["マーケティング理論", "MOT", "ZMOT", "カスタマージャーニー", "購買行動"]
 ---

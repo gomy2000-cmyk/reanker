@@ -2,8 +2,8 @@
 title: "RFM分析とは｜優良顧客の見つけ方"
 description: "RFM分析とは何かを解説。Recency（最終購入日）・Frequency（頻度）・Monetary（金額）の3指標、顧客のランク分け、セグメント別の施策、メリットと限界、実務での進め方まで、わかりやすく整理します。"
 ogTitle: "RFM分析とは｜優良顧客の見つけ方"
-publishedAt: "2026-12-12"
-updatedAt: "2026-12-12"
+publishedAt: "2026-08-11T09:00:00+09:00"
+updatedAt: "2026-08-11"
 category: "marketing-theory"
 tags: ["マーケティング理論", "RFM分析", "顧客分析", "セグメンテーション", "CRM"]
 ---

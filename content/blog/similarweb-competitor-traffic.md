@@ -2,8 +2,8 @@
 title: "競合サイトのアクセス数を推定する方法｜SimilarWeb等の使い方と限界"
 description: "競合サイトのアクセス数を推定する方法を、SimilarWeb など主要ツールの使い方と限界で解説。数値の読み方と精度の注意点、流入チャネルの見方、無料でできる範囲、他の競合監視との組み合わせまで整理します。"
 ogTitle: "競合サイトのアクセス数を推定する方法"
-publishedAt: "2026-08-04"
-updatedAt: "2026-08-04"
+publishedAt: "2026-07-09T17:00:00+09:00"
+updatedAt: "2026-07-09"
 category: "competitor-monitoring"
 tags: ["競合監視", "SimilarWeb", "トラフィック", "アクセス解析", "競合分析"]
 ---

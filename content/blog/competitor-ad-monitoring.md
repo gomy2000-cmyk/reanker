@@ -2,8 +2,8 @@
 title: "競合の広告出稿を調べる方法｜Meta広告ライブラリ・Google広告の見方"
 description: "競合の広告出稿を調べる方法を、Meta広告ライブラリ・Google広告の透明性センター・各種ツールで解説。出稿クリエイティブ・訴求・LPの読み取り方、自社施策への活かし方まで実務目線で整理します。"
 ogTitle: "競合の広告出稿を調べる方法"
-publishedAt: "2026-07-15"
-updatedAt: "2026-07-15"
+publishedAt: "2026-07-04T17:00:00+09:00"
+updatedAt: "2026-07-04"
 category: "competitor-monitoring"
 tags: ["競合監視", "広告", "Meta広告ライブラリ", "リスティング", "競合分析"]
 ---

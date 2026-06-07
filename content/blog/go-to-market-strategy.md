@@ -2,8 +2,8 @@
 title: "Go-To-Market戦略とは｜市場投入の設計"
 description: "Go-To-Market（GTM）戦略とは何かを解説。製品を市場に届けるまでの設計、構成要素（ターゲット・価値提案・チャネル・価格・販売）、GTMモデルの種類、立ち上げの進め方、BtoB SaaSでの実践まで整理します。"
 ogTitle: "Go-To-Market戦略とは｜市場投入の設計"
-publishedAt: "2026-11-24"
-updatedAt: "2026-11-24"
+publishedAt: "2026-08-06T17:00:00+09:00"
+updatedAt: "2026-08-06"
 category: "marketing-theory"
 tags: ["マーケティング理論", "GTM", "市場投入", "戦略", "ローンチ"]
 ---

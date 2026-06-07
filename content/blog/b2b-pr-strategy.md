@@ -2,8 +2,8 @@
 title: "BtoB広報の戦略設計｜認知・信頼・指名を作る年間設計"
 description: "BtoB広報の戦略設計を解説。BtoCとの違い、目的とKPIの置き方、ターゲットとメッセージ設計、認知から信頼・指名までのファネル、チャネルの組み方、体制と効果測定まで、実務目線で整理します。"
 ogTitle: "BtoB広報の戦略設計｜認知・信頼・指名"
-publishedAt: "2026-08-30"
-updatedAt: "2026-08-30"
+publishedAt: "2026-07-16T09:00:00+09:00"
+updatedAt: "2026-07-16"
 category: "pr-and-publicity"
 tags: ["広報", "BtoB広報", "広報戦略", "ブランディング", "PR"]
 ---

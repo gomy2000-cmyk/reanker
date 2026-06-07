@@ -2,8 +2,8 @@
 title: "サービスマーケティングの7Pとは｜無形商材の戦略"
 description: "サービスマーケティングの7Pとは何かを解説。4Pに加わるPeople・Process・Physical Evidenceの意味、サービスの4つの特性、無形商材で品質を伝える工夫、BtoB・SaaSでの実務まで整理します。"
 ogTitle: "サービスマーケティングの7Pとは"
-publishedAt: "2026-10-23"
-updatedAt: "2026-10-23"
+publishedAt: "2026-07-29T17:00:00+09:00"
+updatedAt: "2026-07-29"
 category: "marketing-theory"
 tags: ["マーケティング理論", "7P", "サービスマーケティング", "無形商材", "SaaS"]
 ---

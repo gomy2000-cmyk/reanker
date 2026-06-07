@@ -2,8 +2,8 @@
 title: "購買行動モデルとは｜AIDMA・AISAS・DECAXの変遷"
 description: "購買行動モデルとは何かを解説。AIDA・AIDMAから、ネット時代のAISAS、コンテンツ時代のDECAXまでの変遷、各モデルの意味と違い、マーケ施策への落とし込み、使い分けまで整理します。"
 ogTitle: "購買行動モデルとは｜AIDMA・AISAS"
-publishedAt: "2026-10-27"
-updatedAt: "2026-10-27"
+publishedAt: "2026-07-30T17:00:00+09:00"
+updatedAt: "2026-07-30"
 category: "marketing-theory"
 tags: ["マーケティング理論", "AIDMA", "AISAS", "購買行動モデル", "ファネル"]
 ---

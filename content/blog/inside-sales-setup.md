@@ -2,8 +2,8 @@
 title: "インサイドセールスの立ち上げ｜体制・KPI・トーク設計"
 description: "インサイドセールスの立ち上げを解説。役割（SDR/BDR）の違い、立ち上げの手順、KPI設計、トークスクリプトとフォロー設計、マーケ・営業との連携、ツールまで、BtoBの実務目線で整理します。"
 ogTitle: "インサイドセールスの立ち上げ｜体制とKPI"
-publishedAt: "2026-09-15"
-updatedAt: "2026-09-15"
+publishedAt: "2026-07-20T09:00:00+09:00"
+updatedAt: "2026-07-20"
 category: "btob-marketing"
 tags: ["BtoB", "インサイドセールス", "SDR", "立ち上げ", "営業"]
 ---

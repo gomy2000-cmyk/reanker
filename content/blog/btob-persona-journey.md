@@ -2,8 +2,8 @@
 title: "BtoBペルソナ・カスタマージャーニー設計の実務"
 description: "BtoBのペルソナとカスタマージャーニーの作り方を解説。BtoB特有の意思決定構造（DMU）、ペルソナの作り方、ジャーニーマップの設計、各段階のコンテンツ設計まで、施策に活きる作り方を実務目線で整理します。"
 ogTitle: "BtoBペルソナ・ジャーニー設計の実務"
-publishedAt: "2026-09-23"
-updatedAt: "2026-09-23"
+publishedAt: "2026-07-22T09:00:00+09:00"
+updatedAt: "2026-07-22"
 category: "btob-marketing"
 tags: ["BtoB", "ペルソナ", "カスタマージャーニー", "DMU", "マーケティング"]
 ---
