@@ -1,0 +1,22 @@
+{
+  "title": "AI導入が「めんどくさい」で止まる理由と、手間を減らす始め方",
+  "meta_title": "AI導入がめんどくさい人へ｜手間を減らして始める方法",
+  "meta_description": "AI導入が面倒で止まっている方へ。「めんどくさい」の正体を選ぶ・設定する・運用するの3つに分解し、「作る」より「用意してもらう」で手間を減らす始め方を、中小企業向けに解説します。",
+  "primary_kw": "AI導入 めんどくさい",
+  "secondary_kw": ["ChatGPT 導入 めんどくさい", "AIチャット 作る めんどくさい", "チャットボット 作る めんどくさい", "AI導入 わからない"],
+  "slug": "ai-setup-troublesome",
+  "category": "はじめてのAI",
+  "tags": ["AI導入", "めんどくさい", "悩み解決", "中小企業", "簡単導入", "AIチャット"],
+  "funnel_stage": "認知",
+  "target_reader": "AI導入のやる気はあるが手間を感じて止まっている担当者",
+  "cta_type": "「作る」より「用意してもらう」で手間を減らす",
+  "internal_link_suggestions": [
+    "/blog/ai-chat-easy-setup",
+    "/blog/ai-chat-low-cost",
+    "/blog/company-dedicated-ai-chat",
+    "/blog/ai-how-to-start"
+  ],
+  "image_prompt_file": "image-prompts/004-ai-setup-troublesome.md",
+  "draft_file": "drafts/004-ai-setup-troublesome.md",
+  "status": "draft"
+}

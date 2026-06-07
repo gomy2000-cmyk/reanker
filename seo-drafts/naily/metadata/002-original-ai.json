@@ -1,0 +1,23 @@
+{
+  "title": "オリジナルAIとは？作り方の3パターンと、手軽に始める方法",
+  "meta_title": "オリジナルAIとは？作り方3パターンと手軽に始める方法",
+  "meta_description": "オリジナルAIとは何かをやさしく整理。作り方の3パターンを比較し、一から開発しなくても会社名・ロゴで“自社らしいAI”を手軽に持つ方法を、中小企業向けに解説します。",
+  "primary_kw": "オリジナルAI",
+  "secondary_kw": ["オリジナルAI 作り方", "オリジナルAI 作成", "オリジナルAIチャット", "AI オリジナル", "自社AI 作り方"],
+  "slug": "original-ai",
+  "category": "オリジナルAI",
+  "tags": ["オリジナルAI", "AIチャット", "作り方", "中小企業", "ロゴ設定", "専用URL"],
+  "funnel_stage": "比較検討",
+  "target_reader": "オリジナルのAIに興味がある中小企業の経営者・担当者",
+  "cta_type": "好きな名前・ロゴで自社らしく始める",
+  "internal_link_suggestions": [
+    "/blog/company-dedicated-ai-chat",
+    "/blog/branded-ai-chat",
+    "/blog/chatgpt-for-company",
+    "/blog/ai-setup-troublesome",
+    "/blog/ai-chat-low-cost"
+  ],
+  "image_prompt_file": "image-prompts/002-original-ai.md",
+  "draft_file": "drafts/002-original-ai.md",
+  "status": "draft"
+}

@@ -1,0 +1,23 @@
+{
+  "title": "会社のAI、何から始める？迷わないための最初の一歩",
+  "meta_title": "AIは何から始める？中小企業の最初の一歩をやさしく解説",
+  "meta_description": "会社でAIを使いたいが何から始めるか分からない方へ。小さく試す3ステップ、やりがちな失敗、頼み方のコツ、会社で使うときの入口の作り方まで、初心者向けにやさしく整理しました。",
+  "primary_kw": "AI 何から始める",
+  "secondary_kw": ["AI導入 何から始める", "生成AI 何から始める", "ChatGPT 会社 何から", "AI 業務活用 何から", "AI 使い方 わからない"],
+  "slug": "ai-how-to-start",
+  "category": "はじめてのAI",
+  "tags": ["AI導入", "何から始める", "初心者", "中小企業", "業務活用", "AIチャット"],
+  "funnel_stage": "認知",
+  "target_reader": "AI未経験の中小企業の経営者・担当者",
+  "cta_type": "最初の一歩として軽く始める",
+  "internal_link_suggestions": [
+    "/blog/company-dedicated-ai-chat",
+    "/blog/ai-setup-troublesome",
+    "/blog/too-many-ai-tools",
+    "/blog/ai-chat-easy-setup",
+    "/blog/ai-consultation-desk"
+  ],
+  "image_prompt_file": "image-prompts/003-ai-how-to-start.md",
+  "draft_file": "drafts/003-ai-how-to-start.md",
+  "status": "draft"
+}

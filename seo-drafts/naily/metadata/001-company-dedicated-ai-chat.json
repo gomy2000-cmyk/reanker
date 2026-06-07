@@ -1,0 +1,23 @@
+{
+  "title": "自社専用AIチャットとは？中小企業が手軽に持つ方法と費用の考え方",
+  "meta_title": "自社専用AIチャットとは？費用と始め方を中小企業向けに解説",
+  "meta_description": "自社専用AIチャットとは何かをやさしく解説。会社名・ロゴ・専用URLで“自社のAI”を持つ方法、用意する3つの手段、費用の考え方、最短の始め方まで、中小企業向けにまとめました。",
+  "primary_kw": "自社専用 AIチャット",
+  "secondary_kw": ["会社専用 AIチャット", "企業専用 AIチャット", "専用AIチャット", "AI 自社専用", "自社専用 AI"],
+  "slug": "company-dedicated-ai-chat",
+  "category": "自社専用AI",
+  "tags": ["自社専用AI", "AIチャット", "中小企業", "AI導入", "専用URL", "ロゴ設定"],
+  "funnel_stage": "導入検討",
+  "target_reader": "AI導入に詳しくない中小企業の経営者・担当者",
+  "cta_type": "自社専用環境を小さく始める",
+  "internal_link_suggestions": [
+    "/blog/original-ai",
+    "/blog/branded-ai-chat",
+    "/blog/ai-how-to-start",
+    "/blog/ai-chat-easy-setup",
+    "/blog/ai-chat-low-cost"
+  ],
+  "image_prompt_file": "image-prompts/001-company-dedicated-ai-chat.md",
+  "draft_file": "drafts/001-company-dedicated-ai-chat.md",
+  "status": "draft"
+}

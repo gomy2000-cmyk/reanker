@@ -1,0 +1,23 @@
+{
+  "title": "AI相談窓口の作り方｜「○○相談窓口」を専用URLで用意する方法",
+  "meta_title": "AI相談窓口の作り方｜○○相談窓口を専用URLで用意",
+  "meta_description": "AI相談窓口とは何かをやさしく解説。「○○相談窓口」を名前・専用URL・ロゴで用意する手順、向いている用途、AIと人の役割分担、始める際の注意点まで、中小企業向けにまとめました。",
+  "primary_kw": "AI相談窓口",
+  "secondary_kw": ["AI 相談窓口", "相談窓口 AI化", "AIチャット 相談窓口", "問い合わせ窓口 AI"],
+  "slug": "ai-consultation-desk",
+  "category": "活用・相談窓口",
+  "tags": ["AI相談窓口", "問い合わせ対応", "AIチャット", "中小企業", "専用URL", "相談窓口化"],
+  "funnel_stage": "導入検討",
+  "target_reader": "問い合わせ・相談対応に課題がある中小企業の担当者",
+  "cta_type": "「○○相談窓口」を専用URLで作る",
+  "internal_link_suggestions": [
+    "/blog/branded-ai-chat",
+    "/blog/inquiry-handling-ai",
+    "/blog/internal-helpdesk-ai",
+    "/blog/company-dedicated-ai-chat",
+    "/blog/ai-chat-low-cost"
+  ],
+  "image_prompt_file": "image-prompts/005-ai-consultation-desk.md",
+  "draft_file": "drafts/005-ai-consultation-desk.md",
+  "status": "draft"
+}
