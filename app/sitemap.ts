@@ -4,6 +4,12 @@ import { listCompareSlugs } from '@/lib/compare'
 
 const SITE_URL = 'https://reanker.com'
 
+// sitemap はデフォルトで静的生成され、ビルド時点の publishedAt で内容が確定する。
+// このままだと予約公開（未来日付）の記事が公開日を迎えても、再ビルドまで sitemap に載らない。
+// ISR を有効化し最大1時間ごとに再生成することで、公開日到来後は再デプロイなしで自動反映される。
+// （値はリテラルで静的解析可能である必要がある。runtime は既定の nodejs なので revalidate が有効。）
+export const revalidate = 3600 // 1時間ごとに再検証
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
