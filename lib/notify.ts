@@ -142,7 +142,8 @@ export async function sendEmailDigest(
   to: string,
   summaries: AnchorSummary[]
 ): Promise<NotifyResult> {
-  const apiKey = process.env.RESEND_API_KEY
+  // 環境変数に BOM(﻿) が混入するケースをフォールバック除去する
+  const apiKey = (process.env.RESEND_API_KEY ?? '').replace(/^﻿/, '') || undefined
   if (!apiKey) {
     // 未設定時は「送信成功」扱いにしない。skipped を返し、呼び出し側で notified=true にしない。
     console.warn('[notify] RESEND_API_KEY not set, skipping email')
