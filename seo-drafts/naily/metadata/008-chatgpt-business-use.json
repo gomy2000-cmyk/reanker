@@ -1,0 +1,21 @@
+{
+  "title": "ChatGPTの法人利用・社内利用で押さえる基本と進め方",
+  "meta_title": "ChatGPT法人利用の基本｜社内ルールと情報の扱いを解説",
+  "meta_description": "ChatGPTの法人利用・社内利用で押さえる基本を解説。個人利用との違い、契約の確認ポイント、入力してよい情報の範囲など社内ルール、会社が何から始めるかの段取りを、情報の扱いを気にする中小企業向けにまとめました。",
+  "primary_kw": "ChatGPT 法人利用",
+  "secondary_kw": ["ChatGPT 社内利用", "ChatGPT 会社 何から"],
+  "slug": "chatgpt-business-use",
+  "category": "各AI別解説",
+  "tags": ["ChatGPT", "法人利用", "社内利用", "中小企業", "社内ルール", "情報の扱い", "AI導入"],
+  "funnel_stage": "比較検討",
+  "target_reader": "情報の扱いやルールを気にする中小企業の担当者",
+  "cta_type": "会社で安心して使い始める一歩として専用環境を控えめに提示",
+  "internal_link_suggestions": [
+    "/blog/chatgpt-for-company",
+    "/blog/company-dedicated-ai-chat",
+    "/blog/ai-chat-easy-setup"
+  ],
+  "image_prompt_file": "image-prompts/008-chatgpt-business-use.md",
+  "draft_file": "drafts/008-chatgpt-business-use.md",
+  "status": "draft"
+}

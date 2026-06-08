@@ -1,0 +1,21 @@
+{
+  "title": "AIチャットの費用はいくら？低コストで小さく始める考え方",
+  "meta_title": "AIチャットの費用は？低コストで小さく始める考え方",
+  "meta_description": "AIチャットの費用は何で決まるのかを分解して解説。具体的な相場の断定は避け、高くなる／抑えやすいパターンや、用途を絞り小さく始めるコツ、安さだけで選ぶ注意点まで、予算が限られる中小企業向けにまとめました。",
+  "primary_kw": "AIチャット 低コスト",
+  "secondary_kw": ["AIチャット 安く導入", "AIチャット 費用", "AIチャット 料金 相場", "AIチャット 安い"],
+  "slug": "ai-chat-low-cost",
+  "category": "費用・料金",
+  "tags": ["AIチャット", "費用", "低コスト", "中小企業", "AI導入", "小さく始める"],
+  "funnel_stage": "導入検討",
+  "target_reader": "予算が限られる中小企業の担当者",
+  "cta_type": "大きな初期投資をせず小さく低コストで始める",
+  "internal_link_suggestions": [
+    "/blog/ai-chat-easy-setup",
+    "/blog/company-dedicated-ai-chat",
+    "/blog/ai-setup-troublesome"
+  ],
+  "image_prompt_file": "image-prompts/012-ai-chat-low-cost.md",
+  "draft_file": "drafts/012-ai-chat-low-cost.md",
+  "status": "draft"
+}

@@ -1,0 +1,21 @@
+{
+  "title": "問い合わせ対応をAIで楽にする方法｜一次対応から始める",
+  "meta_title": "AI問い合わせ対応のはじめ方｜一次対応から楽にする",
+  "meta_description": "AI問い合わせ対応で手間を減らす方法をやさしく解説。AIに任せる範囲と人が残す範囲、よくある質問の洗い出しから一次対応・人につなぐまでの始め方、現実的な効果を中小企業向けにまとめました。",
+  "primary_kw": "AI問い合わせ対応",
+  "secondary_kw": ["問い合わせ対応 AI", "問い合わせ窓口 AI", "AI 業務活用 何から"],
+  "slug": "inquiry-handling-ai",
+  "category": "活用・相談窓口",
+  "tags": ["問い合わせ対応", "AI問い合わせ対応", "一次対応", "AIチャット", "中小企業", "業務効率化"],
+  "funnel_stage": "導入検討",
+  "target_reader": "問い合わせ件数が多く対応に追われる中小企業の担当者",
+  "cta_type": "一次対応をAIに任せて小さく始める",
+  "internal_link_suggestions": [
+    "/blog/ai-consultation-desk",
+    "/blog/internal-helpdesk-ai",
+    "/blog/branded-ai-chat"
+  ],
+  "image_prompt_file": "image-prompts/013-inquiry-handling-ai.md",
+  "draft_file": "drafts/013-inquiry-handling-ai.md",
+  "status": "draft"
+}

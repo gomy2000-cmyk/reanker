@@ -1,0 +1,21 @@
+{
+  "title": "AIチャットを簡単に導入する方法｜難しい設定なしで始める",
+  "meta_title": "AIチャット簡単導入｜難しい設定なしで始める方法",
+  "meta_description": "AIチャットを簡単に導入したい方へ。手順を「自分でやること」と「やらなくていいこと（任せられること）」に分けて整理し、すぐ使えるコツ、つまずき回避、最短の始め方までやさしく解説します。",
+  "primary_kw": "AIチャット 簡単導入",
+  "secondary_kw": ["AIチャット すぐ使える", "AIチャット 導入 簡単", "AIチャット 設定なし", "AIチャット 最短 導入"],
+  "slug": "ai-chat-easy-setup",
+  "category": "AI導入ガイド",
+  "tags": ["AIチャット", "簡単導入", "中小企業", "AI導入", "設定なし", "すぐ使える"],
+  "funnel_stage": "比較検討",
+  "target_reader": "設定・IT作業が苦手な中小企業の担当者",
+  "cta_type": "難しい設定なしで手軽に始める",
+  "internal_link_suggestions": [
+    "/blog/ai-setup-troublesome",
+    "/blog/ai-chat-low-cost",
+    "/blog/company-dedicated-ai-chat"
+  ],
+  "image_prompt_file": "image-prompts/011-ai-chat-easy-setup.md",
+  "draft_file": "drafts/011-ai-chat-easy-setup.md",
+  "status": "draft"
+}

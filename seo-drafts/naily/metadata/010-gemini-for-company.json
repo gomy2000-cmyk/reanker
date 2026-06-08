@@ -1,0 +1,21 @@
+{
+  "title": "Geminiを会社で使うには？自社専用のように使う方法",
+  "meta_title": "Geminiを会社で使うには？自社専用のように使う方法",
+  "meta_description": "Geminiを会社で使うとはどういうことかをやさしく整理。そのまま使う方法と、会社名・ロゴ・専用URLで“自社専用のように”使う方法を比較し、注意点や始め方、他AIとの選び方まで中小企業向けに解説します。",
+  "primary_kw": "Gemini 会社で使う",
+  "secondary_kw": ["Gemini 自社専用", "Gemini オリジナル"],
+  "slug": "gemini-for-company",
+  "category": "各AI別解説",
+  "tags": ["Gemini", "AIチャット", "会社で使う", "自社専用", "中小企業", "専用URL", "ロゴ設定"],
+  "funnel_stage": "比較検討",
+  "target_reader": "Geminiに関心がある中小企業の経営者・担当者",
+  "cta_type": "好きなAIを土台に自社専用風で始める",
+  "internal_link_suggestions": [
+    "/blog/chatgpt-for-company",
+    "/blog/claude-for-company",
+    "/blog/company-dedicated-ai-chat"
+  ],
+  "image_prompt_file": "image-prompts/010-gemini-for-company.md",
+  "draft_file": "drafts/010-gemini-for-company.md",
+  "status": "draft"
+}

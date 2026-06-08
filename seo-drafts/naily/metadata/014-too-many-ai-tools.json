@@ -1,0 +1,21 @@
+{
+  "title": "AIツールが多すぎて選べない人へ｜まず1つに絞る考え方",
+  "meta_title": "AIツールが多すぎて選べないときの、絞る考え方",
+  "meta_description": "AIツールが多すぎて選べない方へ。比べ続けて疲れる原因と、「全部比較しない・まず1つ小さく試す」考え方、絞る3つの基準、やりがちな失敗の避け方を、中小企業向けにやさしく整理しました。",
+  "primary_kw": "AIツール 多すぎる",
+  "secondary_kw": ["AIツール 選べない", "AIツール 何から使う"],
+  "slug": "too-many-ai-tools",
+  "category": "はじめてのAI",
+  "tags": ["AIツール", "選べない", "ツール選定", "中小企業", "AI導入", "悩み解決"],
+  "funnel_stage": "認知",
+  "target_reader": "ツール選定に疲れた中小企業の担当者",
+  "cta_type": "比較せず、まず1つ小さく試す",
+  "internal_link_suggestions": [
+    "/blog/ai-how-to-start",
+    "/blog/ai-setup-troublesome",
+    "/blog/company-dedicated-ai-chat"
+  ],
+  "image_prompt_file": "image-prompts/014-too-many-ai-tools.md",
+  "draft_file": "drafts/014-too-many-ai-tools.md",
+  "status": "draft"
+}

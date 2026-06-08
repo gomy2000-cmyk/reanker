@@ -1,0 +1,23 @@
+{
+  "title": "ChatGPTを自社専用のように会社で使う方法と注意点",
+  "meta_title": "ChatGPT 自社専用｜会社で使う方法と注意点を解説",
+  "meta_description": "ChatGPTを自社専用のように会社で使う方法をやさしく解説。「そのまま使う」と「会社名・ロゴで自社専用風にする」の違い、メリット、入力情報の扱いなど注意点、始め方まで中小企業向けにまとめました。",
+  "primary_kw": "ChatGPT 自社専用",
+  "secondary_kw": ["自社専用 ChatGPT", "ChatGPT 会社専用", "ChatGPT オリジナル", "ChatGPT 会社で使う"],
+  "slug": "chatgpt-for-company",
+  "category": "各AI別解説",
+  "tags": ["ChatGPT", "自社専用AI", "AIチャット", "中小企業", "会社利用", "専用URL", "ロゴ設定"],
+  "funnel_stage": "比較検討",
+  "target_reader": "ChatGPTは知っているが会社利用は未経験の中小企業の担当者",
+  "cta_type": "好きなAIを土台に自社専用風で始める",
+  "internal_link_suggestions": [
+    "/blog/chatgpt-business-use",
+    "/blog/company-dedicated-ai-chat",
+    "/blog/original-ai",
+    "/blog/claude-for-company",
+    "/blog/gemini-for-company"
+  ],
+  "image_prompt_file": "image-prompts/007-chatgpt-for-company.md",
+  "draft_file": "drafts/007-chatgpt-for-company.md",
+  "status": "draft"
+}

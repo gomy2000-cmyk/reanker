@@ -1,0 +1,21 @@
+{
+  "title": "会社名・ロゴ・専用URLで使えるAIチャットの作り方",
+  "meta_title": "会社名・ロゴ入りAIチャットの作り方｜専用URLで自社らしく",
+  "meta_description": "会社名・ブランド名・ロゴ・専用URLで“自社らしい”AIチャットを持つ方法をやさしく解説。自社化できる要素、社内定着や顧客への安心感などの効果、設定で決めること、業種別の名前の付け方まで中小企業向けにまとめました。",
+  "primary_kw": "会社名 AIチャット",
+  "secondary_kw": ["ブランドAIチャット", "ロゴ入り AIチャット", "専用URL AIチャット", "AIチャット 会社名"],
+  "slug": "branded-ai-chat",
+  "category": "自社専用AI",
+  "tags": ["会社名AIチャット", "ブランドAIチャット", "ロゴ", "専用URL", "中小企業", "AIチャット"],
+  "funnel_stage": "導入検討",
+  "target_reader": "自社らしさ・ブランド体験を出したい中小企業の担当者",
+  "cta_type": "会社名・ロゴ・専用URLで自社らしく見せる",
+  "internal_link_suggestions": [
+    "/blog/company-dedicated-ai-chat",
+    "/blog/ai-consultation-desk",
+    "/blog/original-ai"
+  ],
+  "image_prompt_file": "image-prompts/006-branded-ai-chat.md",
+  "draft_file": "drafts/006-branded-ai-chat.md",
+  "status": "draft"
+}

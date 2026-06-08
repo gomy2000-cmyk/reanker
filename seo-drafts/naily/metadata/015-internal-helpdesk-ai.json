@@ -1,0 +1,21 @@
+{
+  "title": "社内相談窓口をAIにする方法｜総務・情シスのよくある質問を一次対応",
+  "meta_title": "社内相談窓口をAIに｜総務・情シスの質問を一次対応",
+  "meta_description": "社内相談窓口をAIにする方法をやさしく解説。総務・情シス・人事のよくある質問を「○○相談窓口」で一次対応する作り方、AIと人の役割分担、公開範囲や運用の注意点まで、管理部門向けにまとめました。",
+  "primary_kw": "社内相談窓口 AI",
+  "secondary_kw": ["社内のよくある質問対応", "社内ヘルプデスク AI", "社内問い合わせ AI", "総務 相談窓口 AI", "情シス 問い合わせ AI"],
+  "slug": "internal-helpdesk-ai",
+  "category": "活用・相談窓口",
+  "tags": ["社内相談窓口", "社内ヘルプデスク", "総務", "情シス", "人事", "AIチャット", "中小企業"],
+  "funnel_stage": "導入検討",
+  "target_reader": "バックオフィス・管理部門（総務・情シス・人事）の担当者",
+  "cta_type": "社内向けに「○○相談窓口」を作り一次対応する",
+  "internal_link_suggestions": [
+    "/blog/ai-consultation-desk",
+    "/blog/inquiry-handling-ai",
+    "/blog/company-dedicated-ai-chat"
+  ],
+  "image_prompt_file": "image-prompts/015-internal-helpdesk-ai.md",
+  "draft_file": "drafts/015-internal-helpdesk-ai.md",
+  "status": "draft"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "Claudeを会社で使うには？自社専用のように使う方法",
+  "meta_title": "Claudeを会社で使うには？自社専用のように使う方法",
+  "meta_description": "Claudeを会社で使うとは何かをやさしく解説。そのまま使う・自社専用風に使うの選択肢、会社名・ロゴ・専用URLで“うちのAI”にする利点、入力情報の注意点、ChatGPTやGeminiとの選び方まで中小企業向けにまとめました。",
+  "primary_kw": "Claude 会社で使う",
+  "secondary_kw": ["Claude 自社専用", "Claude オリジナル"],
+  "slug": "claude-for-company",
+  "category": "各AI別解説",
+  "tags": ["Claude", "AIチャット", "中小企業", "自社専用AI", "会社で使う", "専用URL"],
+  "funnel_stage": "比較検討",
+  "target_reader": "Claudeに関心がある中小企業の経営者・担当者",
+  "cta_type": "好きなAIを土台に自社専用風で始める",
+  "internal_link_suggestions": [
+    "/blog/chatgpt-for-company",
+    "/blog/gemini-for-company",
+    "/blog/company-dedicated-ai-chat",
+    "/blog/original-ai"
+  ],
+  "image_prompt_file": "image-prompts/009-claude-for-company.md",
+  "draft_file": "drafts/009-claude-for-company.md",
+  "status": "draft"
+}

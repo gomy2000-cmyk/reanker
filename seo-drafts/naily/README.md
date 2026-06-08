@@ -1,7 +1,7 @@
 # ナイリー（nAIly）SEO記事制作パック
 
-最終更新：2026-06-07
-ステータス：初期下書き作成済み（レビュー待ち・**未コミット**）
+最終更新：2026-06-08
+ステータス：初期計画の**全15本（A01〜A15）すべて本文下書き・メタ・画像案を作成済み**（レビュー待ち）
 
 ---
 
@@ -67,27 +67,29 @@
 ```
 seo-drafts/naily/
   README.md                      … このファイル
+  STYLE-GUIDE.md                 … 執筆共通ルール（量産時の品質統一用）
   keyword-map.csv                … 50KWの台帳（クラスタ/優先度/検索意図/記事化方針 ほか）
   keyword-clusters.json          … クラスタ単位の整理＋カニバリ注意点
   article-production-plan.md     … 初期15記事の制作計画・内部リンク設計・CTA方針
-  drafts/                        … 初期5本の本文下書き
-    001-company-dedicated-ai-chat.md   （自社専用AIチャット）
-    002-original-ai.md                 （オリジナルAI）
-    003-ai-how-to-start.md             （AI 何から始める）
-    004-ai-setup-troublesome.md        （AI導入 めんどくさい）
-    005-ai-consultation-desk.md        （AI相談窓口）
-  metadata/                      … 初期5本のメタ情報JSON
-    001-company-dedicated-ai-chat.json
-    002-original-ai.json
-    003-ai-how-to-start.json
-    004-ai-setup-troublesome.json
-    005-ai-consultation-desk.json
-  image-prompts/                 … 初期5本の画像案・画像生成プロンプト
-    001-company-dedicated-ai-chat.md   （共通デザイン仕様もここに記載）
-    002-original-ai.md
-    003-ai-how-to-start.md
-    004-ai-setup-troublesome.md
-    005-ai-consultation-desk.md
+  drafts/                        … 全15本の本文下書き（001〜015）
+    001-company-dedicated-ai-chat.md   （自社専用AIチャット）★初期5本
+    002-original-ai.md                 （オリジナルAI）★初期5本
+    003-ai-how-to-start.md             （AI 何から始める）★初期5本
+    004-ai-setup-troublesome.md        （AI導入 めんどくさい）★初期5本
+    005-ai-consultation-desk.md        （AI相談窓口）★初期5本
+    006-branded-ai-chat.md             （会社名・ロゴ・専用URL）
+    007-chatgpt-for-company.md         （ChatGPT 自社専用）
+    008-chatgpt-business-use.md        （ChatGPT 法人利用）
+    009-claude-for-company.md          （Claude 会社で使う）
+    010-gemini-for-company.md          （Gemini 会社で使う）
+    011-ai-chat-easy-setup.md          （簡単導入）
+    012-ai-chat-low-cost.md            （低コスト・費用）
+    013-inquiry-handling-ai.md         （問い合わせ対応AI化）
+    014-too-many-ai-tools.md           （AIツール多すぎる）
+    015-internal-helpdesk-ai.md        （社内相談窓口）
+  metadata/                      … 全15本のメタ情報JSON（001〜015）
+  image-prompts/                 … 全15本の画像案・画像生成プロンプト（001〜015）
+                                   ※共通デザイン仕様は image-prompts/001 に集約
 ```
 
 ---
@@ -106,9 +108,9 @@ seo-drafts/naily/
 
 ---
 
-## 7. 次に作るべき10本（A06〜A15）
+## 7. 追加制作した10本（A06〜A15）＝全15本ドラフト完了
 
-`article-production-plan.md` に詳細あり。次の制作対象は以下のとおり。
+初回5本に続き、以下の10本も**本文下書き・メタJSON・画像案まで作成済み**です（詳細は `article-production-plan.md`）。
 
 | # | 記事ID | 優先 | 対策KW | 記事タイプ |
 |---|---|---|---|---|
@@ -123,7 +125,7 @@ seo-drafts/naily/
 | 14 | A14 | A | AIツール 多すぎる | 悩み解決 |
 | 15 | A15 | B | 社内相談窓口 AI | 相談窓口化（社内） |
 
-> 初期5本の本文中に張った内部リンク（`/blog/branded-ai-chat` など）は、上記10本の slug を**先取りで仮設定**しています。10本を作れば内部リンクがつながります。
+> 各記事の本文に張った内部リンク（`/blog/branded-ai-chat` など）は、**全15本そろって相互につながりました**（仮slug。実URL確定後に置換が必要）。
 
 ---
 
@@ -145,18 +147,21 @@ seo-drafts/naily/
 
 ## 9. 次回Claudeに依頼すべきこと
 
-- **次の10本（A06〜A15）の本文下書き作成**（特に優先度A：A06・A07・A11・A12・A13）。
+- 全15本の**人間レビュー反映**（赤入れ箇所の修正）。
 - 仮置きの**LP URL・記事URL・ブランドカラーを、確定値へ一括置換**。
-- 初期5本の**内部リンクの最終整合チェック**（10本完成後）。
+- 全15本の**内部リンクの最終整合チェック**（slug確定後）。
 - 各記事の**FAQ部分の構造化データ（FAQ schema）案**の追加（必要なら）。
 - ナイリーの実サイト／CMSの仕様が分かれば、**フロントマターの項目名を移行先フォーマットへ変換**。
 - 必要に応じて、**ピラー記事（8,000字以上）化**の検討（A01・A03 はピラー候補）。
+- 16本目以降（`keyword-clusters.json` の追加サブKWや業種別など）への拡張。
 
 ---
 
 ## 10. 補足メモ
 
-- 文字数：初期5本はいずれも本文 **約4,000〜5,000字**（依頼の「通常記事4,000〜6,000字」に準拠）。
-- CTA：各記事に**上部・中盤・下部＋関連セクション**のCTAを配置。文面は `> 💬 CTA` のブロックで明示（移行先のCTAコンポーネントに差し替え可能）。
+- 文字数：全15本いずれも本文 **約4,000〜6,000字相当**（依頼の「通常記事4,000〜6,000字」に準拠。表・記号込みの非空白では5,000〜7,300字）。
+- 品質チェック：全15本について、CTA4箇所・画像数の整合・避ける語ゼロ・フロントマター必須キー・JSON妥当性・内部リンクを機械チェック済み（致命的問題なし）。
+- CTA：各記事に**上部・セクション・中盤・下部の4箇所**にCTAを配置。文面は `> 💬 CTA` のブロックで明示（移行先のCTAコンポーネントに差し替え可能）。
+- 執筆ルール：量産時の品質統一のため `STYLE-GUIDE.md` を用意（トーン・体裁・CTA/画像/メタの規約）。
 - 画像プレースホルダ：本文中に `<!-- 🖼 IMAGE img-Axx-xx ... -->` 形式でコメント挿入（レンダリングには出ません）。対応する仕様は `image-prompts/` にあります。
 - カニバリ対策：空白違い・語順違いの同義KW（例：`AI相談窓口`＝`AI 相談窓口`）は必ず同一記事に統合済み。詳細は `keyword-clusters.json` を参照。
