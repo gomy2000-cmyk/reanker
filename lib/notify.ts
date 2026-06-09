@@ -59,6 +59,16 @@ function urlWithUtm(path: string, campaign: string, content?: string): string {
 }
 
 /**
+ * 環境変数値のサニタイズ。
+ * コピペや一部エディタ経由で混入する BOM(U+FEFF)・ゼロ幅文字(U+200B〜U+200D)・
+ * 前後の空白/改行を除去する。これらは Authorization ヘッダ(Bearer ...)等に載せられず
+ * ByteString 変換例外を起こし、メール送信を全滅させる原因になっていたため防御的に除去する。
+ */
+function sanitizeEnv(value: string | undefined): string {
+  return (value ?? '').replace(/[\uFEFF\u200B-\u200D]/g, '').trim()
+}
+
+/**
  * Slack に1通の集約サマリーを送る。
  * - 複数のアンカーを1メッセージにグルーピング表示
  * - 0件のアンカーは含まれていない前提（呼び出し側でフィルタ済み）
@@ -142,8 +152,8 @@ export async function sendEmailDigest(
   to: string,
   summaries: AnchorSummary[]
 ): Promise<NotifyResult> {
-  // 環境変数に BOM(﻿) が混入するケースをフォールバック除去する
-  const apiKey = (process.env.RESEND_API_KEY ?? '').replace(/^﻿/, '') || undefined
+  // BOM/ゼロ幅/前後空白を除去（汚染した env でも送信が壊れないように）
+  const apiKey = sanitizeEnv(process.env.RESEND_API_KEY) || undefined
   if (!apiKey) {
     // 未設定時は「送信成功」扱いにしない。skipped を返し、呼び出し側で notified=true にしない。
     console.warn('[notify] RESEND_API_KEY not set, skipping email')
@@ -210,7 +220,7 @@ export async function sendEmailDigest(
 
   // 送信元は Resend で認証した syojin.com に集約（ローカル部でサービスを分ける）。
   // 既存の reanker.com 認証を外す移行に対応。RESEND_FROM_EMAIL で上書き可。
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'ReAnker <reanker@syojin.com>'
+  const fromEmail = sanitizeEnv(process.env.RESEND_FROM_EMAIL) || 'ReAnker <reanker@syojin.com>'
 
   try {
     const res = await fetchWithRetry('https://api.resend.com/emails', {
