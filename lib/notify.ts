@@ -58,10 +58,15 @@ function urlWithUtm(path: string, campaign: string, content?: string): string {
   return `https://reanker.com${path}?${params}`
 }
 
+// Slack Incoming Webhook の text は実質40,000文字程度で打ち切られる/弾かれる。
+// 余裕を見て本文を上限内に収め、入り切らない分は件数だけ示してダッシュボードへ誘導する。
+const SLACK_MAX_TEXT_CHARS = 35000
+
 /**
  * Slack に1通の集約サマリーを送る。
  * - 複数のアンカーを1メッセージにグルーピング表示
  * - 0件のアンカーは含まれていない前提（呼び出し側でフィルタ済み）
+ * - text が Slack の上限を超えないよう、入り切らない記事は「ほか N件」に集約する。
  */
 export async function sendSlackDigest(
   webhookUrl: string,
@@ -70,16 +75,43 @@ export async function sendSlackDigest(
   const totalItems = summaries.reduce((sum, s) => sum + s.items.length, 0)
   if (totalItems === 0) return { status: 'skipped', error: 'no items' }
 
-  const blocks = summaries
-    .map((s) => {
-      const lines = s.items.map((it) => `・${it.title}\n  ${it.url}`).join('\n')
-      return `*━ ${s.anchorName}（${s.items.length}件）━*\n${lines}`
-    })
-    .join('\n\n')
+  const header = `【ReAnker】今日の新着 ${totalItems}件\n\n`
+  const footer = `\n\nダッシュボードで詳細を見る: https://reanker.com/dashboard`
+  // 打ち切り注記の分も見込んで本文に使える文字数の予算を決める。
+  const budget = SLACK_MAX_TEXT_CHARS - header.length - footer.length - 80
 
-  const text =
-    `【ReAnker】今日の新着 ${totalItems}件\n\n${blocks}\n\n` +
-    `ダッシュボードで詳細を見る: https://reanker.com/dashboard`
+  const parts: string[] = []
+  let used = 0
+  let omitted = 0
+  let truncated = false
+
+  for (const s of summaries) {
+    if (truncated) {
+      omitted += s.items.length
+      continue
+    }
+    const titleLine = `*━ ${s.anchorName}（${s.items.length}件）━*`
+    const lines: string[] = []
+    for (const it of s.items) {
+      const line = `・${it.title}\n  ${it.url}`
+      // 見出し＋ここまでの行＋今の行を足して予算を超えるなら、このアンカーで打ち切る。
+      const projected = used + titleLine.length + 1 + lines.join('\n').length + 1 + line.length
+      if (projected > budget) {
+        truncated = true
+        break
+      }
+      lines.push(line)
+    }
+    omitted += s.items.length - lines.length
+    if (lines.length > 0) {
+      const block = `${titleLine}\n${lines.join('\n')}`
+      parts.push(block)
+      used += block.length + 2 // ブロック区切り \n\n の分
+    }
+  }
+
+  const omittedNote = omitted > 0 ? `\n\n…ほか${omitted}件はダッシュボードでご確認ください` : ''
+  const text = header + parts.join('\n\n') + omittedNote + footer
 
   try {
     const res = await fetchWithRetry(webhookUrl, {
@@ -91,8 +123,8 @@ export async function sendSlackDigest(
       return { status: 'failed', error: `Slack webhook failed: HTTP ${res.status} ${await res.text()}` }
     }
     return { status: 'success' }
-  } catch (e: any) {
-    return { status: 'failed', error: `Slack webhook error: ${e?.message ?? e}` }
+  } catch (e: unknown) {
+    return { status: 'failed', error: `Slack webhook error: ${e instanceof Error ? e.message : e}` }
   }
 }
 

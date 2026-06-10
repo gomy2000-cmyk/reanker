@@ -17,7 +17,7 @@ import { supabaseAdmin } from './supabase'
 import { classifyArticle } from './classify'
 import { prtimesSource } from './sources/prtimes'
 import { googlenewsSource } from './sources/googlenews'
-import type { SourceFetcher, SourceFetchResult, ScrapedItem, SourceName } from './sources/types'
+import type { SourceFetcher, SourceFetchResult, SourceName } from './sources/types'
 
 export type FetchTrigger = 'manual' | 'cron' | 'test'
 
@@ -139,59 +139,102 @@ export async function runFetch(
     return excludeKeywords.some((k) => haystack.includes(k))
   }
 
+  // 4-1. 全ソースの保存候補を1つの配列にまとめる（除外キーワードはここで弾く）。
+  //      1件ずつ INSERT すると記事数に比例して往復が増え cron がタイムアウトしうるため、
+  //      まとめてバッチ upsert（ON CONFLICT DO NOTHING）する。
+  interface CandidateRow {
+    pickkw_id: string
+    source: SourceName
+    title: string
+    url: string
+    summary: string | null
+    published_at: string
+    published_hour: number | null
+    category: string
+    importance: string
+    importance_reason: string
+  }
+  const candidates: CandidateRow[] = []
+  const candidateCount: Record<string, number> = {}
+  const dbErrorBySource: Record<string, number> = {}
+
   for (const [sourceName, fetchResult] of fetchResults) {
-    const sr: SourceRunResult = {
+    sourceRunResults[sourceName] = {
       found: fetchResult.items.length,
       saved: 0,
       duplicate: 0,
       excluded: 0,
-      errors: 0,
+      errors: fetchResult.error ? 1 : 0,
       error_sample: fetchResult.error,
       http_status: fetchResult.http_status,
       duration_ms: fetchResult.duration_ms,
     }
-
-    if (fetchResult.error) {
-      sr.errors += 1
-    }
-
+    let cand = 0
     for (const item of fetchResult.items) {
       if (isExcluded(item.title, item.summary)) {
-        sr.excluded += 1
+        sourceRunResults[sourceName].excluded += 1
         continue
       }
-      const { category, importance, importance_reason } = classifyArticle(item.title)
-      const { data, error } = await supabaseAdmin
-        .from('items')
-        .insert({
-          pickkw_id: anchor.id,
-          source: item.source,
-          title: item.title,
-          url: item.url,
-          summary: item.summary,
-          published_at: item.published_at,
-          published_hour: item.published_hour,
-          category,
-          importance,
-          importance_reason,
-        })
-        .select('id, title, url, source')
-        .single()
-
-      if (!error && data) {
-        sr.saved += 1
-        allSavedItems.push(data as SavedItem)
-      } else if (error?.code === '23505') {
-        // UNIQUE (pickkw_id, url) 違反 → アンカー内の重複
-        sr.duplicate += 1
-      } else if (error) {
-        sr.errors += 1
-        if (!sr.error_sample) sr.error_sample = `db: ${error.message}`
-        console.error(`[runFetch] db insert error (${sourceName}):`, error.message)
-      }
+      const { category, importance, importance_reason } = classifyArticle(item.title, item.summary)
+      candidates.push({
+        pickkw_id: anchor.id,
+        source: item.source,
+        title: item.title,
+        url: item.url,
+        summary: item.summary,
+        published_at: item.published_at,
+        published_hour: item.published_hour,
+        category,
+        importance,
+        importance_reason,
+      })
+      cand++
     }
+    candidateCount[sourceName] = cand
+  }
 
-    sourceRunResults[sourceName] = sr
+  // 4-2. バッチ内の URL 重複を除去（同一アンカー内。先に来たソースの行を優先）。
+  //      残らなかった行は後段の duplicate 計算で自然に重複として数えられる。
+  const seenUrls = new Set<string>()
+  const deduped = candidates.filter((row) => {
+    if (seenUrls.has(row.url)) return false
+    seenUrls.add(row.url)
+    return true
+  })
+
+  // 4-3. チャンク分割して upsert。ignoreDuplicates=true（DO NOTHING）なので
+  //      実際に挿入された行だけが返る → これを「新規保存」として集計する。
+  const savedBySource: Record<string, number> = {}
+  const CHUNK = 500
+  for (let i = 0; i < deduped.length; i += CHUNK) {
+    const chunk = deduped.slice(i, i + CHUNK)
+    const { data, error } = await supabaseAdmin
+      .from('items')
+      .upsert(chunk, { onConflict: 'pickkw_id,url', ignoreDuplicates: true })
+      .select('id, title, url, source')
+
+    if (error) {
+      console.error('[runFetch] batch upsert error:', error.message)
+      for (const row of chunk) {
+        dbErrorBySource[row.source] = (dbErrorBySource[row.source] ?? 0) + 1
+        const sr = sourceRunResults[row.source]
+        if (sr && !sr.error_sample) sr.error_sample = `db: ${error.message}`
+      }
+      continue
+    }
+    for (const d of (data ?? []) as SavedItem[]) {
+      allSavedItems.push(d)
+      savedBySource[d.source] = (savedBySource[d.source] ?? 0) + 1
+    }
+  }
+
+  // 4-4. ソース別に saved / duplicate / errors を確定。
+  //      duplicate = 保存候補 − 新規保存 − DB保存失敗（バッチ内重複もここに含まれる）。
+  for (const [sourceName, sr] of Object.entries(sourceRunResults)) {
+    const dbErr = dbErrorBySource[sourceName] ?? 0
+    sr.saved = savedBySource[sourceName] ?? 0
+    sr.errors += dbErr
+    sr.duplicate = Math.max(0, (candidateCount[sourceName] ?? 0) - sr.saved - dbErr)
     totalFound += sr.found
     totalSaved += sr.saved
     totalDup += sr.duplicate

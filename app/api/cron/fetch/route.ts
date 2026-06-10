@@ -252,10 +252,13 @@ async function handleCronFetch(req: NextRequest) {
         })),
       ])
 
-      // ---- notified 判定：対象チャンネルがすべて success の記事だけ true ----
-      // メール失敗・skipped（RESEND未設定含む）の記事は notified=false のまま残す（自動再送はしない）。
-      const slackOk = slackResult.status === 'success'
-      const emailOk = emailResult.status === 'success'
+      // ---- notified 判定：対象チャンネルが「failed でない」記事を true にする ----
+      // success と skipped（送信先なし・APIキー未設定・対象0件など）は通知完了扱い。
+      // failed のチャンネルを含む記事だけ notified=false のまま残し、次回 cron で再送候補にする。
+      //   ※ skipped を false 扱いにすると、例えば RESEND 未設定環境では Slack が成功しても
+      //     永久に notified=false のままになり、notified 列が信頼できなくなる。
+      const slackFailed = slackResult.status === 'failed'
+      const emailFailed = emailResult.status === 'failed'
       const slackSet = new Set(slackItemIds)
       const emailSet = new Set(emailItemIds)
       const toMark: string[] = []
@@ -263,12 +266,12 @@ async function handleCronFetch(req: NextRequest) {
         const inSlack = slackSet.has(id)
         const inEmail = emailSet.has(id)
         if (!inSlack && !inEmail) {
-          // 通知対象チャンネルなし＝送るものが無いので従来どおり true。
+          // 通知対象チャンネルなし＝送るものが無いので true。
           toMark.push(id)
           continue
         }
-        const slackPass = !inSlack || slackOk
-        const emailPass = !inEmail || emailOk
+        const slackPass = !inSlack || !slackFailed
+        const emailPass = !inEmail || !emailFailed
         if (slackPass && emailPass) toMark.push(id)
       }
       const uniqueMark = [...new Set(toMark)]
