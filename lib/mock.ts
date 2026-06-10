@@ -14,10 +14,10 @@ export const mockUser: User = {
 }
 
 export const mockKeywords: PickKeyword[] = [
-  { id: 'kw1', user_id: 'demo-user', name: 'Salesforce', type: 'service', query_value: 'Salesforce', sources: ['prtimes', 'googlenews'], notify_slack: true, notify_email: false, warmup_until: new Date().toISOString(), created_at: '' },
-  { id: 'kw2', user_id: 'demo-user', name: 'kintone', type: 'service', query_value: 'kintone', sources: ['prtimes', 'googlenews'], notify_slack: true, notify_email: true, warmup_until: new Date().toISOString(), created_at: '' },
-  { id: 'kw3', user_id: 'demo-user', name: 'AI受発注', type: 'keyword', query_value: 'AI受発注', sources: ['prtimes'], notify_slack: true, notify_email: false, warmup_until: new Date().toISOString(), created_at: '' },
-  { id: 'kw4', user_id: 'demo-user', name: 'sansan.com', type: 'domain', query_value: 'sansan.com', sources: ['googlenews'], notify_slack: false, notify_email: true, warmup_until: new Date().toISOString(), created_at: '' },
+  { id: 'kw1', user_id: 'demo-user', name: 'Salesforce', type: 'service', query_value: 'Salesforce', sources: ['prtimes', 'googlenews'], exclude_keywords: [], notify_slack: true, notify_email: false, warmup_until: new Date().toISOString(), created_at: '' },
+  { id: 'kw2', user_id: 'demo-user', name: 'kintone', type: 'service', query_value: 'kintone', sources: ['prtimes', 'googlenews'], exclude_keywords: [], notify_slack: true, notify_email: true, warmup_until: new Date().toISOString(), created_at: '' },
+  { id: 'kw3', user_id: 'demo-user', name: 'AI受発注', type: 'keyword', query_value: 'AI受発注', sources: ['prtimes'], exclude_keywords: [], notify_slack: true, notify_email: false, warmup_until: new Date().toISOString(), created_at: '' },
+  { id: 'kw4', user_id: 'demo-user', name: 'sansan.com', type: 'domain', query_value: 'sansan.com', sources: ['googlenews'], exclude_keywords: [], notify_slack: false, notify_email: true, warmup_until: new Date().toISOString(), created_at: '' },
 ]
 
 function daysAgo(n: number): string {

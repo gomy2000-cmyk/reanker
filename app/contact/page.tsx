@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/LegalLayout'
 import { Mail, Clock, HelpCircle } from 'lucide-react'
+import { ContactForm } from './ContactForm'
 
 export const metadata: Metadata = {
   title: 'お問い合わせ',
@@ -19,8 +20,10 @@ export default function ContactPage() {
   return (
     <LegalLayout title="お問い合わせ" updatedAt="2026年5月22日">
       <p className="text-sm text-gray-700 leading-relaxed mb-8">
-        ReAnker（リアンカー）をご利用いただきありがとうございます。本サービスに関するお問い合わせは、以下の窓口へお寄せください。返信までに通常2〜3営業日いただいております。
+        ReAnker（リアンカー）をご利用いただきありがとうございます。本サービスに関するお問い合わせは、以下のフォームまたはメールでお寄せください。返信までに通常2〜3営業日いただいております。
       </p>
+
+      <ContactForm />
 
       <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
         <div className="flex items-start gap-3 mb-4">

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isStandardPlan } from '@/lib/plan'
 import { generateReportForUser, getPreviousWeekRangeJST } from '@/lib/reports'
+import { sendOpsAlert } from '@/lib/alert'
 
 export const maxDuration = 300
 
@@ -45,6 +46,10 @@ export async function GET(req: NextRequest) {
     const r = await generateReportForUser(u.id, 'weekly', start, end)
     if (r.ok) generated++
     else if (r.error) errors.push(`user ${u.id}: ${r.error}`)
+  }
+
+  if (errors.length > 0) {
+    await sendOpsAlert(`週次レポート生成でエラー ${errors.length}件`, errors)
   }
 
   return NextResponse.json({

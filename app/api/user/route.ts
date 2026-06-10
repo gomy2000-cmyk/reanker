@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { canUseSlackNotification, normalizePlan, planLimitErrorBody, PLAN_LIMITS } from '@/lib/plan'
+import { userPatchSchema, parseBody } from '@/lib/validation'
 
 /**
  * GET /api/user
@@ -46,22 +47,19 @@ export async function PATCH(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   const plan = normalizePlan(user.plan)
-  const body = await req.json()
   // ログイン用 email は更新対象から除外（変更不可）。通知先は notify_email のみ編集可。
-  const allowed = ['name', 'slack_webhook_url', 'notify_email']
-  const updates: Record<string, any> = {}
-  for (const k of allowed) if (k in body) updates[k] = body[k]
+  const parsed = await parseBody(req, userPatchSchema)
+  if (!parsed.ok) return NextResponse.json({ error: parsed.message }, { status: 400 })
 
-  // 通知先メール: 空 → null（送信時はログインメールにフォールバック）、非空 → メール形式を検証
-  if ('notify_email' in updates) {
-    const raw = typeof updates.notify_email === 'string' ? updates.notify_email.trim() : ''
-    if (raw === '') {
-      updates.notify_email = null
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) {
-      return NextResponse.json({ error: 'メールアドレスの形式が正しくありません。' }, { status: 400 })
-    } else {
-      updates.notify_email = raw
-    }
+  const updates: Record<string, string | null> = {}
+  if (parsed.data.name !== undefined) updates.name = parsed.data.name
+  if (parsed.data.slack_webhook_url !== undefined) {
+    // 空 → null（クリア）
+    updates.slack_webhook_url = parsed.data.slack_webhook_url || null
+  }
+  if (parsed.data.notify_email !== undefined) {
+    // 空 → null（送信時はログインメールにフォールバック）
+    updates.notify_email = parsed.data.notify_email || null
   }
 
   // Free は Slack Webhook URL の設定不可（空文字でクリアは OK）

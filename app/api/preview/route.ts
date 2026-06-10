@@ -1,14 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import * as cheerio from 'cheerio'
+import { supabaseAdmin } from '@/lib/supabase'
 
 export const maxDuration = 15
 
 const UA = 'Mozilla/5.0 (compatible; ReankerBot/1.0; +https://reanker.com)'
 
+const TRUSTED_DOMAINS = ['prtimes.jp', 'news.google.com']
+
+function isTrustedDomain(hostname: string): boolean {
+  return TRUSTED_DOMAINS.some((d) => hostname === d || hostname.endsWith(`.${d}`))
+}
+
 /**
- * 任意のURLからOGP情報・本文冒頭を抽出してプレビュー表示用に返す。
+ * 自分のアンカーで取得済みの記事URLかどうか（SSRF対策の本丸）。
+ * Google News 経由の実記事は任意ドメインだが、必ず items に保存されたURLからしか
+ * プレビューしないため、「ログインユーザー本人の items に存在するURL」のみ許可する。
+ */
+async function isOwnSavedItemUrl(url: string, email: string): Promise<boolean> {
+  const { data: user } = await supabaseAdmin
+    .from('users').select('id').eq('email', email).single()
+  if (!user) return false
+
+  const { data: item } = await supabaseAdmin
+    .from('items')
+    .select('id, pick_keywords!inner(user_id)')
+    .eq('url', url)
+    .eq('pick_keywords.user_id', user.id)
+    .limit(1)
+    .maybeSingle()
+
+  return !!item
+}
+
+/**
+ * 記事URLからOGP情報・本文冒頭を抽出してプレビュー表示用に返す。
  * 認証必須（ログインユーザーのみ）。
+ *
+ * 許可するURL:
+ *   - 信頼ドメイン（prtimes.jp / news.google.com）
+ *   - または自分のアンカーで取得済み（items に存在する）URL
+ * それ以外は 403。内部ネットワーク等への任意リクエスト（SSRF）を防ぐ。
  *
  * 使い方: GET /api/preview?url=https://prtimes.jp/main/html/rd/p/...
  */
@@ -21,15 +54,13 @@ export async function GET(req: NextRequest) {
   const url = req.nextUrl.searchParams.get('url')
   if (!url) return NextResponse.json({ error: 'url is required' }, { status: 400 })
 
-  // 簡易バリデーション（信頼ドメインのみ）
   try {
     const u = new URL(url)
-    const allowed = ['prtimes.jp', 'news.google.com']
-    const isAllowed =
-      allowed.some((d) => u.hostname === d || u.hostname.endsWith(`.${d}`)) ||
-      // Google News から飛ぶ実記事は任意ドメイン — Google News 経由の link は通す
-      true
-    if (!isAllowed) {
+    if (u.protocol !== 'https:' && u.protocol !== 'http:') {
+      return NextResponse.json({ error: 'Invalid url' }, { status: 400 })
+    }
+    const allowed = isTrustedDomain(u.hostname) || (await isOwnSavedItemUrl(url, session.user.email))
+    if (!allowed) {
       return NextResponse.json({ error: 'Domain not allowed' }, { status: 403 })
     }
   } catch {
@@ -92,7 +123,7 @@ export async function GET(req: NextRequest) {
         },
       }
     )
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('[preview] fetch failed:', e)
     return NextResponse.json({ error: 'fetch failed' }, { status: 502 })
   }

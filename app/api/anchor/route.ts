@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { canCreateAnchor, canUseSlackNotification, normalizePlan, planLimitErrorBody } from '@/lib/plan'
+import { anchorCreateSchema, anchorUpdateSchema, anchorDeleteSchema, parseBody } from '@/lib/validation'
 function nextDay9amJST(): string {
   const now = new Date()
   const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
@@ -36,8 +37,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(planLimitErrorBody('anchor_limit'), { status: 403 })
   }
 
-  const body = await req.json()
-  const { name, type, query_value, sources, notify_slack, notify_email } = body
+  const parsed = await parseBody(req, anchorCreateSchema)
+  if (!parsed.ok) return NextResponse.json({ error: parsed.message }, { status: 400 })
+  const { name, type, query_value, sources, exclude_keywords, notify_slack, notify_email } = parsed.data
 
   // Slack 通知は Standard のみ許可
   const slackRequested = notify_slack === true
@@ -51,6 +53,7 @@ export async function POST(req: NextRequest) {
     type,
     query_value,
     sources: sources ?? ['prtimes', 'googlenews'],
+    exclude_keywords: exclude_keywords ?? [],
     notify_slack: slackRequested && canUseSlackNotification(plan),
     notify_email: notify_email ?? false,
     warmup_until: nextDay9amJST(),
@@ -69,8 +72,9 @@ export async function PATCH(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   const plan = normalizePlan(user.plan)
-  const body = await req.json()
-  const { id, name, type, query_value, sources, notify_slack, notify_email } = body
+  const parsed = await parseBody(req, anchorUpdateSchema)
+  if (!parsed.ok) return NextResponse.json({ error: parsed.message }, { status: 400 })
+  const { id, name, type, query_value, sources, exclude_keywords, notify_slack, notify_email } = parsed.data
 
   // Slack 通知の有効化は Standard のみ
   if (notify_slack === true && !canUseSlackNotification(plan)) {
@@ -84,6 +88,7 @@ export async function PATCH(req: NextRequest) {
       type,
       query_value,
       sources,
+      exclude_keywords: exclude_keywords ?? [],
       notify_slack: notify_slack === true && canUseSlackNotification(plan),
       notify_email,
     })
@@ -104,7 +109,9 @@ export async function DELETE(req: NextRequest) {
   const user = await getUser(session.user.email)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  const { id } = await req.json()
+  const parsed = await parseBody(req, anchorDeleteSchema)
+  if (!parsed.ok) return NextResponse.json({ error: parsed.message }, { status: 400 })
+  const { id } = parsed.data
 
   const { error } = await supabaseAdmin
     .from('pick_keywords')

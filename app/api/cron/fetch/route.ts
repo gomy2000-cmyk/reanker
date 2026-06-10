@@ -4,6 +4,7 @@ import { daysAgoJST } from '@/lib/scraper'
 import { runFetch, type SavedItem } from '@/lib/runFetch'
 import { sendSlackDigest, sendEmailDigest, type AnchorSummary, type NotifyResult } from '@/lib/notify'
 import { isFetchDayJST, canUseSlackNotification, normalizePlan, type Plan } from '@/lib/plan'
+import { sendOpsAlert } from '@/lib/alert'
 
 export const maxDuration = 300
 
@@ -40,8 +41,8 @@ async function logNotifications(rows: NotificationLogInsert[]): Promise<void> {
         : ''
       console.error(`[notify] notification_logs への記録に失敗${hint}:`, error.message)
     }
-  } catch (e: any) {
-    console.error('[notify] notification_logs への記録で例外:', e?.message ?? e)
+  } catch (e: unknown) {
+    console.error('[notify] notification_logs への記録で例外:', e instanceof Error ? e.message : e)
   }
 }
 
@@ -77,6 +78,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  try {
+    return await handleCronFetch(req)
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('[cron/fetch] unhandled error:', e)
+    await sendOpsAlert('日次取得cronが異常終了しました', [msg])
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 })
+  }
+}
+
+async function handleCronFetch(req: NextRequest) {
   const dateParam = req.nextUrl.searchParams.get('date')
   const notifyEnabled = req.nextUrl.searchParams.get('notify') !== 'false'
   // 直近ウィンドウの下限日。完全一致ではなく「この日以降」を採用する。
@@ -263,9 +275,14 @@ export async function GET(req: NextRequest) {
       if (uniqueMark.length > 0) {
         await supabaseAdmin.from('items').update({ notified: true }).in('id', uniqueMark)
       }
-    } catch (e: any) {
-      notifyErrors.push(`user ${userId}: ${e?.message ?? e}`)
+    } catch (e: unknown) {
+      notifyErrors.push(`user ${userId}: ${e instanceof Error ? e.message : e}`)
     }
+  }
+
+  const allErrors = [...runErrors, ...notifyErrors]
+  if (allErrors.length > 0) {
+    await sendOpsAlert(`日次取得cronでエラー ${allErrors.length}件`, allErrors)
   }
 
   return NextResponse.json({
@@ -278,6 +295,6 @@ export async function GET(req: NextRequest) {
     duplicate: totalDuplicate,
     slack_notifications: slackNotifications,
     email_notifications: emailNotifications,
-    errors: [...runErrors, ...notifyErrors],
+    errors: allErrors,
   })
 }

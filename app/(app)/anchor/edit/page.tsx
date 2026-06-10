@@ -21,6 +21,7 @@ export default function AnchorEditPage() {
   const [name, setName] = useState('')
   const [type, setType] = useState<AnchorType>('service')
   const [queryValue, setQueryValue] = useState('')
+  const [excludeInput, setExcludeInput] = useState('')
   const [sources, setSources] = useState<Source[]>(['prtimes', 'googlenews'])
   const [notifySlack, setNotifySlack] = useState(false)
   const [notifyEmail, setNotifyEmail] = useState(true)
@@ -58,6 +59,7 @@ export default function AnchorEditPage() {
         setName(kw.name)
         setType(kw.type)
         setQueryValue(kw.query_value)
+        setExcludeInput((kw.exclude_keywords ?? []).join('、'))
         setSources(kw.sources)
         setNotifySlack(kw.notify_slack)
         setNotifyEmail(kw.notify_email)
@@ -86,8 +88,13 @@ export default function AnchorEditPage() {
       return
     }
 
+    // 「、」「,」区切り → 配列（空要素・重複は除去、最大20件）
+    const excludeKeywords = [...new Set(
+      excludeInput.split(/[、,]/).map((s) => s.trim()).filter((s) => s.length > 0)
+    )].slice(0, 20)
+
     setLoading(true)
-    const body = { id: editId, name, type, query_value: queryValue, sources, notify_slack: notifySlack, notify_email: notifyEmail }
+    const body = { id: editId, name, type, query_value: queryValue, sources, exclude_keywords: excludeKeywords, notify_slack: notifySlack, notify_email: notifyEmail }
     const res = await fetch('/api/anchor', {
       method: isEdit ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -240,6 +247,21 @@ export default function AnchorEditPage() {
             }
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#378ADD]/50 focus:border-[#378ADD]"
           />
+        </div>
+
+        {/* 除外キーワード */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            除外キーワード <span className="text-gray-400 font-normal">（任意）</span>
+          </label>
+          <input
+            type="text"
+            value={excludeInput}
+            onChange={(e) => setExcludeInput(e.target.value)}
+            placeholder="例：採用、セミナー（「、」区切りで最大20件）"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#378ADD]/50 focus:border-[#378ADD]"
+          />
+          <p className="text-[11px] text-gray-400 mt-1">タイトル・要約に含まれる記事を取得対象から除外します</p>
         </div>
 
         {/* 取得ソース */}

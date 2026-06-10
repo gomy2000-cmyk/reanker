@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
+import { itemPatchSchema, parseBody } from '@/lib/validation'
 
 /** 認証 + 所有権チェック共通ヘルパー */
 async function verifyOwnership(itemId: string, email: string): Promise<boolean> {
@@ -12,7 +13,7 @@ async function verifyOwnership(itemId: string, email: string): Promise<boolean> 
     .from('items')
     .select('id, pick_keywords!inner(user_id)')
     .eq('id', itemId)
-    .single() as any
+    .single() as { data: { id: string; pick_keywords: { user_id: string } | null } | null }
 
   return !!item && item.pick_keywords?.user_id === user.id
 }
@@ -24,9 +25,9 @@ export async function PATCH(req: NextRequest) {
   const session = await getServerSession()
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const body = await req.json()
-  const { id, is_read, is_clipped } = body
-  if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
+  const parsed = await parseBody(req, itemPatchSchema)
+  if (!parsed.ok) return NextResponse.json({ error: parsed.message }, { status: 400 })
+  const { id, is_read, is_clipped } = parsed.data
 
   if (!(await verifyOwnership(id, session.user.email))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

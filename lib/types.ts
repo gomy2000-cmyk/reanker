@@ -22,6 +22,7 @@ export interface PickKeyword {
   type: AnchorType
   query_value: string
   sources: Source[]
+  exclude_keywords: string[]
   notify_slack: boolean
   notify_email: boolean
   warmup_until: string

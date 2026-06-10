@@ -20,18 +20,22 @@ create table if not exists pick_keywords (
   type text not null check (type in ('service', 'keyword', 'domain')),
   query_value text not null,
   sources text[] not null default array['prtimes', 'googlenews'],
+  exclude_keywords text[] not null default '{}',
   notify_slack boolean default true,
   notify_email boolean default false,
   warmup_until timestamptz not null,
   created_at timestamptz default now()
 );
 
+-- 既存テーブル向けマイグレーション
+alter table pick_keywords add column if not exists exclude_keywords text[] not null default '{}';
+
 create table if not exists items (
   id uuid primary key default gen_random_uuid(),
   pickkw_id uuid references pick_keywords(id) on delete cascade,
   source text not null check (source in ('prtimes', 'googlenews')),
   title text not null,
-  url text unique not null,
+  url text not null,
   summary text,
   published_at date not null,
   published_hour integer,
@@ -39,7 +43,10 @@ create table if not exists items (
   is_clipped boolean default false,
   notified boolean default false,
   deleted_at timestamptz,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  -- 重複防止はアンカー単位。グローバル UNIQUE(url) にすると、複数アンカー（別ユーザー含む）が
+  -- 同じ記事にヒットしたとき2件目以降が保存されなくなる。
+  constraint items_pickkw_url_unique unique (pickkw_id, url)
 );
 
 -- 既存テーブル向けマイグレーション
@@ -49,6 +56,18 @@ alter table items add column if not exists category text default 'その他';
 alter table items add column if not exists importance text default '中';
 alter table items add column if not exists ai_summary text;
 alter table items add column if not exists importance_reason text;
+
+-- 旧スキーマ（url がグローバル UNIQUE）からの移行:
+-- グローバル UNIQUE を外し、アンカー単位の複合 UNIQUE に置き換える。
+do $$
+begin
+  if exists (select 1 from pg_constraint where conname = 'items_url_key') then
+    alter table items drop constraint items_url_key;
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'items_pickkw_url_unique') then
+    alter table items add constraint items_pickkw_url_unique unique (pickkw_id, url);
+  end if;
+end $$;
 
 -- レポートテーブル（週次・月次サマリ）
 create table if not exists reports (
@@ -72,6 +91,35 @@ create table if not exists reports (
 
 create unique index if not exists idx_reports_user_type_period
   on reports(user_id, type, period_start);
+
+-- 参照は service role のみ（ポリシー未定義＝anon/authユーザーは遮断）。
+-- RLS を有効化しないと公開 anon キーで全ユーザーのレポートが読み書きできてしまう。
+alter table reports enable row level security;
+
+-- ============================================================
+-- fetch_runs : 取得実行（手動・cron・テスト）の履歴
+--   どのアンカーを / いつ / どのトリガーで取得し、何件保存・重複・エラーだったかを追える。
+--   lib/runFetch.ts が毎回 INSERT/UPDATE する。
+-- ============================================================
+create table if not exists fetch_runs (
+  id uuid primary key default gen_random_uuid(),
+  pickkw_id uuid references pick_keywords(id) on delete cascade,
+  trigger text not null,                -- manual / cron / test
+  started_at timestamptz not null default now(),
+  finished_at timestamptz,
+  status text not null,                 -- running / ok / partial / error
+  sources jsonb not null default '{}'::jsonb,
+  total_found integer not null default 0,
+  total_saved integer not null default 0,
+  total_duplicate integer not null default 0,
+  total_errors integer not null default 0,
+  duration_ms integer,
+  error_message text
+);
+create index if not exists idx_fetch_runs_pickkw_id on fetch_runs(pickkw_id);
+create index if not exists idx_fetch_runs_started_at on fetch_runs(started_at);
+-- 参照は service role のみ（ポリシー未定義＝anon/authユーザーは遮断）
+alter table fetch_runs enable row level security;
 
 -- インデックス
 create index if not exists idx_items_pickkw_id on items(pickkw_id);

@@ -32,6 +32,8 @@ export interface SourceRunResult {
   found: number
   saved: number
   duplicate: number
+  /** 除外キーワードにヒットして保存しなかった件数 */
+  excluded: number
   errors: number
   error_sample: string | null
   http_status: number | null
@@ -76,7 +78,7 @@ export async function runFetch(
   // 1. アンカーをロード
   const { data: anchor, error: anchorErr } = await supabaseAdmin
     .from('pick_keywords')
-    .select('id, query_value, sources')
+    .select('id, query_value, sources, exclude_keywords')
     .eq('id', anchorId)
     .single()
 
@@ -127,11 +129,22 @@ export async function runFetch(
   let totalDup = 0
   let totalErrors = 0
 
+  // 除外キーワード: タイトル・要約のいずれかに含まれる記事は保存しない（大文字小文字は無視）
+  const excludeKeywords = ((anchor.exclude_keywords as string[] | null) ?? [])
+    .map((k) => k.toLowerCase())
+    .filter((k) => k.length > 0)
+  const isExcluded = (title: string, summary: string | null | undefined): boolean => {
+    if (excludeKeywords.length === 0) return false
+    const haystack = `${title}\n${summary ?? ''}`.toLowerCase()
+    return excludeKeywords.some((k) => haystack.includes(k))
+  }
+
   for (const [sourceName, fetchResult] of fetchResults) {
     const sr: SourceRunResult = {
       found: fetchResult.items.length,
       saved: 0,
       duplicate: 0,
+      excluded: 0,
       errors: 0,
       error_sample: fetchResult.error,
       http_status: fetchResult.http_status,
@@ -143,6 +156,10 @@ export async function runFetch(
     }
 
     for (const item of fetchResult.items) {
+      if (isExcluded(item.title, item.summary)) {
+        sr.excluded += 1
+        continue
+      }
       const { category, importance, importance_reason } = classifyArticle(item.title)
       const { data, error } = await supabaseAdmin
         .from('items')
