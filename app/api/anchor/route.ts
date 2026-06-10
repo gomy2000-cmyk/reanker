@@ -95,9 +95,11 @@ export async function PATCH(req: NextRequest) {
     .eq('id', id)
     .eq('user_id', user.id)
     .select()
-    .single()
+    .maybeSingle()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  // 0行更新 = 存在しない or 他人のアンカー
+  if (!data) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json(data)
 }
 
@@ -113,12 +115,17 @@ export async function DELETE(req: NextRequest) {
   if (!parsed.ok) return NextResponse.json({ error: parsed.message }, { status: 400 })
   const { id } = parsed.data
 
-  const { error } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('pick_keywords')
     .delete()
     .eq('id', id)
     .eq('user_id', user.id)
+    .select('id')
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  // 0行削除 = 存在しない or 他人のアンカー（従来は200を返していた）
+  if (!data || data.length === 0) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
   return NextResponse.json({ ok: true })
 }

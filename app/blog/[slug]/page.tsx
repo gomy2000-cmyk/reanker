@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getServerSession } from 'next-auth'
 import { ChevronLeft } from 'lucide-react'
 import { getBlogPost, getRelatedPosts, getAllBlogPosts } from '@/lib/blog'
 import { MarketingHeader } from '@/components/MarketingHeader'
@@ -22,7 +21,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const post = getBlogPost(slug)
-  if (!post) return { title: 'Not Found' }
+  // 存在しないslugはメタデータ解決の時点で404にする（200で返すソフト404を防ぐ）
+  if (!post) notFound()
 
   return {
     title: { absolute: `${post.title}｜ReAnker` },
@@ -74,8 +74,6 @@ export default async function BlogPostPage({ params }: Props) {
   const post = getBlogPost(slug)
   if (!post) notFound()
 
-  const session = await getServerSession()
-  const isAuthenticated = !!session?.user
   const related = getRelatedPosts(slug, 3)
   const recentPosts = getAllBlogPosts().filter((p) => p.slug !== slug).slice(0, 5)
 
@@ -106,7 +104,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
-      <MarketingHeader isAuthenticated={isAuthenticated} />
+      <MarketingHeader />
 
       {/* JSON-LD 構造化データ */}
       <script
@@ -156,7 +154,7 @@ export default async function BlogPostPage({ params }: Props) {
           )}
 
           {/* === CTA: 記事上部（compact） === */}
-          <BlogCTA isAuthenticated={isAuthenticated} variant="compact" />
+          <BlogCTA variant="compact" />
 
           {/* 本文（中盤H2で分割し、中部CTAを挟む） */}
           {(() => {
@@ -174,14 +172,14 @@ export default async function BlogPostPage({ params }: Props) {
               <>
                 <div className="blog-content" dangerouslySetInnerHTML={{ __html: first }} />
                 {/* === CTA: 記事中部（compact） === */}
-                <BlogCTA isAuthenticated={isAuthenticated} variant="compact" />
+                <BlogCTA variant="compact" />
                 <div className="blog-content" dangerouslySetInnerHTML={{ __html: second }} />
               </>
             )
           })()}
 
           {/* === CTA: 記事最下部（full + ダッシュボード画像） === */}
-          <BlogCTA isAuthenticated={isAuthenticated} variant="full" />
+          <BlogCTA variant="full" />
 
           {/* 関連記事 */}
           {related.length > 0 && (

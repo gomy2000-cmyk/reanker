@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getServerSession } from 'next-auth'
 import { Check, X, MinusSquare, ArrowRight, Sparkles } from 'lucide-react'
 import { MarketingHeader } from '@/components/MarketingHeader'
+import { AuthCTA } from '@/components/AuthCTA'
 import { Footer } from '@/components/Footer'
 import {
   TOOLS, COMPARISON_ROWS, REANKER_ADVANTAGES, INDIVIDUAL_COMPARES, FAQS_FOR_COMPARE,
@@ -36,11 +36,7 @@ function CellIcon({ v }: { v: string }) {
   return <span className="text-xs text-gray-700">{v}</span>
 }
 
-export default async function ComparePage() {
-  const session = await getServerSession()
-  const isAuthenticated = !!session?.user
-  const ctaHref = isAuthenticated ? '/dashboard' : '/login'
-
+export default function ComparePage() {
   // FAQ 構造化データ
   const faqJsonLd = {
     '@context': 'https://schema.org',
@@ -54,7 +50,7 @@ export default async function ComparePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
-      <MarketingHeader isAuthenticated={isAuthenticated} />
+      <MarketingHeader />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
       <main className="flex-1">
@@ -193,13 +189,11 @@ export default async function ComparePage() {
               無料プランから始められます。
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
-              <Link
-                href={ctaHref}
+              <AuthCTA
                 className="inline-flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium px-6 py-3 rounded-md transition-colors"
               >
-                {isAuthenticated ? 'ダッシュボードへ' : '無料ではじめる'}
                 <ArrowRight size={14} />
-              </Link>
+              </AuthCTA>
               <Link
                 href="/pricing"
                 className="inline-flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-6 py-3 rounded-md transition-colors"

@@ -1,11 +1,20 @@
+'use client'
+
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import { Wordmark } from './brand/Wordmark'
 
-interface Props {
-  isAuthenticated?: boolean
-}
+/**
+ * マーケティングページ共通ヘッダー。
+ * ログイン状態はクライアント側（useSession）で判定する。
+ * サーバーで getServerSession を呼ぶとページ全体が動的レンダリングになり
+ * 静的配信（CDNキャッシュ・正しい404ステータス）が壊れるため。
+ * SSR時は未ログイン表示で出力し、セッション確認後に切り替わる。
+ */
+export function MarketingHeader() {
+  const { data: session } = useSession()
+  const isAuthenticated = !!session?.user
 
-export function MarketingHeader({ isAuthenticated = false }: Props) {
   return (
     <header className="border-b border-gray-200 bg-white sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 h-[80px] flex items-center justify-between">

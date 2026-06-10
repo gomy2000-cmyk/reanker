@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getServerSession } from 'next-auth'
 import {
   Bell, Search, BarChart3, MessageSquare, Mail,
   ArrowRight, Check, X, Plus, ExternalLink, Circle, ChevronRight,
 } from 'lucide-react'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
+import { AuthCTA } from '@/components/AuthCTA'
 import { AnchorMark } from '@/components/brand/AnchorMark'
 
 export const metadata: Metadata = {
@@ -32,15 +32,57 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function HomePage() {
-  const session = await getServerSession()
-  const isAuthenticated = !!session?.user
-  const ctaHref = isAuthenticated ? '/dashboard' : '/login'
-  const ctaText = isAuthenticated ? 'ダッシュボードへ' : '無料ではじめる'
+// FAQ（UI と JSON-LD 構造化データで共用）
+const FAQ_ITEMS = [
+  { q: 'Googleアラートとの違いは何ですか？', a: 'Googleアラートは無料で便利ですが、配信タイミングが読めず、ブログや関連サイト含めノイズが多めです。ReAnker は PR TIMES と Google News に絞り、毎朝9時に「前日分だけ」を Slack/メールへまとめて配信します。既読・未読・クリップなど管理機能もあります。詳しくは比較ページをご覧ください。' },
+  { q: 'PR TIMES Webクリッピングとの違いは何ですか？', a: 'PR TIMES Webクリッピングは法人広報向けの純正サービスで、約2,900媒体を月額5,500円〜で網羅します。ReAnker は PR TIMES + Google News に絞り月額300円（税抜）から提供。個人・小規模チームでも導入しやすい構成です。' },
+  { q: '競合のプレスリリースを自動で監視できますか？', a: 'はい。サービス名・キーワード・ドメインの3軸でアンカーを登録すると、毎日 PR TIMES の検索結果から新着リリースを取得し、翌朝9時に Slack やメールへ通知します。' },
+  { q: 'Google News も監視できますか？', a: 'はい。同じアンカー登録で PR TIMES と Google News の両方をまとめて監視できます。アンカー設定でソースを選べます。' },
+  { q: 'Slack に通知できますか？', a: 'はい。Slack の Incoming Webhook URL を設定するだけで、指定したチャンネルに毎朝9時の集約通知が届きます。Standard プランで利用可能です。' },
+  { q: '無料プランでは何ができますか？', a: 'アンカー3件まで・週3回（月・水・金）の取得・メール通知・記事一覧/既読/クリップ管理が利用できます。クレジットカード登録は不要です。' },
+  { q: '個人でも利用できますか？', a: 'はい。Googleログインで30秒で開始でき、Stripe 経由でクレジットカード決済します。個人・フリーランス・小規模チームを主な想定としています。' },
+  { q: '法人の経費精算に使えますか？', a: 'はい。設定画面の「請求履歴を見る」から Stripe のカスタマーポータルにアクセスし、月次の請求書 PDF をダウンロードできます。' },
+  { q: '登録した翌日から通知されますか？', a: 'アンカー登録後、翌朝9時のサイクルから通知が始まります（warmup 仕様）。当日にバックログがまとめて飛んで埋もれる事故を防ぐためです。' },
+  { q: 'どんなキーワードを登録すればよいですか？', a: '競合企業のサービス名（例：Salesforce）、業界トピック（例：AI受発注）、ドメイン名（例：sansan.com）など。3軸を組み合わせると見落としが減ります。' },
+  { q: '途中で解約はできますか？', a: '設定画面、または Stripe のカスタマーポータルからいつでも解約できます。解約後は当該課金期間の末日までスタンダード機能を引き続きご利用いただけます。日割り精算はありません。' },
+  { q: 'PR TIMES の仕様変更で取得が止まる可能性はありますか？', a: 'スクレイピング元のサイト仕様変更に依存するため、可能性はあります。検知次第すぐに復旧対応します。Google News側はSerpAPIを利用しているため安定性は高めです。' },
+]
+
+export default function HomePage() {
+  // JSON-LD 構造化データ（Organization / WebSite / FAQPage）
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'ReAnker',
+      url: 'https://reanker.com',
+      logo: 'https://reanker.com/icon.png',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'ReAnker',
+      url: 'https://reanker.com',
+      inLanguage: 'ja',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: FAQ_ITEMS.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      })),
+    },
+  ]
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
-      <MarketingHeader isAuthenticated={isAuthenticated} />
+      <MarketingHeader />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* ============================================ */}
       {/* HERO + Product screenshot                     */}
@@ -64,13 +106,11 @@ export default async function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2.5 mb-3">
-              <Link
-                href={ctaHref}
+              <AuthCTA
                 className="inline-flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
               >
-                {ctaText}
                 <ArrowRight size={15} />
-              </Link>
+              </AuthCTA>
               <Link
                 href="/demo"
                 className="inline-flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
@@ -375,7 +415,6 @@ export default async function HomePage() {
                 'ダッシュボード',
               ]}
               cta="無料ではじめる"
-              ctaHref={ctaHref}
               variant="default"
             />
             <PlanCard
@@ -392,7 +431,6 @@ export default async function HomePage() {
                 '優先サポート',
               ]}
               cta="スタンダードを申し込む"
-              ctaHref={ctaHref}
               variant="accent"
             />
           </div>
@@ -416,20 +454,7 @@ export default async function HomePage() {
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-200">
-            {[
-              { q: 'Googleアラートとの違いは何ですか？', a: 'Googleアラートは無料で便利ですが、配信タイミングが読めず、ブログや関連サイト含めノイズが多めです。ReAnker は PR TIMES と Google News に絞り、毎朝9時に「前日分だけ」を Slack/メールへまとめて配信します。既読・未読・クリップなど管理機能もあります。詳しくは比較ページをご覧ください。' },
-              { q: 'PR TIMES Webクリッピングとの違いは何ですか？', a: 'PR TIMES Webクリッピングは法人広報向けの純正サービスで、約2,900媒体を月額5,500円〜で網羅します。ReAnker は PR TIMES + Google News に絞り月額300円（税抜）から提供。個人・小規模チームでも導入しやすい構成です。' },
-              { q: '競合のプレスリリースを自動で監視できますか？', a: 'はい。サービス名・キーワード・ドメインの3軸でアンカーを登録すると、毎日 PR TIMES の検索結果から新着リリースを取得し、翌朝9時に Slack やメールへ通知します。' },
-              { q: 'Google News も監視できますか？', a: 'はい。同じアンカー登録で PR TIMES と Google News の両方をまとめて監視できます。アンカー設定でソースを選べます。' },
-              { q: 'Slack に通知できますか？', a: 'はい。Slack の Incoming Webhook URL を設定するだけで、指定したチャンネルに毎朝9時の集約通知が届きます。Standard プランで利用可能です。' },
-              { q: '無料プランでは何ができますか？', a: 'アンカー3件まで・週3回（月・水・金）の取得・メール通知・記事一覧/既読/クリップ管理が利用できます。クレジットカード登録は不要です。' },
-              { q: '個人でも利用できますか？', a: 'はい。Googleログインで30秒で開始でき、Stripe 経由でクレジットカード決済します。個人・フリーランス・小規模チームを主な想定としています。' },
-              { q: '法人の経費精算に使えますか？', a: 'はい。設定画面の「請求履歴を見る」から Stripe のカスタマーポータルにアクセスし、月次の請求書 PDF をダウンロードできます。' },
-              { q: '登録した翌日から通知されますか？', a: 'アンカー登録後、翌朝9時のサイクルから通知が始まります（warmup 仕様）。当日にバックログがまとめて飛んで埋もれる事故を防ぐためです。' },
-              { q: 'どんなキーワードを登録すればよいですか？', a: '競合企業のサービス名（例：Salesforce）、業界トピック（例：AI受発注）、ドメイン名（例：sansan.com）など。3軸を組み合わせると見落としが減ります。' },
-              { q: '途中で解約はできますか？', a: '設定画面、または Stripe のカスタマーポータルからいつでも解約できます。解約後は当該課金期間の末日までスタンダード機能を引き続きご利用いただけます。日割り精算はありません。' },
-              { q: 'PR TIMES の仕様変更で取得が止まる可能性はありますか？', a: 'スクレイピング元のサイト仕様変更に依存するため、可能性はあります。検知次第すぐに復旧対応します。Google News側はSerpAPIを利用しているため安定性は高めです。' },
-            ].map((item) => (
+            {FAQ_ITEMS.map((item) => (
               <details key={item.q} className="group">
                 <summary className="cursor-pointer px-5 py-4 flex items-start justify-between gap-4 list-none hover:bg-gray-50 transition-colors">
                   <p className="text-sm font-medium text-gray-900 leading-snug">{item.q}</p>
@@ -461,13 +486,11 @@ export default async function HomePage() {
             まずは無料プランでお試しください。
           </p>
           <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
-            <Link
-              href={ctaHref}
+            <AuthCTA
               className="inline-flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium px-6 py-3 rounded-md transition-colors"
             >
-              {ctaText}
               <ArrowRight size={15} />
-            </Link>
+            </AuthCTA>
             <Link
               href="/pricing"
               className="inline-flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium px-6 py-3 rounded-md transition-colors"
@@ -518,7 +541,7 @@ function FeatureRow({
 }
 
 function PlanCard({
-  name, price, priceSuffix, note, features, cta, ctaHref, variant,
+  name, price, priceSuffix, note, features, cta, variant,
 }: {
   name: string
   price: string
@@ -526,7 +549,6 @@ function PlanCard({
   note: string
   features: string[]
   cta: string
-  ctaHref: string
   variant: 'default' | 'accent'
 }) {
   return (
@@ -539,16 +561,15 @@ function PlanCard({
         <span className="text-3xl font-semibold text-gray-900 tracking-tight">{price}</span>
         <span className="text-xs text-gray-500 ml-1">{priceSuffix}</span>
       </p>
-      <Link
-        href={ctaHref}
+      <AuthCTA
+        anonText={cta}
+        authedText={cta}
         className={`block text-center text-sm font-medium py-2.5 rounded-md mt-5 mb-6 transition-colors ${
           variant === 'accent'
             ? 'bg-gray-900 hover:bg-gray-700 text-white'
             : 'border border-gray-300 hover:bg-gray-50 text-gray-700'
         }`}
-      >
-        {cta}
-      </Link>
+      />
       <ul className="space-y-2 text-sm text-gray-700">
         {features.map((f) => (
           <li key={f} className="flex items-start gap-2">

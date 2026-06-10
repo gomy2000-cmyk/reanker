@@ -7,6 +7,8 @@ import { mockUser, mockKeywords, mockItems } from '@/lib/mock'
 export const metadata: Metadata = {
   title: 'デモ',
   description: 'ReAnker のダッシュボード画面をログイン不要で体験できます（ダミーデータ）。',
+  // ルートレイアウトの canonical（トップページ）を継承しないよう自身を指定
+  alternates: { canonical: 'https://reanker.com/demo' },
   robots: { index: false, follow: false },
 }
 

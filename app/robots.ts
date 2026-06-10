@@ -11,6 +11,8 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard',      // 認証後ページ
           '/anchor',         // 認証後ページ
           '/settings',       // 認証後ページ
+          '/reports',        // 認証後ページ
+          '/admin',          // 管理画面
           '/demo',           // モックデータのデモ画面
           '/login',          // ログインページは noindex
         ],

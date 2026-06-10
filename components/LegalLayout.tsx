@@ -1,4 +1,3 @@
-import { getServerSession } from 'next-auth'
 import { MarketingHeader } from './MarketingHeader'
 import { Footer } from './Footer'
 
@@ -8,13 +7,15 @@ interface Props {
   children: React.ReactNode
 }
 
-export async function LegalLayout({ title, updatedAt, children }: Props) {
-  const session = await getServerSession()
-  const isAuthenticated = !!session?.user
-
+/**
+ * 料金・規約・問い合わせ等の共通レイアウト。
+ * ログイン状態の出し分けは MarketingHeader（クライアント側）が行うため、
+ * ここでは getServerSession を呼ばない（呼ぶとページが動的レンダリングになり静的配信が壊れる）。
+ */
+export function LegalLayout({ title, updatedAt, children }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <MarketingHeader isAuthenticated={isAuthenticated} />
+      <MarketingHeader />
 
       <main className="flex-1">
         <article className="max-w-3xl mx-auto px-4 py-8 sm:py-12">

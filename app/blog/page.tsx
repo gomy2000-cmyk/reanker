@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getServerSession } from 'next-auth'
 import { getAllBlogPosts } from '@/lib/blog'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
@@ -30,15 +29,13 @@ function formatDate(iso: string): string {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
 
-export default async function BlogIndexPage() {
-  const session = await getServerSession()
-  const isAuthenticated = !!session?.user
+export default function BlogIndexPage() {
   const posts = getAllBlogPosts()
   const recentPosts = posts.slice(0, 5)
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
-      <MarketingHeader isAuthenticated={isAuthenticated} />
+      <MarketingHeader />
 
       <main className="flex-1">
         <div className="max-w-6xl mx-auto px-4 pt-8 sm:pt-12 pb-10">

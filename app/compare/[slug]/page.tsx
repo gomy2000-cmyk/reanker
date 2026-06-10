@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getServerSession } from 'next-auth'
 import { ChevronLeft, ArrowRight, Check, X, MinusSquare, Sparkles } from 'lucide-react'
 import { MarketingHeader } from '@/components/MarketingHeader'
+import { AuthCTA } from '@/components/AuthCTA'
 import { Footer } from '@/components/Footer'
 import {
   INDIVIDUAL_COMPARES, TOOLS, COMPARISON_ROWS, listCompareSlugs,
@@ -58,10 +58,6 @@ export default async function CompareDetailPage({ params }: Props) {
   const competitor = TOOLS.find((t) => t.id === data.competitorId)!
   const reanker = TOOLS.find((t) => t.id === 'reanker')!
 
-  const session = await getServerSession()
-  const isAuthenticated = !!session?.user
-  const ctaHref = isAuthenticated ? '/dashboard' : '/login'
-
   // 関連記事
   const related = (data.relatedBlogs ?? [])
     .map((s) => getBlogPost(s))
@@ -69,7 +65,7 @@ export default async function CompareDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
-      <MarketingHeader isAuthenticated={isAuthenticated} />
+      <MarketingHeader />
 
       <main className="flex-1">
         <div className="max-w-4xl mx-auto px-4 pt-8 sm:pt-10 pb-12">
@@ -183,13 +179,11 @@ export default async function CompareDetailPage({ params }: Props) {
               月額300円（税抜）から、無料プランも用意しています。
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
-              <Link
-                href={ctaHref}
+              <AuthCTA
                 className="inline-flex items-center justify-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium px-5 py-2.5 rounded-md transition-colors"
               >
-                {isAuthenticated ? 'ダッシュボードへ' : '無料ではじめる'}
                 <ArrowRight size={14} />
-              </Link>
+              </AuthCTA>
               <Link
                 href="/pricing"
                 className="inline-flex items-center justify-center gap-1.5 border border-gray-300 hover:bg-white text-gray-700 text-sm font-medium px-5 py-2.5 rounded-md transition-colors"

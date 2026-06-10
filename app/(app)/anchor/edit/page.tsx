@@ -104,7 +104,8 @@ export default function AnchorEditPage() {
     setLoading(false)
 
     if (!res.ok) {
-      if (json.error === 'PLAN_LIMIT') {
+      // プラン上限（planLimitErrorBody の reason フィールドで判定）
+      if (json.reason === 'anchor_limit') {
         setError('フリープランは3件まで。スタンダードにアップグレードしてください。')
       } else {
         setError(json.error ?? '保存に失敗しました')
