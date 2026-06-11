@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'デモ',
   description: 'ReAnker をログイン不要で体験できます。ダッシュボードと記事一覧をサンプルデータで自由に操作できます。',
   robots: { index: false, follow: false },
+  alternates: { canonical: 'https://reanker.com/demo' },
 }
 
 // 認証・DBなしで主要画面を体験するためのデモ。
