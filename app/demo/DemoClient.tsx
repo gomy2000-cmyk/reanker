@@ -182,7 +182,6 @@ export function DemoClient({ keywords, initialItems, fetchPool }: Props) {
       <div className="flex flex-1 overflow-hidden">
         <DemoSideNav
           keywords={keywords}
-          items={items}
           view={view}
           onNavigate={(v) => (v === 'dashboard' ? setView('dashboard') : openAnchor(v))}
           onLocked={(label) => showToast(`「${label}」は無料登録後にご利用いただけます`)}
@@ -251,22 +250,14 @@ export function DemoClient({ keywords, initialItems, fetchPool }: Props) {
 /* ───────────────────────── サイドナビ（デモ用） ───────────────────────── */
 
 function DemoSideNav({
-  keywords, items, view, onNavigate, onLocked,
+  keywords, view, onNavigate, onLocked,
 }: {
   keywords: PickKeyword[]
-  items: ItemWithKeyword[]
   view: string
   onNavigate: (view: string) => void
   onLocked: (label: string) => void
 }) {
   const [listOpen, setListOpen] = useState(true)
-  const unreadByAnchor = useMemo(() => {
-    const map: Record<string, number> = {}
-    items.forEach((i) => {
-      if (!i.is_read) map[i.pickkw_id] = (map[i.pickkw_id] ?? 0) + 1
-    })
-    return map
-  }, [items])
 
   return (
     <nav className="w-[220px] bg-white border-r border-gray-200 flex flex-col h-full shrink-0">
@@ -318,11 +309,6 @@ function DemoSideNav({
                       }`}
                     >
                       <span className="truncate">{kw.name}</span>
-                      {(unreadByAnchor[kw.id] ?? 0) > 0 && (
-                        <span className="text-[9px] bg-[#378ADD] text-white rounded-full px-1.5 py-px font-medium shrink-0 ml-1">
-                          {unreadByAnchor[kw.id]}
-                        </span>
-                      )}
                     </button>
                   ))}
                 </div>
