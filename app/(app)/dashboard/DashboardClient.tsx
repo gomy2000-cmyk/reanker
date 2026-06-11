@@ -5,6 +5,7 @@ import { useMemo, useState, useRef, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { FileDown, Circle } from 'lucide-react'
 import type { User, PickKeyword, ItemWithKeyword } from '@/lib/types'
+import { itemSourceList } from '@/lib/dedupe'
 import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 import { OnboardingBanner } from '@/components/OnboardingBanner'
 
@@ -108,7 +109,7 @@ export function DashboardClient({ user, keywords, items }: Props) {
       ['アンカー名', 'ソース', 'タイトル', 'URL', '公開日'],
       ...filteredItems.map((i) => [
         i.pick_keywords?.name ?? '',
-        SOURCE_LABEL[i.source],
+        itemSourceList(i).map((s) => SOURCE_LABEL[s]).join('、'),
         i.title,
         i.url,
         i.published_at,
@@ -184,9 +185,11 @@ export function DashboardClient({ user, keywords, items }: Props) {
                 <span className="text-xs text-gray-500 w-24 truncate shrink-0">
                   {item.pick_keywords?.name}
                 </span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium shrink-0 ${SOURCE_COLOR[item.source]}`}>
-                  {SOURCE_LABEL[item.source]}
-                </span>
+                {itemSourceList(item).map((s) => (
+                  <span key={s} className={`text-[10px] px-1.5 py-0.5 rounded font-medium shrink-0 ${SOURCE_COLOR[s]}`}>
+                    {SOURCE_LABEL[s]}
+                  </span>
+                ))}
                 <a
                   href={item.url}
                   target="_blank"

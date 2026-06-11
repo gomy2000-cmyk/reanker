@@ -49,6 +49,8 @@ alter table items add column if not exists category text default 'その他';
 alter table items add column if not exists importance text default '中';
 alter table items add column if not exists ai_summary text;
 alter table items add column if not exists importance_reason text;
+-- タイトル重複統合: 同一記事が複数ソースで取得された場合の取得元一覧（例: {prtimes,googlenews}）
+alter table items add column if not exists sources text[];
 
 -- レポートテーブル（週次・月次サマリ）
 create table if not exists reports (
