@@ -31,7 +31,10 @@ export interface PickKeyword {
 export interface Item {
   id: string
   pickkw_id: string
+  /** 代表ソース（複数ソースで取得された場合は PR TIMES 優先） */
   source: Source
+  /** 取得元の全ソース。タイトル重複統合の導入前に保存された行は null */
+  sources?: Source[] | null
   title: string
   url: string
   summary: string | null

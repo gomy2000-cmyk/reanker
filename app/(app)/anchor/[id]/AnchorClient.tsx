@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2, Bookmark, Trash2, Clock } from 'lucide-react'
 import type { User, PickKeyword, Item } from '@/lib/types'
+import { itemSourceList } from '@/lib/dedupe'
 import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 import { AnchorOnboardingHint } from '@/components/OnboardingBanner'
 
@@ -217,7 +218,7 @@ export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props)
     const rows = [
       ['ソース', 'タイトル', 'URL', '公開日', '既読'],
       ...filtered.map((i) => [
-        SOURCE_LABEL[i.source],
+        itemSourceList(i).map((s) => SOURCE_LABEL[s]).join('、'),
         i.title,
         i.url,
         i.published_at,
@@ -412,8 +413,12 @@ export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props)
                       </span>
                     </td>
                     <td className="py-2.5">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[item.source]} ${item.is_read ? 'opacity-60' : ''}`}>
-                        {SOURCE_LABEL[item.source]}
+                      <span className="inline-flex gap-1">
+                        {itemSourceList(item).map((s) => (
+                          <span key={s} className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[s]} ${item.is_read ? 'opacity-60' : ''}`}>
+                            {SOURCE_LABEL[s]}
+                          </span>
+                        ))}
                       </span>
                     </td>
                     <td className={`py-2.5 text-xs ${item.is_read ? 'text-gray-400' : 'text-gray-500'}`}>{item.published_at}</td>
@@ -462,19 +467,23 @@ export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props)
                   <Loader2 size={20} className="text-gray-300 animate-spin" />
                 </div>
               ) : (
-                <div className="w-full h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-xl flex items-center justify-center">
-                  <span className={`text-xs px-2 py-1 rounded font-medium ${SOURCE_COLOR[selected.source]}`}>
-                    {SOURCE_LABEL[selected.source]}
-                  </span>
+                <div className="w-full h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-xl flex items-center justify-center gap-1.5">
+                  {itemSourceList(selected).map((s) => (
+                    <span key={s} className={`text-xs px-2 py-1 rounded font-medium ${SOURCE_COLOR[s]}`}>
+                      {SOURCE_LABEL[s]}
+                    </span>
+                  ))}
                 </div>
               )}
 
               {/* メタ + タイトル */}
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3 text-xs">
-                  <span className={`px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[selected.source]}`}>
-                    {SOURCE_LABEL[selected.source]}
-                  </span>
+                  {itemSourceList(selected).map((s) => (
+                    <span key={s} className={`px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[s]}`}>
+                      {SOURCE_LABEL[s]}
+                    </span>
+                  ))}
                   <span className="text-gray-500">{selected.published_at}</span>
                   {selected.published_hour != null && (
                     <span className="text-gray-400">{String(selected.published_hour).padStart(2, '0')}:00</span>
