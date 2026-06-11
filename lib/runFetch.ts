@@ -173,9 +173,18 @@ export async function runFetch(
     // 統合用ルックアップに失敗しても取得自体は続行（最悪、URL重複チェックのみになる）
     console.warn('[runFetch] existing items lookup failed:', existingErr.message)
   }
+  // 同一タイトルの行が既に複数ある場合（統合導入前の重複等）は、
+  // 削除済みでない行 > 優先ソース（PR TIMES）の行 を統合先として選ぶ
   const existingByTitle = new Map<string, ExistingRow>()
   for (const row of (existingRows ?? []) as ExistingRow[]) {
-    existingByTitle.set(normalizeTitle(row.title), row)
+    const key = normalizeTitle(row.title)
+    const prev = existingByTitle.get(key)
+    const better =
+      !prev ||
+      (!!prev.deleted_at && !row.deleted_at) ||
+      (!!prev.deleted_at === !!row.deleted_at &&
+        SOURCE_PRIORITY.indexOf(row.source) < SOURCE_PRIORITY.indexOf(prev.source))
+    if (better) existingByTitle.set(key, row)
   }
 
   // 4b. ソース横断でタイトル重複を統合。PR TIMES を先に処理し、後続ソースの

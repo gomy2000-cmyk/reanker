@@ -20,15 +20,19 @@ export function sortSources(sources: Iterable<Source>): Source[] {
 
 /**
  * タイトル重複判定用の正規化。
- * - Google News のタイトルは「記事タイトル - 媒体名」形式なので末尾の媒体名を除去
- *   （本文側が10文字未満になる場合は誤除去とみなして除去しない）
+ * - Google News のタイトルは「記事タイトル - 媒体名」形式なので末尾の媒体名を除去。
+ *   「タイトル | 会社のプレスリリース - PR TIMES」のように媒体表記が多段になる
+ *   ケースがあるため最大3回繰り返す（本文側が10文字未満になる場合は除去しない）
  * - NFKC 正規化で全角英数・記号の揺れを吸収
  * - 大文字小文字・空白の差を無視
  */
 export function normalizeTitle(title: string): string {
   let t = title.normalize('NFKC').trim()
-  const m = t.match(/^(.{10,})\s*[-–—|｜]\s*[^-–—|｜]{1,40}$/)
-  if (m) t = m[1].trim()
+  for (let i = 0; i < 3; i++) {
+    const m = t.match(/^(.{10,})\s*[-–—|｜]\s*[^-–—|｜]{1,40}$/)
+    if (!m) break
+    t = m[1].trim()
+  }
   return t.toLowerCase().replace(/\s+/g, '')
 }
 
