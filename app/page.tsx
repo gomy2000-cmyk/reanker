@@ -11,21 +11,21 @@ import { AnchorMark } from '@/components/brand/AnchorMark'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
+    absolute: 'リアンカー（ReAnker）｜競合情報収集・プレスリリース監視ツール',
   },
-  description: 'ReAnkerは、競合企業のプレスリリースを毎日自動でチェックし、新着リリースだけをSlack・メールで通知する競合リリース監視ツールです。PR TIMES と Google News の関連報道もまとめて把握できます。',
+  description: 'リアンカー（ReAnker）は、競合企業のプレスリリースを毎日自動でチェックし、新着リリースだけをSlack・メールで通知する競合情報収集ツールです。PR TIMES と Google News のプレス・リリースをまとめて把握できます。',
   openGraph: {
-    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
-    description: 'ReAnkerは、競合企業のプレスリリースを毎日自動でチェックし、新着リリースだけをSlack・メールで通知する競合リリース監視ツールです。PR TIMES と Google News の関連報道もまとめて把握できます。',
+    title: 'リアンカー（ReAnker）｜競合情報収集・プレスリリース監視ツール',
+    description: 'リアンカー（ReAnker）は、競合企業のプレスリリースを毎日自動でチェックし、新着リリースだけをSlack・メールで通知する競合情報収集ツールです。PR TIMES と Google News のプレス・リリースをまとめて把握できます。',
     url: 'https://reanker.com',
-    siteName: 'ReAnker',
+    siteName: 'リアンカー（ReAnker）',
     locale: 'ja_JP',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
-    description: '競合のプレスリリースを毎日自動チェック・通知する競合リリース監視ツール。',
+    title: 'リアンカー（ReAnker）｜競合情報収集・プレスリリース監視ツール',
+    description: 'リアンカー（ReAnker）は競合のプレスリリースを毎日自動チェック・通知する競合情報収集ツール。',
   },
   alternates: {
     canonical: 'https://reanker.com',
@@ -59,8 +59,8 @@ export default async function HomePage() {
             </h1>
 
             <p className="text-[14px] sm:text-[15px] text-gray-600 leading-relaxed mb-4 max-w-2xl">
-              監視したい競合企業を登録するだけ。毎朝9時、前日に出た新着リリースだけをSlack・メールへ自動配信します。
-              PR TIMES と Google News の関連報道を1ツールでまとめて把握。月額300円から、個人や小規模チームでも本格的な競合リリース監視を始められます。
+              リアンカー（ReAnker）は、監視したい競合企業を登録するだけで競合情報収集を自動化できるツールです。毎朝9時、前日に出た新着リリースだけをSlack・メールへ自動配信します。
+              PR TIMES と Google News のプレス・リリースを1ツールでまとめて把握。月額300円から、個人や小規模チームでも本格的な競合リリース監視を始められます。
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2.5 mb-3">

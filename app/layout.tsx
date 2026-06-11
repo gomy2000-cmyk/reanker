@@ -5,20 +5,22 @@ import './globals.css'
 import { Providers } from './providers'
 import { GTMPageView } from '@/components/GTMPageView'
 import { GTMScript, GTMNoScript } from '@/components/GTM'
+import { PostHogProvider } from '@/components/PostHogProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://reanker.com'),
   title: {
-    default: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
-    template: '%s｜ReAnker',
+    default: 'リアンカー（ReAnker）｜競合情報収集・プレスリリース監視ツール',
+    template: '%s｜リアンカー（ReAnker）',
   },
-  description: 'ReAnkerは、競合企業のプレスリリースを毎日自動でチェックし、新着リリースをSlackやメールに通知する競合リリース監視ツールです。PR TIMES と Google News の関連報道もまとめて把握できます。',
+  description: 'リアンカー（ReAnker）は、競合企業のプレスリリースを毎日自動でチェックし、新着リリースをSlackやメールに通知する競合情報収集ツールです。PR TIMES と Google News のプレス・リリースをまとめて監視できます。',
   applicationName: 'ReAnker',
   keywords: [
-    '競合リリース監視', '競合監視', '競合分析', 'プレスリリース監視', 'PR TIMES 監視',
-    'Google News', 'Slack 通知', '広報PR', '競合リリース', 'ReAnker',
+    'リアンカー', '競合情報収集', '競合リリース監視', '競合監視', '競合分析',
+    'プレスリリース監視', 'プレスリリース', 'プレス', 'リリース監視',
+    'PR TIMES 監視', 'Google News', 'Slack 通知', '広報PR', '競合情報', 'ReAnker',
   ],
   authors: [{ name: 'ReAnker' }],
   creator: 'ReAnker',
@@ -38,14 +40,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ja_JP',
     url: 'https://reanker.com',
-    siteName: 'ReAnker',
-    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
-    description: '競合企業のプレスリリースを毎日自動で監視し、新着リリースだけをSlack・メールに通知する競合リリース監視ツール。月額300円から。',
+    siteName: 'リアンカー（ReAnker）',
+    title: 'リアンカー（ReAnker）｜競合情報収集・プレスリリース監視ツール',
+    description: '競合企業のプレスリリースを毎日自動で監視し、新着リリースだけをSlack・メールに通知する競合情報収集ツール。月額300円から。',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ReAnker｜競合リリースを毎日自動チェックする監視ツール',
-    description: '競合のプレスリリースを毎日自動チェック・通知する競合リリース監視ツール。',
+    title: 'リアンカー（ReAnker）｜競合情報収集・プレスリリース監視ツール',
+    description: 'リアンカー（ReAnker）は競合のプレスリリースを毎日自動チェック・通知する競合情報収集ツール。',
   },
   alternates: {
     canonical: 'https://reanker.com',
@@ -78,7 +80,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={null}>
           <GTMPageView />
         </Suspense>
-        <Providers>{children}</Providers>
+        <PostHogProvider>
+          <Providers>{children}</Providers>
+        </PostHogProvider>
       </body>
     </html>
   )

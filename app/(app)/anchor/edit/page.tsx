@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronLeft, Trash2, AlertCircle, Lock } from 'lucide-react'
 import type { PickKeyword, AnchorType, Source } from '@/lib/types'
-import { trackAnchorCreate, trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
+import { trackAnchorCreate, trackCreateKeyword, trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 
 const TYPE_OPTIONS: { value: AnchorType; label: string; desc: string }[] = [
   { value: 'service', label: 'サービス名', desc: '例：Salesforce、kintone' },
@@ -108,6 +108,7 @@ export default function AnchorEditPage() {
     // 新規作成成功時のみ送信（編集は対象外）
     if (!isEdit) {
       trackAnchorCreate({ plan, anchor_type: type })
+      trackCreateKeyword({ plan, anchor_type: type })
     }
 
     router.push('/dashboard')

@@ -6,18 +6,18 @@ import { Check, X } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: '料金プラン',
-  description: 'ReAnker の料金プラン。フリープラン（無料）とスタンダードプラン（月額300円・税抜）の機能比較とよくあるご質問。',
+  description: 'リアンカー（ReAnker）の料金プラン。競合情報収集ツールをフリープラン（無料）またはスタンダードプラン（月額300円・税抜）で利用できます。機能比較とよくあるご質問。',
   alternates: { canonical: 'https://reanker.com/pricing' },
   openGraph: {
-    title: '料金プラン｜ReAnker',
-    description: 'フリープラン（無料）とスタンダードプラン（月額300円）の機能比較。',
+    title: '料金プラン｜リアンカー（ReAnker）',
+    description: 'リアンカー（ReAnker）の競合情報収集ツール。フリープラン（無料）とスタンダードプラン（月額300円）の機能比較。',
     url: 'https://reanker.com/pricing',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '料金プラン｜ReAnker',
-    description: 'フリープラン（無料）とスタンダードプラン（月額300円）。',
+    title: '料金プラン｜リアンカー（ReAnker）',
+    description: 'リアンカー（ReAnker）競合情報収集ツール。フリープラン（無料）とスタンダードプラン（月額300円）。',
   },
 }
 
