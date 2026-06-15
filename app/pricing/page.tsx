@@ -6,34 +6,36 @@ import { Check, X } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: '料金プラン',
-  description: 'リアンカー（ReAnker）の料金プラン。競合情報収集ツールをフリープラン（無料）またはスタンダードプラン（月額300円・税抜）で利用できます。機能比較とよくあるご質問。',
+  description: 'リアンカー（ReAnker）の料金プラン。競合情報収集ツールをフリープラン（無料）・スタンダードプラン（月額300円・税抜）・PROプラン（月額1,000円・開発中）の3プランで提供。機能比較とよくあるご質問。',
   alternates: { canonical: 'https://reanker.com/pricing' },
   openGraph: {
     title: '料金プラン｜リアンカー（ReAnker）',
-    description: 'リアンカー（ReAnker）の競合情報収集ツール。フリープラン（無料）とスタンダードプラン（月額300円）の機能比較。',
+    description: 'リアンカー（ReAnker）の競合情報収集ツール。フリー（無料）・スタンダード（月額300円）・PRO（月額1,000円）の3プラン。',
     url: 'https://reanker.com/pricing',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: '料金プラン｜リアンカー（ReAnker）',
-    description: 'リアンカー（ReAnker）競合情報収集ツール。フリープラン（無料）とスタンダードプラン（月額300円）。',
+    description: 'リアンカー（ReAnker）競合情報収集ツール。フリー（無料）・スタンダード（月額300円）・PRO（月額1,000円）の3プラン。',
   },
 }
 
 const features = [
-  { label: 'アンカー（監視対象）の登録', free: '3件まで', standard: '無制限' },
-  { label: '記事の自動取得頻度', free: '週3回（月・水・金）', standard: '毎日' },
-  { label: 'メール通知', free: '○', standard: '○' },
-  { label: 'Slack通知', free: '×', standard: '○' },
-  { label: '記事一覧 / 既読管理 / クリップ', free: '○', standard: '○' },
-  { label: 'ダッシュボード', free: '○', standard: '○' },
-  { label: 'CSVエクスポート', free: '×', standard: '○' },
-  { label: '週次サマリ', free: '×', standard: '○' },
-  { label: '月次サマリ', free: '×', standard: '○' },
-  { label: '過去レポート閲覧', free: '×', standard: '○' },
-  { label: 'Markdown コピー', free: '×', standard: '○' },
-  { label: 'お問い合わせサポート', free: '○', standard: '○（優先対応）' },
+  { label: 'アンカー（監視対象）の登録', free: '3件まで', standard: '無制限', pro: '無制限' },
+  { label: '記事の自動取得頻度', free: '週3回（月・水・金）', standard: '毎日', pro: '毎日' },
+  { label: 'メール通知', free: '○', standard: '○', pro: '○' },
+  { label: 'Slack通知', free: '×', standard: '○', pro: '○' },
+  { label: '記事一覧 / 既読管理 / クリップ', free: '○', standard: '○', pro: '○' },
+  { label: 'ダッシュボード', free: '○', standard: '○', pro: '○' },
+  { label: 'CSVエクスポート', free: '×', standard: '○', pro: '○' },
+  { label: '週次サマリ', free: '×', standard: '○', pro: '○' },
+  { label: '月次サマリ', free: '×', standard: '○', pro: '○' },
+  { label: '過去レポート閲覧', free: '×', standard: '○', pro: '○' },
+  { label: 'Markdown コピー', free: '×', standard: '○', pro: '○' },
+  { label: 'お問い合わせサポート', free: '○', standard: '○（優先対応）', pro: '○（優先対応）' },
+  { label: '高度な競合分析レポート', free: '×', standard: '×', pro: '🔜' },
+  { label: '複数ユーザー管理', free: '×', standard: '×', pro: '🔜' },
 ]
 
 export default function PricingPage() {
@@ -41,10 +43,10 @@ export default function PricingPage() {
     <LegalLayout title="料金プラン" updatedAt="2026年5月22日">
       <PricingViewTracker />
       <p className="text-sm text-gray-700 leading-relaxed mb-10">
-        ReAnker（リアンカー）はフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円のスタンダードプランをお選びください。プランはいつでも変更・解約できます。
+        ReAnker（リアンカー）はフリープランから無料でご利用いただけます。本格的に競合監視を行いたい方は、月額300円（1日あたり約10円）のスタンダードプランがおすすめです。さらに高度な分析を求める方向けに PROプランも準備中です。プランはいつでも変更・解約できます。
       </p>
 
-      <div className="grid sm:grid-cols-2 gap-5 mb-10">
+      <div className="grid sm:grid-cols-3 gap-4 mb-10">
         {/* フリー */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 flex flex-col">
           <h2 className="text-base font-bold text-gray-900 mb-1">フリープラン</h2>
@@ -65,7 +67,8 @@ export default function PricingPage() {
             おすすめ
           </span>
           <h2 className="text-base font-bold text-gray-900 mb-1">スタンダードプラン</h2>
-          <p className="text-xs text-gray-500 mb-4">本格的に競合監視を運用したい方に</p>
+          <p className="text-xs text-gray-500 mb-1">本格的に競合監視を運用したい方に</p>
+          <p className="text-[11px] text-[#378ADD] font-semibold mb-3">1日10円で本格監視！</p>
           <p className="text-3xl font-bold text-gray-900 mb-1">¥300<span className="text-sm font-normal text-gray-500"> / 月（税抜）</span></p>
           <p className="text-xs text-gray-400 mb-6">クレジットカード決済</p>
           <Link
@@ -75,6 +78,20 @@ export default function PricingPage() {
             スタンダードを申し込む
           </Link>
         </div>
+
+        {/* PRO */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6 flex flex-col relative opacity-80">
+          <span className="absolute -top-2.5 right-4 bg-gray-400 text-white text-[10px] px-2 py-0.5 rounded-full font-medium">
+            開発中
+          </span>
+          <h2 className="text-base font-bold text-gray-900 mb-1">PRO プラン</h2>
+          <p className="text-xs text-gray-500 mb-4">競合監視を極めたい方に</p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">¥1,000<span className="text-sm font-normal text-gray-500"> / 月（税抜）</span></p>
+          <p className="text-xs text-gray-400 mb-6">高度な競合分析機能を準備中</p>
+          <span className="block text-center bg-gray-100 text-gray-400 text-sm font-medium py-2.5 rounded-lg mt-auto cursor-not-allowed select-none">
+            近日公開
+          </span>
+        </div>
       </div>
 
       <h2 className="text-base font-bold text-gray-900 mb-3">機能比較</h2>
@@ -83,8 +100,9 @@ export default function PricingPage() {
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr className="text-xs text-gray-500">
               <th className="text-left py-3 px-4 font-medium">機能</th>
-              <th className="text-center py-3 px-4 font-medium w-28">フリー</th>
-              <th className="text-center py-3 px-4 font-medium w-32">スタンダード</th>
+              <th className="text-center py-3 px-4 font-medium w-24">フリー</th>
+              <th className="text-center py-3 px-4 font-medium w-28">スタンダード</th>
+              <th className="text-center py-3 px-4 font-medium w-24">PRO</th>
             </tr>
           </thead>
           <tbody>
@@ -98,7 +116,13 @@ export default function PricingPage() {
                 </td>
                 <td className="py-3 px-4 text-center text-gray-600">
                   {f.standard === '○' ? <Check size={16} className="inline text-[#378ADD]" /> :
+                   f.standard === '×' ? <X size={16} className="inline text-gray-300" /> :
                    <span className="text-xs">{f.standard}</span>}
+                </td>
+                <td className="py-3 px-4 text-center text-gray-400">
+                  {f.pro === '○' ? <Check size={16} className="inline text-gray-400" /> :
+                   f.pro === '×' ? <X size={16} className="inline text-gray-200" /> :
+                   <span className="text-xs">{f.pro}</span>}
                 </td>
               </tr>
             ))}
