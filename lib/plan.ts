@@ -1,9 +1,10 @@
 /**
  * プラン制御ロジック。
- * Free / Standard の違いをここに集約する。
+ * Free / Standard / Pro の違いをここに集約する。
  *
- * Free  : アンカー3件まで、月・水・金のみ取得、Slack通知不可、レポート閲覧不可
+ * Free    : アンカー3件まで、月・水・金のみ取得、Slack通知不可、レポート閲覧不可
  * Standard: アンカー無制限、毎日取得、Slack + メール両対応、レポート閲覧可
+ * Pro     : Standard と同等（機能開発中）
  */
 
 import type { Plan } from './types'
@@ -33,6 +34,13 @@ export const PLAN_LIMITS: Record<Plan, {
     emailNotify: true,
     reports: true,
   },
+  pro: {
+    maxAnchors: -1,
+    fetchDaysPerWeek: 7,
+    slackNotify: true,
+    emailNotify: true,
+    reports: true,
+  },
 }
 
 // ---------- ユーティリティ ----------
@@ -42,11 +50,13 @@ export const PLAN_LIMITS: Record<Plan, {
  * 未知の値や null は 'free' として扱う。
  */
 export function normalizePlan(plan: string | null | undefined): Plan {
-  return plan === 'standard' ? 'standard' : 'free'
+  if (plan === 'standard') return 'standard'
+  if (plan === 'pro') return 'pro'
+  return 'free'
 }
 
 export function isStandardPlan(plan: Plan): boolean {
-  return plan === 'standard'
+  return plan === 'standard' || plan === 'pro'
 }
 
 /**
@@ -57,7 +67,7 @@ export function isStandardPlan(plan: Plan): boolean {
  * @param now UTC の Date オブジェクト（Vercel サーバー時刻）
  */
 export function isFetchDayJST(plan: Plan, now: Date): boolean {
-  if (plan === 'standard') return true
+  if (plan === 'standard' || plan === 'pro') return true
 
   // UTC → JST (+9h) に変換して曜日を取得
   const jstMs = now.getTime() + 9 * 60 * 60 * 1000

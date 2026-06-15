@@ -1,4 +1,4 @@
-export type Plan = 'free' | 'standard'
+export type Plan = 'free' | 'standard' | 'pro'
 export type AnchorType = 'service' | 'keyword' | 'domain'
 export type Source = 'prtimes' | 'googlenews'
 

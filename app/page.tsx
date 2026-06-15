@@ -355,14 +355,14 @@ export default async function HomePage() {
           <div className="max-w-2xl mb-10">
             <p className="text-xs text-[#378ADD] font-semibold tracking-wide mb-2">PRICING</p>
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight mb-3">
-              シンプルな2プラン
+              3つのプランから選べる
             </h2>
             <p className="text-sm text-gray-600 leading-relaxed">
-              まずはフリーで動作確認。物足りなくなったらスタンダードへ。
+              まずはフリーで動作確認。本格運用は1日10円のスタンダードへ。
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4 mb-6">
+          <div className="grid sm:grid-cols-3 gap-4 mb-6">
             <PlanCard
               name="フリー"
               price="¥0"
@@ -383,6 +383,7 @@ export default async function HomePage() {
               price="¥300"
               priceSuffix="/月（税抜）"
               note="いつでも解約可"
+              subNote="1日10円で本格監視！"
               features={[
                 'アンカー 無制限',
                 '記事取得：毎日',
@@ -394,6 +395,21 @@ export default async function HomePage() {
               cta="スタンダードを申し込む"
               ctaHref={ctaHref}
               variant="accent"
+            />
+            <PlanCard
+              name="PRO"
+              price="¥1,000"
+              priceSuffix="/月（税抜）"
+              note="高度な競合分析機能を準備中"
+              badge="開発中"
+              features={[
+                'スタンダードの全機能',
+                '高度な競合分析レポート',
+                '複数ユーザー管理',
+              ]}
+              cta="近日公開"
+              ctaHref=""
+              variant="pro"
             />
           </div>
 
@@ -518,41 +534,60 @@ function FeatureRow({
 }
 
 function PlanCard({
-  name, price, priceSuffix, note, features, cta, ctaHref, variant,
+  name, price, priceSuffix, note, subNote, badge, features, cta, ctaHref, variant,
 }: {
   name: string
   price: string
   priceSuffix: string
   note: string
+  subNote?: string
+  badge?: string
   features: string[]
   cta: string
   ctaHref: string
-  variant: 'default' | 'accent'
+  variant: 'default' | 'accent' | 'pro'
 }) {
+  const isPro = variant === 'pro'
   return (
-    <div className={`border rounded-lg p-6 sm:p-7 bg-white ${
-      variant === 'accent' ? 'border-gray-900 ring-1 ring-gray-900/5' : 'border-gray-200'
+    <div className={`border rounded-lg p-6 sm:p-7 bg-white relative ${
+      variant === 'accent' ? 'border-gray-900 ring-1 ring-gray-900/5' :
+      isPro ? 'border-gray-200 opacity-75' : 'border-gray-200'
     }`}>
+      {badge && (
+        <span className="absolute -top-2.5 right-4 bg-gray-400 text-white text-[10px] px-2 py-0.5 rounded-full font-medium">
+          {badge}
+        </span>
+      )}
       <p className="text-sm font-semibold text-gray-900 mb-1">{name}</p>
-      <p className="text-xs text-gray-500 mb-5">{note}</p>
+      <p className="text-xs text-gray-500 mb-1">{note}</p>
+      {subNote && (
+        <p className="text-[11px] text-[#378ADD] font-semibold mb-4">{subNote}</p>
+      )}
+      {!subNote && <div className="mb-4" />}
       <p className="mb-1">
         <span className="text-3xl font-semibold text-gray-900 tracking-tight">{price}</span>
         <span className="text-xs text-gray-500 ml-1">{priceSuffix}</span>
       </p>
-      <Link
-        href={ctaHref}
-        className={`block text-center text-sm font-medium py-2.5 rounded-md mt-5 mb-6 transition-colors ${
-          variant === 'accent'
-            ? 'bg-gray-900 hover:bg-gray-700 text-white'
-            : 'border border-gray-300 hover:bg-gray-50 text-gray-700'
-        }`}
-      >
-        {cta}
-      </Link>
+      {isPro ? (
+        <span className="block text-center text-sm font-medium py-2.5 rounded-md mt-5 mb-6 bg-gray-100 text-gray-400 cursor-not-allowed select-none">
+          {cta}
+        </span>
+      ) : (
+        <Link
+          href={ctaHref}
+          className={`block text-center text-sm font-medium py-2.5 rounded-md mt-5 mb-6 transition-colors ${
+            variant === 'accent'
+              ? 'bg-gray-900 hover:bg-gray-700 text-white'
+              : 'border border-gray-300 hover:bg-gray-50 text-gray-700'
+          }`}
+        >
+          {cta}
+        </Link>
+      )}
       <ul className="space-y-2 text-sm text-gray-700">
         {features.map((f) => (
           <li key={f} className="flex items-start gap-2">
-            <Check size={14} className="text-[#378ADD] mt-0.5 shrink-0" strokeWidth={2.5} />
+            <Check size={14} className={`mt-0.5 shrink-0 ${isPro ? 'text-gray-300' : 'text-[#378ADD]'}`} strokeWidth={2.5} />
             {f}
           </li>
         ))}
