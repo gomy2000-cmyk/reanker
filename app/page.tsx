@@ -227,15 +227,15 @@ export default async function HomePage() {
                   <th className="text-left font-medium px-5 py-3 w-[26%]">
                     <span className="text-gray-900 font-semibold">ReAnker</span>
                   </th>
-                  <th className="text-left font-medium px-5 py-3 w-[26%]">PR TIMES Webクリッピング</th>
+                  <th className="text-left font-medium px-5 py-3 w-[26%]">純正クリッピングサービス</th>
                   <th className="text-left font-medium px-5 py-3 w-[26%]">大手クリッピング各社</th>
                 </tr>
               </thead>
               <tbody className="text-gray-700">
                 {([
-                  { k: '月額（最小プラン）', r: '¥0 / ¥300', p: '¥5,500（5キーワード）', e: '月数万円〜' },
-                  { k: 'キーワード数', r: '無制限（スタンダード）', p: '5キーワード', e: 'プラン依存' },
-                  { k: '対象メディア', r: 'PR TIMES + Google News', rSub: '＋主要なプレスリリース配信サイト（Standard）', p: '約2,900媒体', e: '新聞・雑誌・Web' },
+                  { k: '月額（最小プラン）', r: '¥0 / ¥300', p: '月額5,000円〜', e: '月数万円〜' },
+                  { k: 'キーワード数', r: '無制限（スタンダード）', p: '数キーワード', e: 'プラン依存' },
+                  { k: '対象メディア', r: 'PR TIMES + Google News', rSub: '＋主要なプレスリリース配信サイト（Standard）', p: '数千媒体', e: '新聞・雑誌・Web' },
                   { k: '通知頻度', r: '毎日 9:00 JST', p: '日次', e: '日次（朝刊7時等）' },
                   { k: 'Slack通知', r: '○（Incoming Webhook）', p: '○', e: '△（要相談）' },
                   { k: 'メール通知', r: '○', p: '○', e: '○' },
@@ -258,7 +258,7 @@ export default async function HomePage() {
           </div>
 
           <p className="text-[11px] text-gray-400 mt-3">
-            ※ PR TIMES Webクリッピングの料金は2026年5月時点の公開情報。各社の最新料金は公式サイトをご確認ください。
+            ※ 料金・仕様は各社の公開情報を基にした一般的な目安です（2026年5月時点）。最新の内容は各サービスの公式サイトをご確認ください。
           </p>
         </div>
       </section>
