@@ -13,7 +13,7 @@ export function Footer() {
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
               競合のプレスリリースを毎日自動でチェックする <strong>競合リリース監視ツール</strong>。
-              PR TIMES・Google News に加え、@Press・ValuePress・共同通信PRワイヤー（スタンダード以上）も1ツールで。
+              PR TIMES・Google News の新着を1ツールで。スタンダード以上では @Press・ValuePress・共同通信PRワイヤーにも対応。
             </p>
           </div>
 

@@ -66,7 +66,7 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
   },
   {
     key: 'other-prsites',
-    label: '他配信サイト（@Press・ValuePress・共同通信PRワイヤー）の監視',
+    label: '他のPR配信サイト監視（@Press 等）',
     values: {
       reanker: '○（Standard）',
       'google-alerts': '△',

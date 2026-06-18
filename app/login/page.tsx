@@ -4,7 +4,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
-import { Newspaper, Radar, Bell, FileDown, AlertCircle } from 'lucide-react'
+import { Newspaper, Radar, Bell, FileDown, AlertCircle, Globe } from 'lucide-react'
 import { Wordmark } from '@/components/brand/Wordmark'
 
 export default function LoginPage() {
@@ -126,7 +126,7 @@ function LoginPageInner() {
             </h2>
 
             <p className="text-[15px] sm:text-[16px] text-gray-700 leading-[1.85] mb-8 max-w-lg">
-              PR TIMES・Google News（スタンダード以上では@Press・ValuePress・共同通信PRワイヤーも）から競合情報を自動取得。
+              PR TIMES・Google Newsから競合情報を自動取得。
               重要な動きをSlack・メールで通知し、競合の発信トレンドを見逃さないBtoB向け競合監視ツールです。
             </p>
 
@@ -134,6 +134,7 @@ function LoginPageInner() {
             <ul className="space-y-3 mb-9 max-w-lg">
               {[
                 { icon: Newspaper, text: 'PR TIMES・Google Newsの記事を自動取得', mobile: true },
+                { icon: Globe, text: '@Press・ValuePress・共同通信PRワイヤーにも対応（Standard）', mobile: false },
                 { icon: Radar, text: '登録した企業・キーワードを毎日監視', mobile: true },
                 { icon: Bell, text: '新着情報をSlack・メールで通知', mobile: true },
                 { icon: FileDown, text: 'CSV・PDFエクスポートに対応', mobile: false },

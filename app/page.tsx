@@ -232,20 +232,23 @@ export default async function HomePage() {
                 </tr>
               </thead>
               <tbody className="text-gray-700">
-                {[
+                {([
                   { k: '月額（最小プラン）', r: '¥0 / ¥300', p: '¥5,500（5キーワード）', e: '月数万円〜' },
                   { k: 'キーワード数', r: '無制限（スタンダード）', p: '5キーワード', e: 'プラン依存' },
-                  { k: '対象メディア', r: 'PR TIMES + Google News（＋@Press・ValuePress・共同通信PRワイヤー）', p: '約2,900媒体', e: '新聞・雑誌・Web' },
+                  { k: '対象メディア', r: 'PR TIMES + Google News', rSub: '＋@Press・ValuePress・共同通信PRワイヤー（Standard）', p: '約2,900媒体', e: '新聞・雑誌・Web' },
                   { k: '通知頻度', r: '毎日 9:00 JST', p: '日次', e: '日次（朝刊7時等）' },
                   { k: 'Slack通知', r: '○（Incoming Webhook）', p: '○', e: '△（要相談）' },
                   { k: 'メール通知', r: '○', p: '○', e: '○' },
                   { k: '契約形態', r: '月額・解約自由', p: '月単位継続', e: '年間契約が多い' },
                   { k: 'クレジットカード決済', r: '○（Stripe）', p: '○', e: '請求書払い中心' },
                   { k: '対象', r: '個人 / 小規模チーム', p: '法人広報', e: '法人広報' },
-                ].map((row, i) => (
+                ] as { k: string; r: string; rSub?: string; p: string; e: string }[]).map((row, i) => (
                   <tr key={i} className={i % 2 ? 'bg-gray-50/30' : ''}>
                     <td className="px-5 py-3 text-gray-600 text-xs">{row.k}</td>
-                    <td className="px-5 py-3 font-medium text-gray-900">{row.r}</td>
+                    <td className="px-5 py-3 font-medium text-gray-900">
+                      {row.r}
+                      {row.rSub && <span className="block text-[11px] font-normal text-gray-500 mt-0.5">{row.rSub}</span>}
+                    </td>
                     <td className="px-5 py-3 text-gray-600">{row.p}</td>
                     <td className="px-5 py-3 text-gray-600">{row.e}</td>
                   </tr>
