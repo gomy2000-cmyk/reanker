@@ -35,10 +35,10 @@ export default function LegalPage() {
               商陣 / SYOJIN（運営サービス：ReAnker）
             </Row>
             <Row label="運営責任者">
-              小林 豪
+              G. Kobayashi
             </Row>
             <Row label="所在地">
-              神奈川県横浜市
+              横浜市
               <p className="text-xs text-gray-500 mt-1">詳細な所在地は、請求があり次第、遅滞なく開示いたします。下記お問い合わせ先までご連絡ください。</p>
             </Row>
             <Row label="電話番号">
