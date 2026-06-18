@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import {
   Bell, Search, BarChart3, MessageSquare, Mail,
-  ArrowRight, Check, X, Plus, ExternalLink, Circle, ChevronRight,
+  ArrowRight, Check, X, Plus, ExternalLink, Circle, ChevronRight, Globe,
 } from 'lucide-react'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { Footer } from '@/components/Footer'
@@ -235,7 +235,7 @@ export default async function HomePage() {
                 {[
                   { k: '月額（最小プラン）', r: '¥0 / ¥300', p: '¥5,500（5キーワード）', e: '月数万円〜' },
                   { k: 'キーワード数', r: '無制限（スタンダード）', p: '5キーワード', e: 'プラン依存' },
-                  { k: '対象メディア', r: 'PR TIMES + Google News', p: '約2,900媒体', e: '新聞・雑誌・Web' },
+                  { k: '対象メディア', r: 'PR TIMES + Google News（＋@Press・ValuePress・共同通信PRワイヤー）', p: '約2,900媒体', e: '新聞・雑誌・Web' },
                   { k: '通知頻度', r: '毎日 9:00 JST', p: '日次', e: '日次（朝刊7時等）' },
                   { k: 'Slack通知', r: '○（Incoming Webhook）', p: '○', e: '△（要相談）' },
                   { k: 'メール通知', r: '○', p: '○', e: '○' },
@@ -280,6 +280,7 @@ export default async function HomePage() {
               { icon: Search, title: '3軸での監視登録', desc: 'サービス名 / 任意キーワード / ドメインから自由に登録。同一企業を異なる角度から追跡可。' },
               { icon: Bell, title: 'PR TIMES 自動取得', desc: 'PR TIMES のキーワード検索結果を毎日スキャン。前日公開分だけを抽出。' },
               { icon: Search, title: 'Google News 取得', desc: 'SerpAPI 経由で Google News（tbm=nws）を取得。第三者報道もカバー。' },
+              { icon: Globe, title: '他サイトも監視（Standard）', desc: 'スタンダード以上で @Press・ValuePress・共同通信PRワイヤーも監視対象に追加。PR TIMES以外の配信元もまとめて捕捉。' },
               { icon: MessageSquare, title: 'Slack 通知', desc: 'Incoming Webhook URL を設定するだけ。アンカーごとにグルーピングして配信。' },
               { icon: Mail, title: 'メール通知', desc: '個人運用にも対応。設定したメールアドレスに日次まとめを送信。' },
               { icon: BarChart3, title: 'ダッシュボード', desc: '曜日別件数・時間帯分布・アンカー別サマリーをグラフで可視化。' },
@@ -437,6 +438,7 @@ export default async function HomePage() {
               { q: 'PR TIMES Webクリッピングとの違いは何ですか？', a: 'PR TIMES Webクリッピングは法人広報向けの純正サービスで、約2,900媒体を月額5,500円〜で網羅します。ReAnker は PR TIMES + Google News に絞り月額300円（税抜）から提供。個人・小規模チームでも導入しやすい構成です。' },
               { q: '競合のプレスリリースを自動で監視できますか？', a: 'はい。サービス名・キーワード・ドメインの3軸でアンカーを登録すると、毎日 PR TIMES の検索結果から新着リリースを取得し、翌朝9時に Slack やメールへ通知します。' },
               { q: 'Google News も監視できますか？', a: 'はい。同じアンカー登録で PR TIMES と Google News の両方をまとめて監視できます。アンカー設定でソースを選べます。' },
+              { q: 'PR TIMES・Google News以外のサイトも監視できますか？', a: 'はい。スタンダード以上のプランでは @Press・ValuePress・共同通信PRワイヤーの3サイトも監視できます。PR TIMES以外の配信元を使う競合も取りこぼしなく追えます。アンカー編集画面の「取得ソース」で選択してください。' },
               { q: 'Slack に通知できますか？', a: 'はい。Slack の Incoming Webhook URL を設定するだけで、指定したチャンネルに毎朝9時の集約通知が届きます。Standard プランで利用可能です。' },
               { q: '無料プランでは何ができますか？', a: 'アンカー3件まで・週3回（月・水・金）の取得・メール通知・記事一覧/既読/クリップ管理が利用できます。クレジットカード登録は不要です。' },
               { q: '個人でも利用できますか？', a: 'はい。Googleログインで30秒で開始でき、Stripe 経由でクレジットカード決済します。個人・フリーランス・小規模チームを主な想定としています。' },

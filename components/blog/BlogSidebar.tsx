@@ -45,7 +45,7 @@ export function BlogSidebar({
             競合のリリース、見逃していませんか？
           </h3>
           <p className="text-[12.5px] text-gray-600 leading-relaxed mb-4">
-            ReAnker（リアンカー）は、PR TIMES・Google Newsから競合情報を自動取得し、重要な動きをSlack・メールで通知する競合リリース監視ツールです。
+            ReAnker（リアンカー）は、PR TIMES・Google News（スタンダード以上では@Press・ValuePress・共同通信PRワイヤーも）から競合情報を自動取得し、重要な動きをSlack・メールで通知する競合リリース監視ツールです。
           </p>
           <Link
             href="/"
