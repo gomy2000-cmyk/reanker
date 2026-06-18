@@ -126,7 +126,7 @@ function LoginPageInner() {
             </h2>
 
             <p className="text-[15px] sm:text-[16px] text-gray-700 leading-[1.85] mb-8 max-w-lg">
-              PR TIMES・Google Newsから競合情報を自動取得。
+              PR TIMES・Google News（スタンダード以上では@Press・ValuePress・共同通信PRワイヤーも）から競合情報を自動取得。
               重要な動きをSlack・メールで通知し、競合の発信トレンドを見逃さないBtoB向け競合監視ツールです。
             </p>
 

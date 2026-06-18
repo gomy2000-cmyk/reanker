@@ -25,7 +25,7 @@ export interface CompareTool {
 }
 
 export const TOOLS: CompareTool[] = [
-  { id: 'reanker', name: 'ReAnker', oneLiner: 'PR TIMES・Google News 特化、月額300円〜' },
+  { id: 'reanker', name: 'ReAnker', oneLiner: 'PR TIMES・Google News＋他PR配信サイト特化、月額300円〜' },
   { id: 'google-alerts', name: 'Googleアラート', shortName: 'Googleアラート', oneLiner: '無料・全Web対象、シンプル' },
   { id: 'prtimes-clipping', name: 'PR TIMES Webクリッピング', shortName: 'PR TIMESクリッピング', oneLiner: 'PR TIMES 配信元の純正、約2,900媒体' },
   { id: 'google-news', name: 'Google ニュース検索', shortName: 'Googleニュース', oneLiner: '無料・手動巡回が前提' },
@@ -62,6 +62,20 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
       feedly: '○',
       'nikkei-telecom': '×',
       'clipping-agency': '△',
+    },
+  },
+  {
+    key: 'other-prsites',
+    label: '他配信サイト（@Press・ValuePress・共同通信PRワイヤー）の監視',
+    values: {
+      reanker: '○（Standard）',
+      'google-alerts': '△',
+      'prtimes-clipping': '×',
+      'google-news': '△',
+      talkwalker: '△',
+      feedly: '△',
+      'nikkei-telecom': '×',
+      'clipping-agency': '○',
     },
   },
   {

@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 const features = [
   { label: 'アンカー（監視対象）の登録', free: '3件まで', standard: '無制限', pro: '無制限' },
   { label: '記事の自動取得頻度', free: '週3回（月・水・金）', standard: '毎日', pro: '毎日' },
+  { label: '取得ソース', free: 'PR TIMES / Google News', standard: '＋@Press・ValuePress・共同通信PRワイヤー', pro: '＋@Press・ValuePress・共同通信PRワイヤー' },
   { label: 'メール通知', free: '○', standard: '○', pro: '○' },
   { label: 'Slack通知', free: '×', standard: '○', pro: '○' },
   { label: '記事一覧 / 既読管理 / クリップ', free: '○', standard: '○', pro: '○' },
@@ -138,6 +139,7 @@ export default function PricingPage() {
           { q: '返金は可能ですか？', a: 'デジタルサービスとしての性質上、決済完了後の返金には応じかねます。次回更新を停止することで以降の課金は発生しません。' },
           { q: '請求書は発行できますか？', a: 'はい、設定画面の「請求履歴を見る」からStripeのカスタマーポータルにアクセスし、過去の請求書をPDFでダウンロードいただけます。' },
           { q: 'フリープランからスタンダードへの変更で、登録済のアンカーはどうなりますか？', a: '登録済のアンカー（最大3件）はそのまま引き継がれ、4件目以降を制限なく追加できるようになります。' },
+          { q: 'PR TIMES・Google News以外のサイトも監視できますか？', a: 'はい。スタンダード以上のプランでは、@Press・ValuePress・共同通信PRワイヤーの3サイトも監視対象に追加できます。アンカー編集画面の「取得ソース」で各サイトを選択してください。フリープランではPR TIMESとGoogle Newsをご利用いただけます。' },
         ].map((item) => (
           <div key={item.q} className="bg-white border border-gray-200 rounded-lg p-5">
             <p className="text-sm font-semibold text-gray-900 mb-1.5">Q. {item.q}</p>
