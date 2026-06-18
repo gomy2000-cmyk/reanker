@@ -5,7 +5,7 @@ import { LegalLayout } from '@/components/LegalLayout'
 
 export const metadata: Metadata = {
   title: '運営者情報',
-  description: 'ReAnker は、商陣 / SYOJIN（代表：小林 豪）が企画・開発・運営する競合リリース監視サービスです。運営者情報・事業内容・お問い合わせ先を掲載しています。',
+  description: 'ReAnker は、商陣 / SYOJIN（運営者：G. Kobayashi）が企画・開発・運営する競合リリース監視サービスです。運営者情報・事業内容・お問い合わせ先を掲載しています。',
   alternates: { canonical: 'https://reanker.com/operator' },
   openGraph: {
     title: '運営者情報｜ReAnker',
@@ -25,7 +25,7 @@ const Row = ({ label, children }: { label: string; children: React.ReactNode }) 
 
 export default function OperatorPage() {
   return (
-    <LegalLayout title="運営者情報" updatedAt="2026年5月24日">
+    <LegalLayout title="運営者情報" updatedAt="2026年6月18日">
       <p className="text-sm text-gray-700 leading-relaxed mb-10">
         ReAnker は、<strong>商陣 / SYOJIN</strong> が企画・開発・運営する競合リリース監視サービスです。
         企業の広報・マーケティング担当者が、競合企業や関連業界の動きを継続的に把握しやすくすることを目的に提供しています。
@@ -34,15 +34,15 @@ export default function OperatorPage() {
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-8">
         <table className="w-full">
           <tbody>
-            <Row label="運営者名">
+            <Row label="運営">
               <span className="font-medium">商陣</span>
               <span className="text-gray-500 ml-2">／ SYOJIN</span>
             </Row>
-            <Row label="代表者">
-              小林 豪
+            <Row label="運営者">
+              G. Kobayashi
             </Row>
             <Row label="所在地">
-              神奈川県横浜市
+              横浜市
             </Row>
             <Row label="公式サイト">
               <a
@@ -57,7 +57,7 @@ export default function OperatorPage() {
             </Row>
             <Row label="事業内容">
               <ul className="space-y-1 list-disc list-inside marker:text-gray-300">
-                <li>Webプロダクトの企画・開発・運営</li>
+                <li>AIツール開発、Webサービス開発</li>
                 <li>マーケティング支援</li>
                 <li>業務効率化・情報収集支援ツールの提供</li>
               </ul>
