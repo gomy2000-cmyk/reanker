@@ -96,7 +96,8 @@ export default function PricingPage() {
       </div>
 
       <h2 className="text-base font-bold text-gray-900 mb-3">機能比較</h2>
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-10">
+      <div className="overflow-x-auto mb-10">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden min-w-[480px]">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr className="text-xs text-gray-500">
@@ -129,6 +130,7 @@ export default function PricingPage() {
             ))}
           </tbody>
         </table>
+      </div>
       </div>
 
       <h2 className="text-base font-bold text-gray-900 mb-3">よくあるご質問</h2>
