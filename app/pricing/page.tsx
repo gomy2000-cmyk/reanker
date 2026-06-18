@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 const features = [
   { label: 'アンカー（監視対象）の登録', free: '3件まで', standard: '無制限', pro: '無制限' },
   { label: '記事の自動取得頻度', free: '週3回（月・水・金）', standard: '毎日', pro: '毎日' },
-  { label: '取得ソース', free: 'PR TIMES / Google News', standard: '＋@Press・ValuePress・共同通信PRワイヤー', pro: '＋@Press・ValuePress・共同通信PRワイヤー' },
+  { label: '取得ソース', free: 'PR TIMES / Google News', standard: 'PR TIMES / Google News\n＋ @Press / ValuePress / 共同通信PRワイヤー', pro: 'PR TIMES / Google News\n＋ @Press / ValuePress / 共同通信PRワイヤー' },
   { label: 'メール通知', free: '○', standard: '○', pro: '○' },
   { label: 'Slack通知', free: '×', standard: '○', pro: '○' },
   { label: '記事一覧 / 既読管理 / クリップ', free: '○', standard: '○', pro: '○' },
@@ -113,17 +113,17 @@ export default function PricingPage() {
                 <td className="py-3 px-4 text-center text-gray-600">
                   {f.free === '○' ? <Check size={16} className="inline text-[#378ADD]" /> :
                    f.free === '×' ? <X size={16} className="inline text-gray-300" /> :
-                   <span className="text-xs">{f.free}</span>}
+                   <span className="text-xs whitespace-pre-line leading-relaxed">{f.free}</span>}
                 </td>
                 <td className="py-3 px-4 text-center text-gray-600">
                   {f.standard === '○' ? <Check size={16} className="inline text-[#378ADD]" /> :
                    f.standard === '×' ? <X size={16} className="inline text-gray-300" /> :
-                   <span className="text-xs">{f.standard}</span>}
+                   <span className="text-xs whitespace-pre-line leading-relaxed">{f.standard}</span>}
                 </td>
                 <td className="py-3 px-4 text-center text-gray-400">
                   {f.pro === '○' ? <Check size={16} className="inline text-gray-400" /> :
                    f.pro === '×' ? <X size={16} className="inline text-gray-200" /> :
-                   <span className="text-xs">{f.pro}</span>}
+                   <span className="text-xs whitespace-pre-line leading-relaxed">{f.pro}</span>}
                 </td>
               </tr>
             ))}
