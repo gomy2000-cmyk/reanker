@@ -3,7 +3,18 @@
  * 各ソース（PR TIMES、Google News等）は SourceFetcher を実装する。
  */
 
-export type SourceName = 'prtimes' | 'googlenews'
+/**
+ * 取得元ソース。
+ * - prtimes / googlenews : 全プランで利用可（無料含む）
+ * - atpress / valuepress / kyodo : 有料プラン限定の追加トラッキング先
+ *   （Google News を site: で各ドメインに絞って取得する）
+ */
+export type SourceName =
+  | 'prtimes'
+  | 'googlenews'
+  | 'atpress'
+  | 'valuepress'
+  | 'kyodo'
 
 export interface ScrapedItem {
   title: string

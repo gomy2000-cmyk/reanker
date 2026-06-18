@@ -21,6 +21,7 @@ import { classifyArticle } from './classify'
 import { normalizeTitle, sortSources, SOURCE_PRIORITY } from './dedupe'
 import { prtimesSource } from './sources/prtimes'
 import { googlenewsSource } from './sources/googlenews'
+import { atpressSource, valuepressSource, kyodoSource } from './sources/sites'
 import type { SourceFetcher, SourceFetchResult, ScrapedItem, SourceName } from './sources/types'
 
 export type FetchTrigger = 'manual' | 'cron' | 'test'
@@ -60,6 +61,9 @@ export interface FetchRunResult {
 const SOURCE_REGISTRY: Record<SourceName, SourceFetcher> = {
   prtimes: prtimesSource,
   googlenews: googlenewsSource,
+  atpress: atpressSource,
+  valuepress: valuepressSource,
+  kyodo: kyodoSource,
 }
 
 /**

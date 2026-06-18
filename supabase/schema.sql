@@ -29,7 +29,7 @@ create table if not exists pick_keywords (
 create table if not exists items (
   id uuid primary key default gen_random_uuid(),
   pickkw_id uuid references pick_keywords(id) on delete cascade,
-  source text not null check (source in ('prtimes', 'googlenews')),
+  source text not null check (source in ('prtimes', 'googlenews', 'atpress', 'valuepress', 'kyodo')),
   title text not null,
   url text unique not null,
   summary text,
@@ -51,6 +51,15 @@ alter table items add column if not exists ai_summary text;
 alter table items add column if not exists importance_reason text;
 -- タイトル重複統合: 同一記事が複数ソースで取得された場合の取得元一覧（例: {prtimes,googlenews}）
 alter table items add column if not exists sources text[];
+
+-- 追加トラッキング先ソース（有料プラン限定: @Press / ValuePress / 共同通信PRワイヤー）を
+-- items.source の CHECK 制約に許可する。既存制約を貼り替える。
+do $$
+begin
+  alter table items drop constraint if exists items_source_check;
+  alter table items add constraint items_source_check
+    check (source in ('prtimes', 'googlenews', 'atpress', 'valuepress', 'kyodo'));
+end $$;
 
 -- レポートテーブル（週次・月次サマリ）
 create table if not exists reports (

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronLeft, Trash2, AlertCircle, Lock } from 'lucide-react'
 import type { PickKeyword, AnchorType, Source } from '@/lib/types'
+import { SOURCE_META, SOURCE_ORDER } from '@/lib/sources/meta'
 import { trackAnchorCreate, trackCreateKeyword, trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 
 const TYPE_OPTIONS: { value: AnchorType; label: string; desc: string }[] = [
@@ -65,6 +66,8 @@ export default function AnchorEditPage() {
   }, [editId])
 
   const toggleSource = (src: Source) => {
+    // 有料ソースは Free では選択させない（サーバー側でも除外される）
+    if (SOURCE_META[src].premium && isFree) return
     setSources((prev) =>
       prev.includes(src) ? prev.filter((s) => s !== src) : [...prev, src]
     )
@@ -246,21 +249,34 @@ export default function AnchorEditPage() {
         {/* 取得ソース */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">取得ソース</label>
-          <div className="flex gap-4">
-            {(['prtimes', 'googlenews'] as Source[]).map((src) => (
-              <label key={src} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={sources.includes(src)}
-                  onChange={() => toggleSource(src)}
-                  className="accent-[#378ADD]"
-                />
-                <span className="text-sm text-gray-600">
-                  {src === 'prtimes' ? 'PR TIMES' : 'Google News'}
-                </span>
-              </label>
-            ))}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            {SOURCE_ORDER.map((src) => {
+              const premiumLocked = SOURCE_META[src].premium && isFree
+              return (
+                <label
+                  key={src}
+                  className={`flex items-center gap-2 ${premiumLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={sources.includes(src) && !premiumLocked}
+                    disabled={premiumLocked}
+                    onChange={() => toggleSource(src)}
+                    className="accent-[#378ADD]"
+                  />
+                  <span className="text-sm text-gray-600">{SOURCE_META[src].label}</span>
+                  {premiumLocked && (
+                    <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">Standard</span>
+                  )}
+                </label>
+              )
+            })}
           </div>
+          {isFree && (
+            <p className="text-[11px] text-gray-400 mt-2">
+              @Press・ValuePress・共同通信PRワイヤーの監視はStandardプランで利用できます。
+            </p>
+          )}
         </div>
 
         {/* 通知先 */}

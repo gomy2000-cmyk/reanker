@@ -9,7 +9,7 @@
 import type { Source } from './types'
 
 /** ソースの優先順位。同一記事が複数ソースで取得された場合、先頭に近いソースを正とする。 */
-export const SOURCE_PRIORITY: Source[] = ['prtimes', 'googlenews']
+export const SOURCE_PRIORITY: Source[] = ['prtimes', 'googlenews', 'atpress', 'valuepress', 'kyodo']
 
 /** 重複を除きつつ優先順位順に並べる。 */
 export function sortSources(sources: Iterable<Source>): Source[] {
