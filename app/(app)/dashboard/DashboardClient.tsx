@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { FileDown, Circle } from 'lucide-react'
 import type { User, PickKeyword, ItemWithKeyword } from '@/lib/types'
 import { itemSourceList } from '@/lib/dedupe'
+import { SOURCE_META } from '@/lib/sources/meta'
 import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 import { OnboardingBanner } from '@/components/OnboardingBanner'
 
@@ -40,8 +41,12 @@ const PRESETS = [
   { label: '今月', days: -1 },
 ]
 
-const SOURCE_LABEL = { prtimes: 'PR TIMES', googlenews: 'Google News' }
-const SOURCE_COLOR = { prtimes: 'bg-blue-100 text-blue-700', googlenews: 'bg-gray-100 text-gray-600' }
+const SOURCE_LABEL: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_META).map(([k, v]) => [k, v.label])
+)
+const SOURCE_COLOR: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_META).map(([k, v]) => [k, v.badgeClass])
+)
 
 export function DashboardClient({ user, keywords, items }: Props) {
   const [preset, setPreset] = useState(7)
@@ -92,7 +97,8 @@ export function DashboardClient({ user, keywords, items }: Props) {
     return keywords.map((kw) => {
       const kwItems = filteredItems.filter((i) => i.pickkw_id === kw.id)
       const pt = kwItems.filter((i) => i.source === 'prtimes').length
-      const gn = kwItems.filter((i) => i.source === 'googlenews').length
+      // PR TIMES 以外（Google News / @Press / ValuePress / 共同通信PRワイヤー）をまとめて集計
+      const gn = kwItems.length - pt
       const unread = kwItems.filter((i) => !i.is_read).length
       const lastDate = kwItems[0]?.published_at ?? '—'
       return { ...kw, total: kwItems.length, pt, gn, unread, lastDate }
@@ -216,7 +222,7 @@ export function DashboardClient({ user, keywords, items }: Props) {
                 <YAxis tick={{ fontSize: 11 }} stroke="#9ca3af" allowDecimals={false} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="prtimes" stackId="a" fill="#378ADD" name="PR TIMES" isAnimationActive={false} />
-                <Bar dataKey="googlenews" stackId="a" fill="#9ca3af" name="Google News" isAnimationActive={false} />
+                <Bar dataKey="googlenews" stackId="a" fill="#9ca3af" name="Google News他" isAnimationActive={false} />
               </BarChart>
             )}
           </Chart>
@@ -272,7 +278,7 @@ export function DashboardClient({ user, keywords, items }: Props) {
                 <th className="text-left py-2 font-medium">アンカー名</th>
                 <th className="text-right py-2 font-medium w-16">取得数</th>
                 <th className="text-right py-2 font-medium w-20">PR TIMES</th>
-                <th className="text-right py-2 font-medium w-24">Google News</th>
+                <th className="text-right py-2 font-medium w-24">Google News他</th>
                 <th className="text-right py-2 font-medium w-16">未読</th>
                 <th className="text-right py-2 font-medium w-24">最終取得日</th>
               </tr>

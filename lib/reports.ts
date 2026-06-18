@@ -10,6 +10,7 @@ import type {
   ReportAnchorSummary,
   ReportHighlight,
   ReportNotableItem,
+  Source,
 } from './types'
 
 export type ReportType = 'weekly' | 'monthly'
@@ -17,7 +18,7 @@ export type ReportType = 'weekly' | 'monthly'
 interface ItemRow {
   id: string
   pickkw_id: string
-  source: 'prtimes' | 'googlenews'
+  source: Source
   title: string
   url: string
   published_at: string

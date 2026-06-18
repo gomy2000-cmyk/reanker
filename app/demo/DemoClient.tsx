@@ -11,10 +11,15 @@ import {
 import { Wordmark } from '@/components/brand/Wordmark'
 import type { PickKeyword, ItemWithKeyword, Source } from '@/lib/types'
 import type { MockFetchSeed } from '@/lib/mock'
+import { SOURCE_META } from '@/lib/sources/meta'
 import { pushEvent } from '@/lib/analytics'
 
-const SOURCE_LABEL: Record<Source, string> = { prtimes: 'PR TIMES', googlenews: 'Google News' }
-const SOURCE_COLOR: Record<Source, string> = { prtimes: 'bg-blue-100 text-blue-700', googlenews: 'bg-gray-100 text-gray-600' }
+const SOURCE_LABEL: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_META).map(([k, v]) => [k, v.label])
+)
+const SOURCE_COLOR: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_META).map(([k, v]) => [k, v.badgeClass])
+)
 const IMPORTANCE_COLOR: Record<string, string> = {
   高: 'bg-red-50 text-red-600',
   中: 'bg-amber-50 text-amber-700',

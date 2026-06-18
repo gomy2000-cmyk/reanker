@@ -9,6 +9,8 @@ PR TIMES・Google Newsから競合企業の記事を自動取得・通知するB
 - Google SSOログイン（NextAuth）
 - アンカー登録（サービス名／キーワード／ドメイン）
 - PR TIMESスクレイピング + Google News（SerpAPI）
+- 追加トラッキング先（@Press・ValuePress・共同通信PRワイヤー／スタンダード以上）
+  - 各サイトはbotブロック・JSレンダリングで直接取得が難しいため、Google Newsを `site:<ドメイン>` で絞って取得する
 - Vercel Cronで毎日自動取得・通知（Slack・メール）
 - ダッシュボード（曜日別／時間帯別グラフ・サマリーテーブル）
 - 記事一覧（既読切替・プレビューペイン）
@@ -102,6 +104,7 @@ Cron実行時は `Authorization: Bearer $CRON_SECRET` ヘッダーで認証。
 |---|---|---|
 | アンカー登録 | 3件まで | 無制限 |
 | 更新頻度 | 隔日 | 毎日 |
+| 取得ソース | PR TIMES / Google News | ＋@Press・ValuePress・共同通信PRワイヤー |
 | 通知 | メールのみ | Slack + メール |
 | エクスポート | × | CSV |
 

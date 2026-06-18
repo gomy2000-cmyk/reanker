@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { FileDown, Check, Circle, ExternalLink, Sliders, RefreshCw, CheckCircle2, AlertCircle, Loader2, Bookmark, Trash2, Clock } from 'lucide-react'
 import type { User, PickKeyword, Item } from '@/lib/types'
 import { itemSourceList } from '@/lib/dedupe'
+import { SOURCE_META } from '@/lib/sources/meta'
 import { trackBeginCheckout, trackUpgradeClick } from '@/lib/analytics'
 import { AnchorOnboardingHint } from '@/components/OnboardingBanner'
 
@@ -54,8 +55,12 @@ interface Props {
   recentRuns: FetchRun[]
 }
 
-const SOURCE_LABEL = { prtimes: 'PR TIMES', googlenews: 'Google News' }
-const SOURCE_COLOR = { prtimes: 'bg-blue-100 text-blue-700', googlenews: 'bg-gray-100 text-gray-600' }
+const SOURCE_LABEL: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_META).map(([k, v]) => [k, v.label])
+)
+const SOURCE_COLOR: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_META).map(([k, v]) => [k, v.badgeClass])
+)
 
 export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props) {
   const router = useRouter()
@@ -117,7 +122,7 @@ export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props)
         const { found = 0, saved = 0, duplicate = 0, errors = 0, sources = {}, status = 'ok' } = data
         const sourceSummary = Object.entries(sources as Record<string, { saved: number; duplicate: number; errors: number; error_sample: string | null }>)
           .map(([name, s]) => {
-            const label = name === 'prtimes' ? 'PR TIMES' : 'Google News'
+            const label = SOURCE_META[name as keyof typeof SOURCE_META]?.label ?? name
             if (s.error_sample) return `${label}: エラー(${s.error_sample.slice(0, 30)})`
             return `${label}: 新規${s.saved}件/既存${s.duplicate}件`
           }).join(' / ')

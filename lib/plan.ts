@@ -7,7 +7,8 @@
  * Pro     : Standard と同等（機能開発中）
  */
 
-import type { Plan } from './types'
+import type { Plan, Source } from './types'
+import { SOURCE_META, BASE_SOURCES } from './sources/meta'
 
 export type { Plan }
 
@@ -102,6 +103,31 @@ export function canCreateAnchor(plan: Plan, currentCount: number): boolean {
  */
 export function canUseReports(plan: Plan): boolean {
   return PLAN_LIMITS[plan].reports
+}
+
+/**
+ * そのプランで指定ソースを利用できるか。
+ * 追加トラッキング先（@Press / ValuePress / 共同通信PRワイヤー）は有料プラン限定。
+ * prtimes / googlenews は全プランで利用可。
+ */
+export function canUseSource(plan: Plan, source: Source): boolean {
+  if (!SOURCE_META[source]?.premium) return true
+  return isStandardPlan(plan)
+}
+
+/**
+ * 渡されたソース配列を、そのプランで利用可能なものだけに絞り込む。
+ * - 不正値・重複を除去
+ * - Free では有料ソースを除外
+ * - 結果が空になる場合は最低限の prtimes を残す（取得ソース0件を防ぐ）
+ */
+export function filterAllowedSources(plan: Plan, sources: unknown): Source[] {
+  const input = Array.isArray(sources) ? sources : []
+  const valid = input.filter(
+    (s): s is Source => typeof s === 'string' && s in SOURCE_META
+  )
+  const allowed = [...new Set(valid)].filter((s) => canUseSource(plan, s))
+  return allowed.length > 0 ? allowed : [BASE_SOURCES[0]]
 }
 
 /**

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
-import { canCreateAnchor, canUseSlackNotification, normalizePlan, planLimitErrorBody } from '@/lib/plan'
+import { canCreateAnchor, canUseSlackNotification, filterAllowedSources, normalizePlan, planLimitErrorBody } from '@/lib/plan'
 function nextDay9amJST(): string {
   const now = new Date()
   const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
@@ -45,12 +45,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })
   }
 
+  // 有料ソース（@Press / ValuePress / 共同通信PRワイヤー）は Standard 以上のみ。
+  // Free が混ぜて送ってきても黙って除外する（UI 側でも選択不可にしてある）。
+  const allowedSources = filterAllowedSources(plan, sources ?? ['prtimes', 'googlenews'])
+
   const { data, error } = await supabaseAdmin.from('pick_keywords').insert({
     user_id: user.id,
     name,
     type,
     query_value,
-    sources: sources ?? ['prtimes', 'googlenews'],
+    sources: allowedSources,
     notify_slack: slackRequested && canUseSlackNotification(plan),
     notify_email: notify_email ?? false,
     warmup_until: nextDay9amJST(),
@@ -83,7 +87,7 @@ export async function PATCH(req: NextRequest) {
       name,
       type,
       query_value,
-      sources,
+      sources: filterAllowedSources(plan, sources),
       notify_slack: notify_slack === true && canUseSlackNotification(plan),
       notify_email,
     })

@@ -4,20 +4,30 @@
  *
  * 使い方:
  *   npx tsx scripts/test-scraper.ts <query> [source]
- *     source = prtimes (default) | googlenews
+ *     source = prtimes (default) | googlenews | atpress | valuepress | kyodo
  */
 import { config } from 'dotenv'
 config({ path: '.env.local' })
+import type { SourceName, SourceFetcher } from '../lib/sources/types'
 
 async function main() {
   const query = process.argv[2] ?? 'Salesforce'
-  const sourceName = (process.argv[3] ?? 'prtimes') as 'prtimes' | 'googlenews'
+  const sourceName = (process.argv[3] ?? 'prtimes') as SourceName
 
-  let fetcher
+  let fetcher: SourceFetcher
   if (sourceName === 'prtimes') {
     fetcher = (await import('../lib/sources/prtimes')).prtimesSource
-  } else {
+  } else if (sourceName === 'googlenews') {
     fetcher = (await import('../lib/sources/googlenews')).googlenewsSource
+  } else {
+    const sites = await import('../lib/sources/sites')
+    const map: Record<string, SourceFetcher> = {
+      atpress: sites.atpressSource,
+      valuepress: sites.valuepressSource,
+      kyodo: sites.kyodoSource,
+    }
+    fetcher = map[sourceName]
+    if (!fetcher) { console.error(`unknown source: ${sourceName}`); process.exit(1) }
   }
 
   console.log(`\n=== ${sourceName} scraper test ===`)

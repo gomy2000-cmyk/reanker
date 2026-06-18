@@ -6,7 +6,14 @@
  *
  * SERPAPI_KEY が未設定でも RSS で動くので、最低限の取得は保証される。
  */
-import type { SourceFetcher, SourceFetchResult, ScrapedItem } from './types'
+import type { SourceFetcher, SourceFetchResult, ScrapedItem, SourceName } from './types'
+
+/** site: フィルタ付きソースの summary 併記用ラベル（取得経路の明示）。 */
+const SOURCE_VIA_LABEL: Partial<Record<SourceName, string>> = {
+  atpress: '@Press',
+  valuepress: 'ValuePress',
+  kyodo: '共同通信PRワイヤー',
+}
 
 function isValidSerpApiKey(key: string | undefined): boolean {
   if (!key) return false
@@ -33,7 +40,7 @@ export const googlenewsSource: SourceFetcher = {
     }
 
     try {
-      const items = await fetchViaRss(query, sinceDate)
+      const items = await fetchViaRss(query, sinceDate, 'googlenews')
       return { items, http_status: 200, error: null, duration_ms: Date.now() - start }
     } catch (e: any) {
       return {
@@ -44,6 +51,42 @@ export const googlenewsSource: SourceFetcher = {
       }
     }
   },
+}
+
+/**
+ * 特定サイトに絞った Google News ソースを生成するファクトリ。
+ *
+ * @Press / ValuePress / 共同通信PRワイヤー などは bot ブロックや JS レンダリングで
+ * 直接スクレイピングが難しい。一方 Google News はこれらのドメインを索引しているため、
+ * `q="<query> site:<domain>"` の RSS 取得で各サイトの記事だけを安定して拾える。
+ *
+ * SerpAPI は使わず RSS のみ（無料・構造が単純で壊れにくい）。
+ * 取得アイテムの source は渡した name で刻む（PR TIMES / Google News と区別するため）。
+ *
+ * @param name    ソース名（'atpress' など）
+ * @param domain  site: フィルタに使うドメイン（'atpress.ne.jp' など）
+ */
+export function createSiteFilteredGoogleNewsSource(
+  name: SourceName,
+  domain: string
+): SourceFetcher {
+  return {
+    name,
+    async fetch(query, sinceDate): Promise<SourceFetchResult> {
+      const start = Date.now()
+      try {
+        const items = await fetchViaRss(query, sinceDate, name, domain)
+        return { items, http_status: 200, error: null, duration_ms: Date.now() - start }
+      } catch (e: any) {
+        return {
+          items: [],
+          http_status: e?.status ?? null,
+          error: `rss(${domain}): ${e?.message ?? e}`,
+          duration_ms: Date.now() - start,
+        }
+      }
+    },
+  }
 }
 
 // -------------------- SerpAPI --------------------
@@ -93,9 +136,16 @@ async function fetchViaSerpApi(query: string, sinceDate: string | null): Promise
 
 // -------------------- Google News RSS（無料フォールバック） --------------------
 
-async function fetchViaRss(query: string, sinceDate: string | null): Promise<ScrapedItem[]> {
+async function fetchViaRss(
+  query: string,
+  sinceDate: string | null,
+  sourceName: SourceName,
+  siteFilter?: string
+): Promise<ScrapedItem[]> {
+  // siteFilter があれば `<query> site:<domain>` で対象ドメインに限定する
+  const q = siteFilter ? `${query} site:${siteFilter}` : query
   const url =
-    `https://news.google.com/rss/search?q=${encodeURIComponent(query)}` +
+    `https://news.google.com/rss/search?q=${encodeURIComponent(q)}` +
     `&hl=ja&gl=JP&ceid=JP:ja`
 
   const res = await fetch(url, {
@@ -108,10 +158,14 @@ async function fetchViaRss(query: string, sinceDate: string | null): Promise<Scr
   }
 
   const xml = await res.text()
-  return parseGoogleNewsRss(xml, sinceDate)
+  return parseGoogleNewsRss(xml, sinceDate, sourceName)
 }
 
-function parseGoogleNewsRss(xml: string, sinceDate: string | null): ScrapedItem[] {
+function parseGoogleNewsRss(
+  xml: string,
+  sinceDate: string | null,
+  sourceName: SourceName
+): ScrapedItem[] {
   const items: ScrapedItem[] = []
   const seen = new Set<string>()
 
@@ -133,13 +187,15 @@ function parseGoogleNewsRss(xml: string, sinceDate: string | null): ScrapedItem[
     if (seen.has(link)) continue
     seen.add(link)
 
+    // 取得経路は Google News だが、site: フィルタ付きの場合は対象サイト名を併記する
+    const via = sourceName === 'googlenews' ? 'Google News' : `Google News / ${SOURCE_VIA_LABEL[sourceName] ?? sourceName}`
     items.push({
       title: decodeHtmlEntities(title),
       url: link,
-      summary: source ? `${decodeHtmlEntities(source)}（Google News）` : null,
+      summary: source ? `${decodeHtmlEntities(source)}（${via}）` : null,
       published_at: parsed.date,
       published_hour: parsed.hour,
-      source: 'googlenews',
+      source: sourceName,
     })
   }
 

@@ -1,6 +1,6 @@
 export type Plan = 'free' | 'standard' | 'pro'
 export type AnchorType = 'service' | 'keyword' | 'domain'
-export type Source = 'prtimes' | 'googlenews'
+export type Source = 'prtimes' | 'googlenews' | 'atpress' | 'valuepress' | 'kyodo'
 
 export interface User {
   id: string

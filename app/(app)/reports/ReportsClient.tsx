@@ -5,6 +5,7 @@ import {
   FileBarChart, Copy, CheckCircle2, ExternalLink, Loader2, ChevronDown, FileText, Lock, Sparkles, ArrowRight,
 } from 'lucide-react'
 import type { Report } from '@/lib/types'
+import { SOURCE_META, sourceLabel } from '@/lib/sources/meta'
 import { trackBeginCheckout, trackReportCopy, trackReportView, trackUpgradeClick } from '@/lib/analytics'
 
 interface ReportListItem {
@@ -31,10 +32,9 @@ const IMPORTANCE_COLOR = {
   '低': 'bg-gray-50 text-gray-500 border-gray-200',
 }
 
-const SOURCE_COLOR = {
-  prtimes: 'bg-blue-100 text-blue-700',
-  googlenews: 'bg-gray-100 text-gray-600',
-}
+const SOURCE_COLOR: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_META).map(([k, v]) => [k, v.badgeClass])
+)
 
 export function ReportsClient({ initialReport, initialType, weeklyList, monthlyList, isPreview = false }: Props) {
   const [type, setType] = useState<'weekly' | 'monthly'>(initialType)
@@ -354,7 +354,7 @@ export function ReportsClient({ initialReport, initialType, weeklyList, monthlyL
                         <td className="py-2 px-3 text-xs text-gray-600 truncate max-w-[100px]">{it.anchor_name}</td>
                         <td className="py-2 px-3">
                           <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_COLOR[it.source]}`}>
-                            {it.source === 'prtimes' ? 'PR TIMES' : 'Google News'}
+                            {sourceLabel(it.source)}
                           </span>
                         </td>
                         <td className="py-2 px-3 text-xs text-gray-500">{it.published_at}</td>
