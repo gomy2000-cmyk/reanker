@@ -2,10 +2,11 @@ import type { SavedItem } from './runFetch'
 
 /**
  * Slack 通知に表示する公式アイコン／表示名。
- * ファビコン（app/icon.png）と同一の公式アンカーマークを /icon-512.png から参照し、
- * Slack メッセージのアバターをブランド統一する。
+ * ファビコンと同一の公式アンカーマーク（白背景版）を参照する。
+ * アバターは不透明な正方形で表示されるため、透過版 /icon-512.png ではなく
+ * 白背景版を使い、Slack 上で錨マークがきれいに表示されるようにする。
  */
-const SLACK_ICON_URL = 'https://reanker.com/icon-512.png'
+const SLACK_ICON_URL = 'https://reanker.com/brand/favicon_anchor_whitebg_512.png'
 const SLACK_USERNAME = 'ReAnker'
 
 export interface AnchorSummary {
