@@ -1,5 +1,14 @@
 import type { SavedItem } from './runFetch'
 
+/**
+ * Slack 通知に表示する公式アイコン／表示名。
+ * ファビコンと同一の公式アンカーマーク（白背景版）を参照する。
+ * アバターは不透明な正方形で表示されるため、透過版 /icon-512.png ではなく
+ * 白背景版を使い、Slack 上で錨マークがきれいに表示されるようにする。
+ */
+const SLACK_ICON_URL = 'https://reanker.com/brand/favicon_anchor_whitebg_512.png'
+const SLACK_USERNAME = 'ReAnker'
+
 export interface AnchorSummary {
   anchorName: string
   items: SavedItem[]
@@ -85,7 +94,11 @@ export async function sendSlackDigest(
     const res = await fetchWithRetry(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({
+        text,
+        username: SLACK_USERNAME,
+        icon_url: SLACK_ICON_URL,
+      }),
     })
     if (!res.ok) {
       return { status: 'failed', error: `Slack webhook failed: HTTP ${res.status} ${await res.text()}` }
