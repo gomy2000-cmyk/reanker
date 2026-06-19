@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getServerSession } from 'next-auth'
 import {
   Bell, Search, BarChart3, MessageSquare, Mail,
@@ -777,9 +778,13 @@ function SlackNotifyPreview() {
       </div>
       <div className="p-4 text-xs">
         <div className="flex gap-2.5">
-          <div className="w-8 h-8 bg-[#0a0a0a] rounded flex items-center justify-center shrink-0 text-white">
-            <AnchorMark size={14} />
-          </div>
+          <Image
+            src="/brand/favicon_anchor_whitebg_512.png"
+            alt="ReAnker"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded shrink-0 border border-gray-200"
+          />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="font-semibold text-gray-900 text-[13px]">ReAnker</span>
