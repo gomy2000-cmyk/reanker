@@ -276,8 +276,22 @@ export async function runFetch(
       if (item.summary) patch.summary = item.summary
     }
     const { error } = await supabaseAdmin.from('items').update(patch).eq('id', existing.id)
-    if (error && upgrade) {
-      // PR TIMES 版の URL が別行と衝突した場合などは、ソース併記のみ行う
+    if (error?.code === '23505' && upgrade) {
+      // PRTIMES URL が既に別アイテムとして存在する:
+      // そちらに googlenews ソースを追記し、Google News 版を削除してPRTIMES版を正とする
+      if (hasSourcesColumn) {
+        await supabaseAdmin
+          .from('items')
+          .update({ sources: merged })
+          .eq('url', item.url)
+          .eq('pickkw_id', anchor!.id)
+      }
+      await supabaseAdmin
+        .from('items')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', existing.id)
+    } else if (error && upgrade) {
+      // その他のエラー → ソース併記のみ行う
       await supabaseAdmin.from('items').update({ sources: merged }).eq('id', existing.id)
     }
     existing.sources = merged
