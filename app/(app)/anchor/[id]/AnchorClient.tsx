@@ -362,7 +362,7 @@ export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props)
               </p>
             </div>
           ) : (
-            <table className="w-full text-sm">
+            <table className="w-full text-sm table-fixed">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr className="text-xs text-gray-500">
                   <th className="text-center py-2 pl-3 w-7"></th>
@@ -413,7 +413,7 @@ export function AnchorClient({ user, keyword, initialItems, recentRuns }: Props)
                       </button>
                     </td>
                     <td className="py-2.5 pr-2 pl-1">
-                      <span className={`text-sm truncate block max-w-[380px] ${item.is_read ? 'text-gray-400' : 'text-gray-900 font-medium'}`}>
+                      <span className={`text-sm truncate block ${item.is_read ? 'text-gray-400' : 'text-gray-900 font-medium'}`}>
                         {item.title}
                       </span>
                     </td>
