@@ -56,7 +56,7 @@ export function Footer() {
           <p className="text-[11px] text-gray-400">
             運営：<Link href="/operator" className="hover:text-[#378ADD]">商陣 / SYOJIN</Link>
             <span className="mx-1">／</span>
-            お問い合わせ：<a href="mailto:support@reanker.com" className="hover:text-[#378ADD]">support@reanker.com</a>
+            お問い合わせ：<a href="mailto:info@syojin.com?subject=%5BReAnker%5D%20%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B&body=%E9%80%81%E4%BF%A1%E5%85%83%3A%20ReAnker%20%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%20(https%3A%2F%2Freanker.com%2Fcontact)%0A%0A" className="hover:text-[#378ADD]">info@syojin.com</a>
           </p>
         </div>
       </div>

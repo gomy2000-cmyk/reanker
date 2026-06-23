@@ -45,7 +45,7 @@ export default function LegalPage() {
               請求があり次第、遅滞なく開示いたします。ご希望の方は下記お問い合わせ先までご連絡ください。
             </Row>
             <Row label="お問い合わせ先">
-              <a href="mailto:support@reanker.com" className="text-[#378ADD] hover:underline">support@reanker.com</a>
+              <a href="mailto:info@syojin.com?subject=%5BReAnker%5D%20%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B&body=%E9%80%81%E4%BF%A1%E5%85%83%3A%20ReAnker%20%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%20(https%3A%2F%2Freanker.com%2Fcontact)%0A%0A" className="text-[#378ADD] hover:underline">info@syojin.com</a>
               <p className="text-xs text-gray-500 mt-1">受付時間：平日 10:00 - 18:00（土日祝・年末年始を除く）</p>
             </Row>
             <Row label="販売価格">
