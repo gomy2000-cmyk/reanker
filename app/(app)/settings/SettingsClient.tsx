@@ -1,11 +1,164 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Check } from 'lucide-react'
+import { Check, ShieldCheck, ExternalLink, Send } from 'lucide-react'
 import type { User } from '@/lib/types'
 import { trackBeginCheckout, trackPurchase, trackUpgradeClick } from '@/lib/analytics'
 
 interface Props { user: User }
+
+/** 入力中の Slack Webhook URL がそれらしい形式か（クライアント側の即時フィードバック用） */
+function looksLikeSlackWebhook(url: string): boolean {
+  const v = url.trim()
+  return v === '' || /^https:\/\/hooks\.slack\.com\//.test(v)
+}
+
+/**
+ * 決済の安心訴求。スタンダードへの誘導まわりに添える。
+ * カード情報を自社で保持しない（Stripe 管理）ことを明示し、アップグレードの心理的ハードルを下げる。
+ */
+function StripeSafetyNote() {
+  return (
+    <p className="flex items-start gap-1.5 text-[11px] text-gray-500 leading-relaxed mt-2">
+      <ShieldCheck size={13} className="text-gray-400 shrink-0 mt-px" />
+      <span>
+        お支払いは決済プラットフォーム「Stripe」で処理されます。カード情報はReAnkerのサーバーには保存・通過せず、
+        Stripeの安全な環境で管理されるため、情報が抜き取られる心配はありません。
+      </span>
+    </p>
+  )
+}
+
+/**
+ * Slack Webhook URL の設定フィールド（Standard ユーザー向け）。
+ * - 取得手順とヘルプリンクを表示してオンボーディングを補助
+ * - 「テスト送信」で保存前でも疎通確認できる
+ * - 形式チェックの結果と保存／テスト結果をその場でフィードバック
+ */
+function SlackWebhookField({ initialValue }: { initialValue: string }) {
+  const [value, setValue] = useState(initialValue)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [testing, setTesting] = useState(false)
+  const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  const valid = looksLikeSlackWebhook(value)
+
+  const handleSave = async () => {
+    if (!valid) {
+      setMsg({ type: 'error', text: 'URLは「https://hooks.slack.com/」で始まる必要があります。' })
+      return
+    }
+    setSaving(true)
+    setMsg(null)
+    try {
+      const res = await fetch('/api/user', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slack_webhook_url: value.trim() }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setMsg({ type: 'error', text: data.error ?? '保存に失敗しました。' })
+      } else {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 1500)
+      }
+    } catch {
+      setMsg({ type: 'error', text: '通信エラーが発生しました。' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleTest = async () => {
+    if (!value.trim()) {
+      setMsg({ type: 'error', text: 'テストするWebhook URLを入力してください。' })
+      return
+    }
+    if (!valid) {
+      setMsg({ type: 'error', text: 'URLは「https://hooks.slack.com/」で始まる必要があります。' })
+      return
+    }
+    setTesting(true)
+    setMsg(null)
+    try {
+      const res = await fetch('/api/user/slack-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slack_webhook_url: value.trim() }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setMsg({ type: 'error', text: data.error ?? 'テスト送信に失敗しました。' })
+      } else {
+        setMsg({ type: 'success', text: 'テスト通知を送信しました。Slackをご確認ください。' })
+      }
+    } catch {
+      setMsg({ type: 'error', text: '通信エラーが発生しました。' })
+    } finally {
+      setTesting(false)
+    }
+  }
+
+  return (
+    <div>
+      <label className="block text-xs text-gray-500 mb-1">Slack Webhook URL</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="https://hooks.slack.com/services/..."
+          className={`flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+            valid
+              ? 'border-gray-200 focus:ring-[#378ADD]/50 focus:border-[#378ADD]'
+              : 'border-red-300 focus:ring-red-300/50 focus:border-red-400'
+          }`}
+        />
+        <button
+          onClick={handleTest}
+          disabled={testing || saving}
+          className="text-xs px-3 py-2 border border-gray-200 hover:bg-gray-50 rounded-lg text-gray-600 disabled:opacity-50 flex items-center gap-1 whitespace-nowrap"
+        >
+          <Send size={12} /> {testing ? '送信中' : 'テスト送信'}
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={saving || testing}
+          className="text-xs px-3 py-2 border border-gray-200 hover:bg-gray-50 rounded-lg text-gray-600 disabled:opacity-50 flex items-center gap-1 whitespace-nowrap"
+        >
+          {saved ? <><Check size={12} className="text-green-600" /> 保存済</> : saving ? '保存中' : '保存'}
+        </button>
+      </div>
+
+      {msg && (
+        <p className={`text-xs mt-2 ${msg.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+          {msg.text}
+        </p>
+      )}
+
+      {/* 取得手順のガイド */}
+      <div className="mt-3 bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <p className="text-xs font-medium text-gray-700 mb-1.5">Webhook URL の取得方法</p>
+        <ol className="text-xs text-gray-600 leading-relaxed list-decimal list-inside space-y-0.5">
+          <li>Slack APIのページで「Incoming Webhooks」を有効にしたアプリを作成</li>
+          <li>通知を受け取りたいSlackチャンネルにこのアプリをAdd</li>
+          <li>発行された <code className="bg-white border border-gray-200 rounded px-1">https://hooks.slack.com/...</code> をここに貼り付け → 保存</li>
+          <li>「テスト送信」で実際に通知が届くか確認</li>
+        </ol>
+        <a
+          href="https://api.slack.com/messaging/webhooks"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-[#378ADD] hover:underline mt-2"
+        >
+          Slack公式の設定手順を見る <ExternalLink size={11} />
+        </a>
+      </div>
+    </div>
+  )
+}
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -77,7 +230,6 @@ export function SettingsClient({ user }: Props) {
   }, [])
 
   const [name, setName] = useState(user.name ?? '')
-  const [slackWebhook, setSlackWebhook] = useState(user.slack_webhook_url ?? '')
   const [notifyEmail, setNotifyEmail] = useState(user.notify_email ?? user.email)
   const [invoiceMonth, setInvoiceMonth] = useState(new Date().toISOString().slice(0, 7))
 
@@ -138,7 +290,9 @@ export function SettingsClient({ user }: Props) {
                   Slack Webhook URL
                   <span className="ml-2 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">Standard</span>
                 </p>
-                <p className="text-xs text-gray-600">Slack通知はStandardプランで利用できます。</p>
+                <p className="text-xs text-gray-600">
+                  競合の新着リリースを毎朝Slackへ自動通知。チームでの共有に便利です。Standardプランで利用できます。
+                </p>
               </div>
               <button
                 onClick={handleUpgrade}
@@ -147,15 +301,10 @@ export function SettingsClient({ user }: Props) {
                 アップグレード
               </button>
             </div>
+            <StripeSafetyNote />
           </div>
         ) : (
-          <Field
-            label="Slack Webhook URL"
-            value={slackWebhook}
-            onChange={setSlackWebhook}
-            onSave={() => save({ slack_webhook_url: slackWebhook })}
-            placeholder="https://hooks.slack.com/services/..."
-          />
+          <SlackWebhookField initialValue={user.slack_webhook_url ?? ''} />
         )}
         <Field
           label="通知メール"
@@ -186,6 +335,8 @@ export function SettingsClient({ user }: Props) {
             </button>
           )}
         </div>
+
+        {user.plan === 'free' && <StripeSafetyNote />}
 
         {user.plan === 'standard' && (
           <>
