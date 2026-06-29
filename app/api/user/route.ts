@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { canUseSlackNotification, normalizePlan, planLimitErrorBody, PLAN_LIMITS } from '@/lib/plan'
+import { isValidSlackWebhookUrl } from '@/lib/notify'
 
 /**
  * GET /api/user
@@ -64,10 +65,22 @@ export async function PATCH(req: NextRequest) {
     }
   }
 
-  // Free は Slack Webhook URL の設定不可（空文字でクリアは OK）
-  if ('slack_webhook_url' in updates && updates.slack_webhook_url) {
-    if (!canUseSlackNotification(plan)) {
-      return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })
+  // Slack Webhook URL: 空 → null（クリア、全プランで可）、非空 → Standard限定＋形式検証
+  if ('slack_webhook_url' in updates) {
+    const raw = typeof updates.slack_webhook_url === 'string' ? updates.slack_webhook_url.trim() : ''
+    if (raw === '') {
+      updates.slack_webhook_url = null
+    } else {
+      if (!canUseSlackNotification(plan)) {
+        return NextResponse.json(planLimitErrorBody('slack'), { status: 403 })
+      }
+      if (!isValidSlackWebhookUrl(raw)) {
+        return NextResponse.json(
+          { error: 'Slack Webhook URL の形式が正しくありません。「https://hooks.slack.com/」で始まるURLを入力してください。' },
+          { status: 400 }
+        )
+      }
+      updates.slack_webhook_url = raw
     }
   }
 

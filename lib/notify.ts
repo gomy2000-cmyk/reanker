@@ -110,6 +110,51 @@ export async function sendSlackDigest(
 }
 
 /**
+ * Slack Incoming Webhook URL の形式チェック。
+ * 正規の Webhook は必ず https://hooks.slack.com/ 配下のため、
+ * プロトコルとホスト名のみを厳密に検証する（パスはアプリ種別で異なるので問わない）。
+ * 保存API・テスト送信API・UIの3箇所で同じ判定を使う。
+ */
+export function isValidSlackWebhookUrl(url: string): boolean {
+  try {
+    const u = new URL(url.trim())
+    return u.protocol === 'https:' && u.hostname === 'hooks.slack.com'
+  } catch {
+    return false
+  }
+}
+
+/**
+ * 設定画面の「テスト送信」用。指定 Webhook へ接続確認メッセージを1通送る。
+ * 本番ダイジェスト（sendSlackDigest）と同じ送信経路・表示名・アイコンを使い、
+ * ユーザーが本番と同じ見た目で疎通を確認できるようにする。
+ */
+export async function sendSlackTest(webhookUrl: string): Promise<NotifyResult> {
+  const text =
+    `:anchor: *ReAnker* 接続テスト\n\n` +
+    `このメッセージが届いていれば、Slack通知の設定は完了です。\n` +
+    `毎朝9時（JST）に、競合・業界の新着リリースをこのチャンネルへお届けします。`
+
+  try {
+    const res = await fetchWithRetry(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text,
+        username: SLACK_USERNAME,
+        icon_url: SLACK_ICON_URL,
+      }),
+    })
+    if (!res.ok) {
+      return { status: 'failed', error: `Slack webhook failed: HTTP ${res.status} ${await res.text()}` }
+    }
+    return { status: 'success' }
+  } catch (e: any) {
+    return { status: 'failed', error: `Slack webhook error: ${e?.message ?? e}` }
+  }
+}
+
+/**
  * タイトルが SHARED_CHARS 文字以上共通する記事を重複とみなして除去する。
  * 同じリリースが PR TIMES / Google News 両方で取得された場合などを排除する。
  */
